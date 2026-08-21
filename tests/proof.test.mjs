@@ -50,7 +50,7 @@ test("full snapshot extractor recognizes only safe provider error codes", () => 
     "object_producthea_undocument_generateda");
 });
 
-test("proof uses the fixed bridge flow for exactly the two approved feeds", async () => {
+test("proof uses the fixed bridge flow for the two selected static feeds", async () => {
   const originalArgv = process.argv;
   const originalFetch = globalThis.fetch;
   const originalWrite = process.stdout.write;

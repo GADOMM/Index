@@ -1,4 +1,4 @@
-name: TradeDoubler feeds
+name: Perfumetr catalog feeds
 
 on:
   pull_request:
@@ -6,19 +6,22 @@ on:
       - master
     paths:
       - .github/workflows/tradedoubler.yml
-      - scripts/tradedoubler-import.mjs
-      - scripts/tradedoubler-products.mjs
-      - tests/proof.test.mjs
+      - config/**
+      - scripts/**
+      - tests/**
       - package.json
       - README.md
+      - AGENTS.md
+      - PROJECT_STATE.md
+      - docs/**
   push:
     branches:
       - master
     paths:
       - .github/workflows/tradedoubler.yml
-      - scripts/tradedoubler-import.mjs
-      - scripts/tradedoubler-products.mjs
-      - tests/proof.test.mjs
+      - config/**
+      - scripts/**
+      - tests/**
       - package.json
       - README.md
   workflow_dispatch:
@@ -31,6 +34,8 @@ on:
         options:
           - proof
           - full
+          - partners
+          - all
   schedule:
     - cron: "17 14 * * *"
 
@@ -38,7 +43,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: perfumetr-tradedoubler-import
+  group: perfumetr-catalog-import
   cancel-in-progress: false
 
 jobs:
@@ -64,11 +69,11 @@ jobs:
         run: npm test
 
   import:
-    name: Import Cocolita and Drogeria.pl
+    name: Import all configured catalog sources
     needs: validate
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     permissions:
       contents: read
       id-token: write
@@ -96,26 +101,26 @@ jobs:
           node-version: 22
           package-manager-cache: false
 
-      - name: Test both live feeds after an importer change
-        if: github.event_name == 'push'
+      - name: Test all TradeDoubler sources after an importer change
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'proof' || inputs.mode == 'all'))
         env:
           PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
           PERFUMETR_MODE: proof
-        run: node scripts/tradedoubler-import.mjs 112471 118359
+        run: node scripts/tradedoubler-import.mjs
 
-      - name: Run the first full import after a successful live test
-        if: github.event_name == 'push'
+      - name: Run the full TradeDoubler import
+        if: always() && (github.event_name == 'push' || github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'full' || inputs.mode == 'all')))
         env:
           PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
           PERFUMETR_MODE: full
-        run: node scripts/tradedoubler-import.mjs 112471 118359
+        run: node scripts/tradedoubler-import.mjs
 
-      - name: Run the selected automatic or manual import
-        if: github.event_name != 'push' && github.event_name != 'pull_request'
+      - name: Advance partner sources through the shared orchestrator
+        if: always() && (github.event_name == 'push' || github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'partners' || inputs.mode == 'all')))
         env:
           PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
-          PERFUMETR_MODE: ${{ github.event_name == 'schedule' && 'full' || inputs.mode }}
-        run: node scripts/tradedoubler-import.mjs 112471 118359
+          PERFUMETR_ORCHESTRATOR_STEPS: 24
+        run: node scripts/catalog-orchestrator.mjs
 
       - name: Publish the first live import result
         if: always() && github.event_name == 'push'

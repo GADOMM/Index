@@ -7,98 +7,86 @@ import {
   providerPayloadErrorCode,
   providerPayloadShapeCode,
 } from "./tradedoubler-products.mjs";
+import { createOidcTokenProvider, validatedSiteOrigin } from "./github-oidc.mjs";
+import { isPerfumeProduct } from "./perfume-classifier.mjs";
 
-const ALLOWED_FEED_IDS = new Set(["112471", "118359"]);
-const DEFAULT_FEED_IDS = [...ALLOWED_FEED_IDS];
 const BRIDGE_MAXIMUM_BYTES = 2 * 1024 * 1024;
 const CHUNK_TARGET_BYTES = 1_500_000;
 const PROVIDER_MAXIMUM_BYTES = 512 * 1024 * 1024;
 const OIDC_AUDIENCE = "perfumetr-tradedoubler-bridge";
-const OIDC_MAXIMUM_BYTES = 64 * 1024;
 const mode = process.env.PERFUMETR_MODE === "full" ? "full"
   : process.env.PERFUMETR_MODE === "proof" ? "proof" : null;
-const oidcRequestToken = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN?.trim() ?? "";
-const oidcRequestUrlValue = process.env.ACTIONS_ID_TOKEN_REQUEST_URL?.trim() ?? "";
-const requestedFeedIds = process.argv.slice(2).length ? process.argv.slice(2) : DEFAULT_FEED_IDS;
-const feedIds = [...new Set(requestedFeedIds.map((value) => value.trim()))];
 
 if (!mode) throw new Error("invalid_mode");
-if (!feedIds.length || feedIds.some((feedId) => !ALLOWED_FEED_IDS.has(feedId))) {
-  throw new Error("invalid_feed_id");
-}
-if (!oidcRequestToken || oidcRequestToken.length > 16_384) throw new Error("invalid_oidc_environment");
 
-let oidcRequestUrl;
-try {
-  oidcRequestUrl = new URL(oidcRequestUrlValue);
-} catch {
-  throw new Error("invalid_oidc_environment");
-}
-if (oidcRequestUrl.protocol !== "https:" || oidcRequestUrl.username || oidcRequestUrl.password
-  || oidcRequestUrl.port || !/^[a-z0-9-]+\.actions\.githubusercontent\.com$/i.test(oidcRequestUrl.hostname)) {
-  throw new Error("invalid_oidc_environment");
-}
-oidcRequestUrl.searchParams.set("audience", OIDC_AUDIENCE);
-
-const siteOrigin = new URL(
-  process.env.PERFUMETR_ORIGIN || "https://perfumetr.borodzicz85.chatgpt.site",
+const sourceConfigText = await readFile(
+  new URL("../config/tradedoubler-sources.json", import.meta.url),
+  "utf8",
 );
-if (siteOrigin.protocol !== "https:" || siteOrigin.username || siteOrigin.password
-  || siteOrigin.port || siteOrigin.pathname !== "/" || siteOrigin.search || siteOrigin.hash) {
-  throw new Error("invalid_site_origin");
+let sourceConfig;
+try {
+  sourceConfig = JSON.parse(sourceConfigText);
+} catch {
+  throw new Error("invalid_source_config");
 }
+if (sourceConfig?.schemaVersion !== 1 || !Array.isArray(sourceConfig.sources)
+  || sourceConfig.sources.length < 1 || sourceConfig.sources.length > 100) {
+  throw new Error("invalid_source_config");
+}
+
+const sourceKeys = new Set();
+const storeSlugs = new Set();
+const configuredFeedIds = new Set();
+const sourceDefinitions = sourceConfig.sources.map((source) => {
+  const sourceKey = typeof source?.sourceKey === "string" ? source.sourceKey.trim() : "";
+  const storeSlug = typeof source?.storeSlug === "string" ? source.storeSlug.trim() : "";
+  const storeName = typeof source?.storeName === "string" ? source.storeName.trim() : "";
+  const currency = typeof source?.currency === "string" ? source.currency.trim() : "";
+  const allowedDomains = Array.isArray(source?.allowedDomains) ? source.allowedDomains : [];
+  const feedIds = Array.isArray(source?.feedIds) ? source.feedIds.map(String) : [];
+  const programIds = Array.isArray(source?.programIds) ? source.programIds.map(String) : [];
+  if (!/^[a-z0-9-]{2,50}$/.test(sourceKey) || sourceKeys.has(sourceKey)
+    || !/^[a-z0-9-]{2,40}$/.test(storeSlug) || storeSlugs.has(storeSlug)
+    || !storeName || storeName.length > 80 || currency !== "PLN"
+    || !allowedDomains.length || allowedDomains.length > 10
+    || allowedDomains.some((domain) => !/^(?:[a-z0-9-]+\.)+[a-z]{2,}$/i.test(domain))
+    || feedIds.length > 50 || programIds.length > 20
+    || (!feedIds.length && !programIds.length)
+    || feedIds.some((feedId) => !/^\d{1,20}$/.test(feedId) || configuredFeedIds.has(feedId))
+    || programIds.some((programId) => !/^\d{1,20}$/.test(programId))) {
+    throw new Error("invalid_source_config");
+  }
+  sourceKeys.add(sourceKey);
+  storeSlugs.add(storeSlug);
+  for (const feedId of feedIds) configuredFeedIds.add(feedId);
+  return {
+    sourceKey,
+    storeSlug,
+    storeName,
+    currency,
+    allowedDomains: allowedDomains.map((domain) => domain.toLowerCase()),
+    feedIds: [...new Set(feedIds)],
+    programIds: [...new Set(programIds)],
+  };
+});
+
+const selectors = process.argv.slice(2).length
+  ? [...new Set(process.argv.slice(2).map((value) => value.trim()))]
+  : sourceDefinitions.map((source) => source.sourceKey);
+const selectedSources = [];
+for (const selector of selectors) {
+  const source = sourceDefinitions.find((candidate) => (
+    candidate.sourceKey === selector || candidate.feedIds.includes(selector)
+  ));
+  if (!source) throw new Error("invalid_source_selector");
+  if (!selectedSources.includes(source)) selectedSources.push(source);
+}
+if (!selectedSources.length) throw new Error("invalid_source_selector");
+
+const getOidcToken = createOidcTokenProvider({ audience: OIDC_AUDIENCE });
+const siteOrigin = validatedSiteOrigin();
 
 const bridge = new URL("/api/internal/tradedoubler-runtime-proof", siteOrigin).toString();
-
-let cachedOidc = null;
-
-const oidcExpiration = (token) => {
-  const parts = token.split(".");
-  if (parts.length !== 3 || parts.some((part) => !/^[A-Za-z0-9_-]+$/.test(part))) return null;
-  try {
-    const claims = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf8"));
-    return Number.isSafeInteger(claims.exp) ? claims.exp : null;
-  } catch {
-    return null;
-  }
-};
-
-const getOidcToken = async () => {
-  const nowSeconds = Math.floor(Date.now() / 1000);
-  if (cachedOidc && cachedOidc.expiresAt > nowSeconds + 60) return cachedOidc.token;
-  let response;
-  try {
-    response = await fetch(oidcRequestUrl, {
-      headers: {
-        accept: "application/json",
-        authorization: `Bearer ${oidcRequestToken}`,
-      },
-      redirect: "error",
-      signal: AbortSignal.timeout(30_000),
-    });
-  } catch {
-    throw new Error("oidc_unavailable");
-  }
-  const declaredLength = Number(response.headers.get("content-length") || 0);
-  if (!response.ok || (Number.isFinite(declaredLength) && declaredLength > OIDC_MAXIMUM_BYTES)) {
-    await response.body?.cancel().catch(() => {});
-    throw new Error("oidc_rejected");
-  }
-  const text = await response.text();
-  if (Buffer.byteLength(text) > OIDC_MAXIMUM_BYTES) throw new Error("oidc_rejected");
-  let token = "";
-  try {
-    const parsed = JSON.parse(text);
-    token = typeof parsed.value === "string" ? parsed.value : "";
-  } catch {
-    throw new Error("oidc_rejected");
-  }
-  const expiresAt = oidcExpiration(token);
-  if (!expiresAt || token.length > 16_384 || expiresAt <= nowSeconds + 30
-    || expiresAt > nowSeconds + 20 * 60) throw new Error("oidc_rejected");
-  cachedOidc = { token, expiresAt };
-  return token;
-};
 
 const safeBridgeError = (payload, status) => {
   const code = typeof payload?.error === "string" && /^[a-z0-9_]{1,80}$/i.test(payload.error)
@@ -311,19 +299,6 @@ const importTicketPayload = (ticket, providerPayload) => bridgePost(
   { "x-perfumetr-bridge-ticket": ticket },
 );
 
-const perfumeSignal = /(?:\bperfum|eau\s+de\s+(?:parfum|toilette|cologne)|woda\s+(?:perfumowana|toaletowa|kolonska)|\b(?:edp|edt|edc)\b|extrait\s+de\s+parfum|\bparfum\b)/i;
-
-const isPerfumeProduct = (product) => {
-  if (!product || typeof product !== "object" || Array.isArray(product)) return false;
-  const categories = Array.isArray(product.categories)
-    ? product.categories.flatMap((category) => category && typeof category === "object"
-      ? [category.name, category.tdCategoryName] : [])
-    : [];
-  const text = [product.name, product.description, product.shortDescription, ...categories]
-    .filter((value) => typeof value === "string").join(" ");
-  return perfumeSignal.test(text);
-};
-
 const buildChunks = (products) => {
   const chunks = [];
   let current = [];
@@ -343,7 +318,7 @@ const buildChunks = (products) => {
   if (current.length) chunks.push(makeEnvelope(current));
   if (chunks.some((chunk) => Buffer.byteLength(JSON.stringify({
     action: "import_unlimited_chunk",
-    feedId: "118359",
+    feedId: "999999",
     sessionId: "00000000-0000-4000-8000-000000000000",
     chunkIndex: 1_000_000,
     snapshotHash: "f".repeat(64),
@@ -355,15 +330,37 @@ const buildChunks = (products) => {
   return chunks;
 };
 
-const feedMetadataProductCount = (payload, feedId) => {
+const feedMetadataRecord = (payload, feedId) => {
   const records = Array.isArray(payload)
     ? payload
     : Array.isArray(payload?.feeds) ? payload.feeds : [payload];
-  const exact = records.find((record) => record && typeof record === "object"
+  return records.find((record) => record && typeof record === "object"
     && String(record.feedId) === String(feedId));
-  const record = exact ?? (records.length === 1 ? records[0] : null);
+};
+
+const feedMetadataProductCount = (payload, feedId) => {
+  const record = feedMetadataRecord(payload, feedId);
   const productCount = Number(record?.numberOfProducts);
   return Number.isSafeInteger(productCount) && productCount > 0 ? productCount : null;
+};
+
+const feedMetadataVersion = (payload, feedId) => {
+  const record = feedMetadataRecord(payload, feedId);
+  const value = record?.lastModifiedTime ?? record?.lastUpdated ?? record?.updatedAt;
+  return typeof value === "string" && value.length > 0 && value.length <= 100 ? value : null;
+};
+
+const configureProgramFeed = async (source, programId) => {
+  const issued = await issueTicket(programId, "program_feeds");
+  const providerPayload = await fetchProviderJson(issued.ticket);
+  const configured = await bridgePost({
+    action: "configure_store_feed",
+    store: source.storeSlug,
+    payload: providerPayload,
+  });
+  const feedId = String(configured.feedId ?? "");
+  if (!/^\d{1,20}$/.test(feedId)) throw new Error("program_feed_configuration_invalid");
+  return [feedId];
 };
 
 const runProofImport = async (feedId) => {
@@ -375,12 +372,18 @@ const runProofImport = async (feedId) => {
     || !Number.isSafeInteger(totalHits) || totalHits < products.length) {
     throw new Error("provider_proof_invalid");
   }
-  const imported = await importTicketPayload(issued.ticket, payload);
+  const perfumeProducts = products.filter(isPerfumeProduct);
+  if (!perfumeProducts.length) throw new Error("no_perfume_products");
+  const imported = await importTicketPayload(issued.ticket, {
+    ...payload,
+    products: perfumeProducts,
+  });
   return {
     ok: true,
     mode: "proof",
     feedId,
     receivedProducts: products.length,
+    perfumeProducts: perfumeProducts.length,
     providerTotalHits: totalHits,
     candidates: Number(imported.candidates ?? 0),
     reviewCandidates: Number(imported.reviewCandidates ?? 0),
@@ -394,7 +397,10 @@ const runFullImport = async (feedId) => {
   const metadataTicket = await issueTicket(feedId, "feed_metadata");
   const feedMetadata = await fetchProviderJson(metadataTicket.ticket);
   const expectedProductCount = feedMetadataProductCount(feedMetadata, feedId);
-  if (expectedProductCount === null) throw new Error("provider_feed_metadata_invalid");
+  const expectedVersion = feedMetadataVersion(feedMetadata, feedId);
+  if (expectedProductCount === null || expectedVersion === null) {
+    throw new Error("provider_feed_metadata_invalid");
+  }
   const snapshot = await bridgePost({ action: "begin_unlimited_snapshot", feedId, lastUpdated: feedMetadata });
   if (!snapshot.required) return { ok: true, mode: "full", feedId, unchanged: true };
 
@@ -452,7 +458,8 @@ const runFullImport = async (feedId) => {
     }
     const confirmationTicket = await issueTicket(feedId, "feed_metadata");
     const confirmedFeedMetadata = await fetchProviderJson(confirmationTicket.ticket);
-    if (feedMetadataProductCount(confirmedFeedMetadata, feedId) !== providerProducts.length) {
+    if (feedMetadataProductCount(confirmedFeedMetadata, feedId) !== providerProducts.length
+      || feedMetadataVersion(confirmedFeedMetadata, feedId) !== expectedVersion) {
       throw new Error("provider_snapshot_changed");
     }
     const completion = await bridgePost({
@@ -486,28 +493,69 @@ const runFullImport = async (feedId) => {
 };
 
 const results = [];
-let proofFailed = false;
-for (const feedId of feedIds) {
-  if (mode === "full") {
-    results.push(await runFullImport(feedId));
-    continue;
+let failed = false;
+const resolvedSources = [];
+const resolvedFeedIds = new Set();
+for (const source of selectedSources) {
+  for (const feedId of source.feedIds) {
+    if (resolvedFeedIds.has(feedId)) continue;
+    resolvedFeedIds.add(feedId);
+    resolvedSources.push({ ...source, feedId, programId: null });
   }
+  for (const programId of source.programIds) {
+    try {
+      const discovered = await configureProgramFeed(source, programId);
+      if (discovered.some((feedId) => resolvedFeedIds.has(feedId))) {
+        throw new Error("feed_identity_conflict");
+      }
+      for (const feedId of discovered) {
+        resolvedFeedIds.add(feedId);
+        resolvedSources.push({ ...source, feedId, programId });
+      }
+    } catch (error) {
+      failed = true;
+      results.push({
+        ok: false,
+        mode: "configuration",
+        sourceKey: source.sourceKey,
+        storeName: source.storeName,
+        programId,
+        error: error instanceof Error && /^[a-z0-9_]{1,120}$/i.test(error.message)
+          ? error.message : "program_feed_configuration_failed",
+      });
+    }
+  }
+}
+
+for (const source of resolvedSources) {
   try {
-    results.push(await runProofImport(feedId));
+    const result = mode === "full"
+      ? await runFullImport(source.feedId)
+      : await runProofImport(source.feedId);
+    results.push({
+      ...result,
+      sourceKey: source.sourceKey,
+      storeName: source.storeName,
+      ...(source.programId ? { programId: source.programId } : {}),
+    });
   } catch (error) {
-    proofFailed = true;
+    failed = true;
     results.push({
       ok: false,
-      mode: "proof",
-      feedId,
+      mode,
+      feedId: source.feedId,
+      sourceKey: source.sourceKey,
+      storeName: source.storeName,
+      ...(source.programId ? { programId: source.programId } : {}),
       error: error instanceof Error && /^[a-z0-9_]{1,120}$/i.test(error.message)
-        ? error.message : "proof_failed",
+        ? error.message : `${mode}_failed`,
     });
   }
 }
-const report = JSON.stringify({ ok: !proofFailed, mode, results });
-if (proofFailed) {
-  process.stderr.write(`proof_result=${report}\n`);
+const report = JSON.stringify({ ok: !failed, mode, results });
+if (failed) {
+  const prefix = mode === "proof" ? "proof_result" : "tradedoubler_result";
+  process.stderr.write(`${prefix}=${report}\n`);
   process.exitCode = 1;
 } else {
   process.stdout.write(`${report}\n`);
