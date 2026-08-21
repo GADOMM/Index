@@ -404,6 +404,17 @@ const buildChunks = (products) => {
   return chunks;
 };
 
+const feedMetadataProductCount = (payload, feedId) => {
+  const records = Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload?.feeds) ? payload.feeds : [payload];
+  const exact = records.find((record) => record && typeof record === "object"
+    && String(record.feedId) === String(feedId));
+  const record = exact ?? (records.length === 1 ? records[0] : null);
+  const productCount = Number(record?.numberOfProducts);
+  return Number.isSafeInteger(productCount) && productCount > 0 ? productCount : null;
+};
+
 const runProofImport = async (feedId) => {
   const issued = await issueTicket(feedId, "query");
   const payload = await fetchProviderJson(issued.ticket);
@@ -431,6 +442,8 @@ const runProofImport = async (feedId) => {
 const runFullImport = async (feedId) => {
   const metadataTicket = await issueTicket(feedId, "feed_metadata");
   const feedMetadata = await fetchProviderJson(metadataTicket.ticket);
+  const expectedProductCount = feedMetadataProductCount(feedMetadata, feedId);
+  if (expectedProductCount === null) throw new Error("provider_feed_metadata_invalid");
   const snapshot = await bridgePost({ action: "begin_unlimited_snapshot", feedId, lastUpdated: feedMetadata });
   if (!snapshot.required) return { ok: true, mode: "full", feedId, unchanged: true };
 
@@ -439,14 +452,14 @@ const runFullImport = async (feedId) => {
     const fullTicket = await issueTicket(feedId, "unlimited_full", { sessionId });
     const downloaded = await fetchUnlimitedJson(fullTicket.ticket);
     const providerProducts = Array.isArray(downloaded.payload?.products)
-      ? downloaded.payload.products : null;
-    const providerTotal = Number(downloaded.payload?.productHeader?.totalHits);
+      ? downloaded.payload.products
+      : Array.isArray(downloaded.payload) ? downloaded.payload : null;
     if (snapshot.snapshotHash && snapshot.snapshotHash !== downloaded.snapshotHash) {
       throw new Error("snapshot_file_mismatch");
     }
-    if (!providerProducts || !Number.isSafeInteger(providerTotal)
-      || providerTotal !== providerProducts.length || providerProducts.length < 1) {
-      throw new Error("provider_snapshot_incomplete");
+    if (!providerProducts || providerProducts.length !== expectedProductCount) {
+      const received = providerProducts ? providerProducts.length : "missing";
+      throw new Error(`provider_snapshot_incomplete_${received}_${expectedProductCount}`);
     }
     const perfumeProducts = providerProducts.reduce(
       (count, product) => count + (isPerfumeProduct(product) ? 1 : 0),
@@ -477,6 +490,9 @@ const runFullImport = async (feedId) => {
     }
     const confirmationTicket = await issueTicket(feedId, "feed_metadata");
     const confirmedFeedMetadata = await fetchProviderJson(confirmationTicket.ticket);
+    if (feedMetadataProductCount(confirmedFeedMetadata, feedId) !== providerProducts.length) {
+      throw new Error("provider_snapshot_changed");
+    }
     const completion = await bridgePost({
       action: "complete_unlimited_snapshot",
       feedId,
