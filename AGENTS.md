@@ -59,14 +59,25 @@ must remain within the user's current authorization and provider quota.
 
 ## Handoff and reports
 
-After every important deployment update `PROJECT_STATE.md` with UTC timestamp,
-commit, Sites version, workflow run, verified counts, blockers and next action.
-Never put secrets in that file.
+After every important deployment or major production investigation, update both
+`PROJECT_STATE.md` and `docs/CHAT_CONTINUITY.md`. Record the UTC timestamp,
+current `master` commit, important pull requests, latest Actions run, last
+production importer run, Sites version and deployment, exact offer counts,
+tests, completed work, work still in progress, what works, what does not work,
+external blockers, report-delivery state and the exact next task. Never put
+secrets in either file and never present unfinished work as completed.
+
+When the user says that the chat is lagging, asks to change chats or requests a
+message for the next chat, immediately return one complete paste-ready handoff
+that follows `docs/CHAT_CONTINUITY.md`. Do not ask the user to summarize the old
+chat. The receiving chat must read the four required project files and verify
+GitHub and Sites before it changes code, imports, configuration or production.
 
 The user requires a numbered and dated report after every important deployment,
-both in chat and by email. The report must clearly distinguish verified facts,
-unfinished work and automatic next steps. Use the approved Perfumetr wordmark
-and this footer:
+both in chat and by email to `support@perfumetr.pl`. The report must clearly
+distinguish verified facts, unfinished work and next steps, and it must include
+test results, active blockers and delivery state. Use the real Perfumetr.
+wordmark and this footer:
 
 ```text
 Pozdrawiamy,
@@ -75,3 +86,7 @@ Ten sam zapach. Różne ceny.
 perfumetr.pl
 support@perfumetr.pl
 ```
+
+Record the last report as `sent`, `pending` or `not required`. Claim `sent`
+only after delivery is confirmed, and verify the last delivered report number
+before assigning the next sequential number.
