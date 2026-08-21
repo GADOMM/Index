@@ -32,7 +32,7 @@ on:
           - proof
           - full
   schedule:
-    - cron: "17 3 * * *"
+    - cron: "17 14 * * *"
 
 permissions:
   contents: read
