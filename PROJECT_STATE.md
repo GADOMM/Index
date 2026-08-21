@@ -1,6 +1,6 @@
 # Perfumetr project state
 
-Updated: 2026-08-21 23:08 UTC
+Updated: 2026-08-21 23:31 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
@@ -11,65 +11,69 @@ Repository: `GADOMM/Index`
 
 Default branch: `master`
 
-Repository baseline verified immediately before this continuity branch:
+Repository baseline verified before this continuity branch:
 
-* `master` commit `15cdffc860d319bc82705ea903e3127b2145c985`;
+* `master` commit `05bb754f70526314d0c301fea6e27878fe8aeb4e`;
 * merged pull request `#12`: production importer release;
 * merged pull request `#13`: verified importer production state;
 * merged pull request `#14`: strict chat-continuity runbook;
 * merged pull request `#15`: Sites v114 store-rail continuity record;
-* this v120 continuity update is documentation only and does not change the
+* merged pull request `#16`: Sites v120 catalog continuity record;
+* this v121 continuity update is documentation only and does not change the
   importer, catalog data or production runtime.
 
 GitHub Actions evidence:
 
-* latest workflow run: number `32`, database ID `32527917523`, attempt `1`,
-  event `pull_request`, success from 2026-08-21 21:18:57 UTC to 21:19:07 UTC;
-* run 32 validated the importer and skipped the import job because it was a
-  pull-request documentation validation;
+* latest workflow run before this continuity branch: number `33`, database ID
+  `32535949248`, attempt `1`, event `pull_request`, succeeded from
+  2026-08-21 23:11:27 UTC to 23:11:40 UTC;
+* run 33 validated the importer successfully and skipped the import job because
+  it was pull-request documentation validation;
 * latest scheduled production partner cycle remains run number `31`, database
   ID `32526426619`, attempt `1`, success from 2026-08-21 21:00:42 UTC to
   21:01:08 UTC;
-* run 31 passed importer validation `14/14`, ran partner sources and skipped the
-  full TradeDoubler product snapshot;
+* run 31 passed importer validation `14/14`, advanced partner sources and
+  skipped the full TradeDoubler product snapshot;
 * latest full production importer remains run number `28`, database ID
-  `32497431067`, attempt `3`, success at 2026-08-21 16:20 UTC;
+  `32497431067`, attempt `3`, successful at 2026-08-21 16:20 UTC;
 * GitHub Actions is the only automatic scheduler.
 
-Sites v120 is deployed successfully:
+Sites v121 is deployed successfully:
 
-* source commit `4302d9133a5cc99eec4d4f5da7e3358108561b60`;
+* source commit `8e41f34be3ec5fe390e287c959ae0c16d552f2f0`;
 * version
-  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e30e538bc74081918bfdc3fa5c7c8706`;
-* deployment `appgdep_6a88d9d0cd048191b6ff07192ccbeef4`;
-* deployment status `succeeded`, directly rechecked at 2026-08-21 23:07 UTC;
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_946ac9bc18f48191b469baae459a807b`;
+* deployment `appgdep_6a88df699204819198a3982e8045bad2`;
+* deployment status `succeeded`, directly rechecked at 2026-08-21 23:30 UTC;
 * provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
-* Sites reports `https://beta.perfumetr.pl` as the current live URL;
+* Sites reports version `121` and `https://beta.perfumetr.pl` as the current
+  live URL;
 * the Sites project is active and public;
-* both `perfumetr.pl` and `beta.perfumetr.pl` report active domain, provider
-  and SSL status with no recorded domain error.
+* `perfumetr.pl` and `beta.perfumetr.pl` last reported active provider and
+  SSL state at the preceding checkpoint; v121 did not change domain settings.
 
-The v120 production build completed successfully. The full Sites test suite
+The v121 production build completed successfully. The full Sites test suite
 passes `47/47`. Lint reports zero errors and two pre-existing unused-variable
-warnings in `tests/rendered-html.test.mjs`.
+warnings in `tests/rendered-html.test.mjs`. Two independent read-only reviews
+found no blocking regression.
 
 ## Project area checkpoint
 
 | Area | Confirmed state at this checkpoint |
 | --- | --- |
-| Repository and CI | `master` baseline `15cdffc...`; run 32 succeeded; run 31 remains the latest scheduled partner import and run 28 the latest full TradeDoubler import |
-| Sites | v120 deployed successfully from `4302d913...`; production build and 47/47 tests passed |
-| Importer | TradeDoubler and CJ sources remain operational; no importer code or data changed in v120 |
+| Repository and CI | `master` baseline `05bb754...`; run 33 succeeded; run 31 remains the latest scheduled partner import and run 28 the latest full TradeDoubler import |
+| Sites | v121 deployed successfully from `8e41f34...`; production build and 47/47 tests passed |
+| Importer | TradeDoubler and CJ sources remain operational; no importer code, schedule or data changed in v121 |
 | Affiliate sources | Aelia, Cocolita, Drogeria.pl, Notino and Brasty active; AWIN Flaconi externally blocked |
-| Domains | `perfumetr.pl` and `beta.perfumetr.pl` have active provider and SSL status; Sites reports beta as the live URL |
-| Homepage | Latest compact layout and footer refinements remain deployed; no homepage change was made in v120 |
-| Beta landing page | Refined browse trigger, search treatment, feedback prominence, metadata placement and responsive footer from the v115-v119 visual iterations remain deployed |
-| Catalog browser | v120 Catalog Canvas redesign deployed: centered desktop canvas, full-screen mobile layout, simplified navigation, searchable brand selection, radio-based refinements, active chips, clean product cards and integrated detail view |
+| Domains | Sites reports `beta.perfumetr.pl` as the live URL; both custom domains were last confirmed active with provider and SSL and were not reconfigured in v121 |
+| Homepage | The compact homepage, footer and store-rail refinements remain deployed; v121 did not change them |
+| Beta landing page | The browse trigger, search, feedback prominence, metadata and responsive footer refinements remain deployed; v121 changed only the opened catalog |
+| Catalog browser | v121 transparent minimal catalog layer deployed: one title, one control rail, flat filters, on-demand brand suggestions and cardless product presentation |
 | Store rail | Five active store logos loop continuously, blend into the page on both ends and use the compact mobile treatment |
-| Store count | Dynamic coverage message remains outside the logo rail and says more stores are coming |
-| Integrations panel | Persisted read-only status model remains deployed; normal imports do not start from page interaction |
-| Reporting | Last confirmed delivered report is #005; reports are now consolidated and sent only when the user explicitly requests one; v120 report was not sent |
-| Human visual verification | Automated and build verification are complete; subjective inspection of v120 on the user's real phone and desktop remains pending |
+| Store count | Dynamic coverage message remains outside the logo rail and states that more stores are coming |
+| Integrations panel | Persisted read-only status model remains deployed; page interaction does not start normal imports |
+| Reporting | Last confirmed delivered report is #005; reports are consolidated and sent only when the user explicitly requests one; no v120 or v121 report was sent |
+| Human visual verification | Automated and production deployment verification are complete; the user's subjective review of v121 on real phone and desktop is pending |
 
 ## Verified importer results
 
@@ -86,9 +90,9 @@ warnings in `tests/rendered-html.test.mjs`.
 The latest verified total remains `7,977` live offers: Aelia `1,049`,
 Cocolita `793`, Drogeria.pl `814`, Notino `4,422` and Brasty `899`.
 Run 31 reconfirmed the CJ counts and did not execute a new TradeDoubler product
-snapshot, so the three TradeDoubler counts remain the verified result of run 28.
-The `100 received` values for Cocolita and Drogeria.pl are bounded proof samples,
-not the size of either full provider feed.
+snapshot, so the three TradeDoubler counts remain the verified run 28 results.
+The `100 received` values for Cocolita and Drogeria.pl are bounded proof
+samples, not the full provider-feed sizes.
 
 A blocked source does not stop successful TradeDoubler or CJ sources. Scheduled
 cycles retry the AWIN blocker automatically after the feed becomes available.
@@ -100,56 +104,67 @@ snapshot runs at 14:17 UTC. GitHub may start a scheduled run later than the
 configured minute. Source-level isolation prevents one unavailable partner from
 blocking the remaining stores.
 
-## Sites v120 catalog redesign
+## Sites v121 minimal catalog refinement
 
-The user requested a clean, unusually intuitive catalog experience without
-adding unnecessary options. v120 changes only the catalog presentation,
-interaction flow and related tests. It does not change the importer, database
+The user rejected the v120 catalog treatment as too busy and too heavily
+designed. v121 changes only catalog presentation, responsive styling and the
+related rendering tests. It does not change API behavior, the importer, database
 schema, offer counts, source configuration, schedules or external integrations.
 
 Completed changes:
 
-1. the right-side desktop drawer became a centered, wide Catalog Canvas while
-   mobile remains a full-screen experience;
-2. the catalog heading and navigation now use one calmer visual hierarchy;
-3. the unexplained `⌁` symbol and permanent native sort select were removed;
-4. audience remains the only always-visible segmentation;
-5. the long native brand select was replaced by a searchable brand picker with
-   suggestions, diacritic-insensitive matching and an explicit validation
-   message for ambiguous input;
-6. concentration, volume and sort use accessible radio groups with keyboard
-   navigation instead of generic selects;
-7. draft filters remain separate from applied filters, active chips stay
-   visible and chip removal is synchronized with an open draft;
-8. the misleading count of only loaded cards was removed;
-9. product cards use a light editorial image stage, a simpler metadata
-   hierarchy and three desktop columns instead of four compressed columns;
-10. the detail back action was integrated into the main header;
-11. the first price-capable volume is selected automatically and its price is
-    checked immediately, removing a manual step;
-12. focus restoration, scroll restoration, request cancellation, error states,
-    reduced-motion behavior and safe mobile-area padding remain intact;
-13. mobile touch targets for navigation, chips, brand suggestions and refinement
-    choices are at least 44 px.
+1. the centered cream Catalog Canvas became a full-viewport transparent dark
+   layer that lets the beta background remain visible;
+2. the catalog header now contains only `Przeglądaj perfumy`, back when needed
+   and close;
+3. the permanent control area contains only audience categories and an obvious
+   `Filtry` action;
+4. the decorative filter icon, helper headings, slogans, nested cream panels and
+   separate result heading were removed;
+5. the brand picker is empty until the user types; suggestions appear only for a
+   query and close after a brand is selected;
+6. concentration, volume and order remain accessible radio groups, but they now
+   sit on one flat translucent surface;
+7. active filters remain removable and a compact clear action is retained;
+8. audience badges and repeated `Zobacz ceny` calls were removed from product
+   cards;
+9. product cards have no permanent border, filled card background or shadow;
+   bottle images sit over a soft transparent radial glow;
+10. the desktop grid returns to four lighter product columns; mobile retains two
+    columns and at least 44 px interactive filter targets;
+11. the product detail view also loses its heavy split-panel frame while
+    preserving volume selection, automatic price lookup and comparison;
+12. mobile blur was reduced for weaker devices, and touch cards receive a
+    lightweight active-state response without adding visual clutter.
+
+Preserved behavior:
+
+* the first price-capable volume is selected and checked automatically;
+* diacritic-insensitive brand matching and ambiguous-input validation;
+* draft/applied filter separation and synchronized filter removal;
+* request cancellation, focus restoration, scroll restoration and error states;
+* reduced-motion behavior and mobile safe-area padding;
+* complete keyboard radio semantics and visible focus states.
 
 Verification:
 
 * production build: passed;
+* focused catalog tests: `2/2`;
 * full automated suite: `47/47`;
 * lint: zero errors, two pre-existing warnings;
-* independent read-only regression review completed;
-* deployment v120: `succeeded`.
+* two independent read-only reviews: no blocking regression;
+* deployment v121: `succeeded`.
 
-The Sites skill did not authorize a cloud-browser preview in this task, so no
-claim is made that subjective appearance or every real-device interaction has
-been visually approved. The next verification is the user's real-device review.
+The Sites workflow did not authorize a cloud-browser preview. The user must still
+judge the subjective appearance and interaction on the real desktop and phone.
+This is pending visual approval, not a known production failure.
 
-## Earlier visual iterations retained in v120
+## Earlier visual work retained in v121
 
-The visual iterations between v114 and v119 remain part of the current build.
-They refined only the homepage, beta landing page, logo rail, browse trigger,
-search presentation, feedback prominence, metadata placement, footer spacing
-and mobile/desktop viewport fit. v120 did not rebuild or reverse those areas.
+The v114-v119 homepage and beta refinements remain part of the current build.
+They cover the logo rail, separate store-count message, browse trigger, search
+presentation, feedback prominence, metadata placement, footer spacing and
+single-viewport mobile/desktop fit. v121 did not rebuild or reverse those areas.
 
 Current intended behavior:
 
@@ -157,21 +172,19 @@ Current intended behavior:
    container and blends into the page background at both ends;
 2. the coverage message is separate from the rail and announces that more stores
    are coming;
-3. the beta landing page removes unnecessary perfume totals and the old beta
-   index label while retaining the brand count;
-4. the feedback action is visually prominent;
+3. the beta landing page omits unnecessary perfume totals and the old beta index
+   label while retaining the brand count;
+4. the feedback action remains visually prominent;
 5. the beta footer does not repeat the Perfumetr logo already shown in the
    header;
-6. desktop content fits without the earlier large empty lower area;
-7. the latest mobile footer position is lower while preserving the compact
-   single-screen presentation.
+6. desktop and mobile landing content retain the latest compact viewport fit.
 
 ## Integrations panel
 
 The panel reads persisted source status and refreshes lightweight status views
-automatically. It does not start normal imports during page interaction. The
-obsolete TradeDoubler PRODUCTS probe remains removed. AWIN clearly reports the
-feed activation blocker, while CJ reports the latest persisted importer state.
+automatically. It does not start normal imports during page interaction. AWIN
+reports the external feed-activation blocker, while CJ reports the latest
+persisted importer state.
 
 Emergency authenticated backend import routes remain available for controlled
 recovery, but the panel is not a second scheduler. Manual coupon confirmation
@@ -180,23 +193,23 @@ remains a separate guarded operation.
 ## Deployment reports
 
 Report `#005`, dated 2026-08-21, is the last confirmed delivered message to
-`support@perfumetr.pl`. It was sent at 21:13 UTC and Gmail confirmed it in
-Sent.
+`support@perfumetr.pl`. It was sent at 21:13 UTC and confirmed in Sent at the
+previous checkpoint.
 
-The user later corrected the reporting workflow:
+Current user instruction:
 
-1. do not send a report automatically after every visual deployment;
+1. do not send a report automatically after each visual deployment;
 2. wait until the user explicitly requests the consolidated report, normally
    after the workday;
-3. before writing it, retrieve report `#003` from Sent and reproduce that exact
-   visual template, logo treatment, layout, typography and footer;
+3. before writing it, retrieve delivered report `#003` from Sent and reproduce
+   that exact visual template, wordmark, layout, typography and footer;
 4. do not invent a new email design;
-5. recheck the last delivered report number immediately before assigning the
-   next one.
+5. recheck the latest delivered report number immediately before assigning the
+   next sequential number.
 
-No report was sent for v120. Its delivery state is `deferred at the user's
-request`. If the user asks for the next report, verify the mailbox first; if
-`#005` is still latest, the next number is `#006`.
+No report was sent for v120 or v121. Delivery is `deferred at the user's
+request`. If the user requests the next report, verify Sent first; if `#005`
+is still latest, the next number is `#006`.
 
 Required footer:
 
@@ -209,17 +222,16 @@ support@perfumetr.pl
 ## Current operational handoff
 
 No code change, import, Sites deployment or email delivery is currently in
-progress. The last completed production work is the v120 catalog-browser
-redesign deployed from Sites source commit
-`4302d9133a5cc99eec4d4f5da7e3358108561b60`, with a successful production
-build and `47/47` tests.
+progress. The last completed production work is the v121 minimal catalog
+refinement deployed from Sites source commit
+`8e41f34be3ec5fe390e287c959ae0c16d552f2f0`, with a successful production
+build, `47/47` tests and a directly confirmed `succeeded` deployment.
 
-The exact next task is the user's visual and interaction review of v120 on
-`beta.perfumetr.pl`, first on desktop and then on a real phone. The review
-should cover opening the catalog, audience switching, brand search, each
-refinement group, active-chip removal, product-card scanning, automatic initial
-volume pricing and returning to the same card. Make only the specific visual or
-interaction refinements the user requests after that review.
+The exact next task is the user's visual and interaction review of v121 on
+`beta.perfumetr.pl`, first on desktop and then on a real phone. Review the
+transparent background, control density, category rail, filter clarity,
+on-demand brand suggestions, product scanning, detail view and touch response.
+Make only the specific catalog refinements the user requests after that review.
 
 ## Known risks and blockers
 
@@ -231,9 +243,9 @@ interaction refinements the user requests after that review.
 4. A future provider schema change may require a new bounded adapter or source
    profile.
 5. Sites reports `beta.perfumetr.pl` as the current live URL even though both
-   custom domains have active provider and SSL status.
-6. v120 passed technical verification, but its subjective appearance and full
-   interaction flow on the user's physical devices remain pending.
+   custom domains were last confirmed active.
+6. v121 passed technical verification but has not yet received the user's
+   subjective approval on physical desktop and mobile devices.
 
 ## Chat continuity
 
@@ -251,7 +263,7 @@ production before that verification.
 ## Do not claim
 
 Do not claim that AWIN Flaconi is active while its state remains
-`orchestrator_feed_not_found`. Do not invent Aelia review or excluded counters.
-Do not describe run 31 as a full TradeDoubler import. Do not describe subjective
-desktop or mobile visual approval as completed before the user confirms it. Do
-not claim that a v120 email report was sent.
+`orchestrator_feed_not_found`. Do not invent Aelia review or excluded
+counters. Do not describe run 31 as a full TradeDoubler import. Do not claim
+that v121 has subjective desktop or mobile approval before the user confirms
+it. Do not claim that a v120 or v121 email report was sent.
