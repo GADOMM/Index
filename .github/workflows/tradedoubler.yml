@@ -34,18 +34,43 @@ on:
 
 permissions:
   contents: read
-  id-token: write
-  statuses: write
 
 concurrency:
   group: perfumetr-tradedoubler-import
   cancel-in-progress: false
 
 jobs:
+  validate:
+    name: Validate importer
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out importer
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Validate importer
+        run: npm test
+
   import:
     name: Import Cocolita and Drogeria.pl
+    needs: validate
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    permissions:
+      contents: read
+      id-token: write
+      statuses: write
     steps:
       - name: Mark the first live import as pending
         if: github.event_name == 'push'
@@ -68,9 +93,6 @@ jobs:
         with:
           node-version: 22
           package-manager-cache: false
-
-      - name: Validate importer
-        run: npm test
 
       - name: Test both live feeds after an importer change
         if: github.event_name == 'push'
