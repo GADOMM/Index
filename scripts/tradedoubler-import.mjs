@@ -84,6 +84,45 @@ const safeOidcContext = (token) => {
   }
 };
 
+const safeOidcTechnicalContext = (token) => {
+  const parts = token.split(".");
+  if (parts.length !== 3) return { segmentCount: parts.length, tokenLength: token.length };
+  try {
+    const header = JSON.parse(Buffer.from(parts[0], "base64url").toString("utf8"));
+    const claims = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf8"));
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const jti = claims.jti;
+    return {
+      tokenLength: token.length,
+      segmentLengths: parts.map((part) => part.length),
+      signatureBytes: Buffer.from(parts[2], "base64url").byteLength,
+      header: {
+        alg: typeof header.alg === "string" ? header.alg : typeof header.alg,
+        typ: typeof header.typ === "string" ? header.typ : typeof header.typ,
+        kid: typeof header.kid === "string" && header.kid.length <= 200 ? header.kid : typeof header.kid,
+        hasCrit: Object.hasOwn(header, "crit"),
+        b64: Object.hasOwn(header, "b64") ? header.b64 : "absent",
+      },
+      jti: {
+        type: typeof jti,
+        length: typeof jti === "string" ? jti.length : null,
+        acceptedShape: typeof jti === "string" && /^[A-Za-z0-9._:-]{8,200}$/.test(jti),
+      },
+      time: {
+        iatType: typeof claims.iat,
+        nbfType: typeof claims.nbf,
+        expType: typeof claims.exp,
+        issuedSecondsAgo: Number.isSafeInteger(claims.iat) ? nowSeconds - claims.iat : null,
+        notBeforeDelta: Number.isSafeInteger(claims.nbf) ? claims.nbf - nowSeconds : null,
+        lifetimeSeconds: Number.isSafeInteger(claims.iat) && Number.isSafeInteger(claims.exp)
+          ? claims.exp - claims.iat : null,
+      },
+    };
+  } catch {
+    return { tokenLength: token.length, invalidJson: true };
+  }
+};
+
 const getOidcToken = async () => {
   const nowSeconds = Math.floor(Date.now() / 1000);
   if (cachedOidc && cachedOidc.expiresAt > nowSeconds + 60) return cachedOidc.token;
@@ -156,6 +195,7 @@ const bridgePost = async (body, extraHeaders = {}) => {
   if (response.status === 404 && cachedOidc?.token) {
     const context = safeOidcContext(cachedOidc.token);
     if (context) console.error(`oidc_context=${JSON.stringify(context)}`);
+    console.error(`oidc_technical_context=${JSON.stringify(safeOidcTechnicalContext(cachedOidc.token))}`);
   }
   if (!response.ok || payload.ok === false) throw safeBridgeError(payload, response.status);
   return payload;
