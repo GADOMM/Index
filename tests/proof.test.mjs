@@ -291,7 +291,10 @@ test("full import versions the unlimited file from official feed metadata", asyn
       if (body.action === "import_unlimited_chunk") {
         assert.equal(body.sessionId, sessionId);
         assert.equal(body.chunkIndex, 0);
+        assert.equal(body.rawProductCount, 2);
+        assert.equal(body.payload.productHeader.totalHits, 2);
         assert.equal(body.payload.products.length, 1);
+        assert.equal(body.payload.products[0].name, "Testowa Eau de Parfum 50 ml");
         chunkAttempts += 1;
         if (chunkAttempts === 1) {
           return Response.json({ ok: false, error: "already_running" }, { status: 409 });
@@ -300,7 +303,7 @@ test("full import versions the unlimited file from official feed metadata", asyn
       }
       assert.equal(body.action, "complete_unlimited_snapshot");
       assert.equal(body.lastUpdated.lastModifiedTime, "2026-08-21T12:00:00Z");
-      assert.equal(body.rawProductCount, 1);
+      assert.equal(body.rawProductCount, 2);
       return Response.json({ ok: true, liveOffers: 1, importedCount: 1 });
     }
     if (url.hostname === "perfumetr.borodzicz85.chatgpt.site") {
@@ -318,7 +321,7 @@ test("full import versions the unlimited file from official feed metadata", asyn
       return Response.json({
         feedId: 112471,
         lastModifiedTime: "2026-08-21T12:00:00Z",
-        numberOfProducts: 1,
+        numberOfProducts: 2,
       });
     }
     assert.match(url.pathname, /\/productsUnlimited;fid=112471;sourceproducturl=true$/);
@@ -327,6 +330,7 @@ test("full import versions the unlimited file from official feed metadata", asyn
         productFeed: {
           products: {
             "test-sku": { name: "Testowa Eau de Parfum 50 ml", feedId: 112471 },
+            "other-sku": { name: "Szampon do włosów 250 ml", feedId: 112471 },
           },
         },
       },
@@ -350,7 +354,7 @@ test("full import versions the unlimited file from official feed metadata", asyn
       "complete_unlimited_snapshot",
     ]);
     assert.equal(chunkAttempts, 2);
-    assert.equal(report.results[0].providerProducts, 1);
+    assert.equal(report.results[0].providerProducts, 2);
     assert.equal(report.results[0].perfumeProducts, 1);
     assert.equal(report.results[0].liveOffers, 1);
     assert.equal(report.results[0].importedCount, 1);
