@@ -166,6 +166,24 @@ const safeBridgeError = (payload, status) => {
   return new Error(`bridge_${code}`);
 };
 
+const safeProviderError = (text, status) => {
+  let payload = null;
+  try { payload = JSON.parse(text); } catch { /* Provider details remain private. */ }
+  const candidates = payload && typeof payload === "object" && !Array.isArray(payload)
+    ? [
+        payload.code,
+        payload.statusCode,
+        payload.errorCode,
+        payload.error && typeof payload.error === "object" ? payload.error.code : null,
+        ...(Array.isArray(payload.errors)
+          ? payload.errors.slice(0, 20).map((error) => error && typeof error === "object" ? error.code : null)
+          : []),
+      ]
+    : [];
+  const code = candidates.find((value) => typeof value === "string" && /^[A-Za-z0-9_-]{1,40}$/.test(value));
+  return new Error(code ? `provider_${status}_${code}` : `provider_${status}`);
+};
+
 const bridgePost = async (body, extraHeaders = {}) => {
   const serialized = JSON.stringify(body);
   if (Buffer.byteLength(serialized) > BRIDGE_MAXIMUM_BYTES) {
@@ -277,7 +295,7 @@ const fetchProviderJson = async (ticket, maximumBytes = BRIDGE_MAXIMUM_BYTES) =>
     throw new Error("provider_unavailable");
   }
   const text = await readBoundedText(response, maximumBytes);
-  if (!response.ok) throw new Error(`provider_${response.status}`);
+  if (!response.ok) throw safeProviderError(text, response.status);
   try {
     return JSON.parse(text);
   } catch {
@@ -490,7 +508,29 @@ const runFullImport = async (feedId) => {
 };
 
 const results = [];
+let proofFailed = false;
 for (const feedId of feedIds) {
-  results.push(mode === "proof" ? await runProofImport(feedId) : await runFullImport(feedId));
+  if (mode === "full") {
+    results.push(await runFullImport(feedId));
+    continue;
+  }
+  try {
+    results.push(await runProofImport(feedId));
+  } catch (error) {
+    proofFailed = true;
+    results.push({
+      ok: false,
+      mode: "proof",
+      feedId,
+      error: error instanceof Error && /^[a-z0-9_]{1,120}$/i.test(error.message)
+        ? error.message : "proof_failed",
+    });
+  }
 }
-process.stdout.write(`${JSON.stringify({ ok: true, mode, results })}\n`);
+const report = JSON.stringify({ ok: !proofFailed, mode, results });
+if (proofFailed) {
+  process.stderr.write(`proof_result=${report}\n`);
+  process.exitCode = 1;
+} else {
+  process.stdout.write(`${report}\n`);
+}
