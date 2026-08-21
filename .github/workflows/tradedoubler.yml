@@ -1,0 +1,128 @@
+name: TradeDoubler feeds
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - .github/workflows/tradedoubler.yml
+      - scripts/tradedoubler-import.mjs
+      - tests/proof.test.mjs
+      - package.json
+      - README.md
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/tradedoubler.yml
+      - scripts/tradedoubler-import.mjs
+      - tests/proof.test.mjs
+      - package.json
+      - README.md
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Tryb uruchomienia
+        required: true
+        default: proof
+        type: choice
+        options:
+          - proof
+          - full
+  schedule:
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: perfumetr-tradedoubler-import
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate importer
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out importer
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Validate importer
+        run: npm test
+
+  import:
+    name: Import Cocolita and Drogeria.pl
+    needs: validate
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      id-token: write
+      statuses: write
+    steps:
+      - name: Mark the first live import as pending
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: >-
+          gh api --method POST "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA"
+          -f state=pending -f context=perfumetr/importer
+          -f description="Test i pierwszy import są uruchomione"
+          -f target_url="$RUN_URL"
+
+      - name: Check out importer
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Test both live feeds after an importer change
+        if: github.event_name == 'push'
+        env:
+          PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
+          PERFUMETR_MODE: proof
+        run: node scripts/tradedoubler-import.mjs 112471 118359
+
+      - name: Run the first full import after a successful live test
+        if: github.event_name == 'push'
+        env:
+          PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
+          PERFUMETR_MODE: full
+        run: node scripts/tradedoubler-import.mjs 112471 118359
+
+      - name: Run the selected automatic or manual import
+        if: github.event_name != 'push' && github.event_name != 'pull_request'
+        env:
+          PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
+          PERFUMETR_MODE: ${{ github.event_name == 'schedule' && 'full' || inputs.mode }}
+        run: node scripts/tradedoubler-import.mjs 112471 118359
+
+      - name: Publish the first live import result
+        if: always() && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          RESULT_STATE: ${{ job.status == 'success' && 'success' || 'failure' }}
+          RESULT_DESCRIPTION: ${{ job.status == 'success' && 'Test i pierwszy import zakończone' || 'Test lub import zakończony błędem' }}
+        run: >-
+          gh api --method POST "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA"
+          -f state="$RESULT_STATE" -f context=perfumetr/importer
+          -f description="$RESULT_DESCRIPTION" -f target_url="$RUN_URL"
