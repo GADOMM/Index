@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/tradedoubler.yml
       - scripts/tradedoubler-import.mjs
+      - scripts/tradedoubler-products.mjs
       - tests/proof.test.mjs
       - package.json
       - README.md
@@ -16,6 +17,7 @@ on:
     paths:
       - .github/workflows/tradedoubler.yml
       - scripts/tradedoubler-import.mjs
+      - scripts/tradedoubler-products.mjs
       - tests/proof.test.mjs
       - package.json
       - README.md

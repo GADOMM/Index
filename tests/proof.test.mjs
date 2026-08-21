@@ -1,5 +1,46 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import {
+  extractProviderProducts,
+  providerPayloadErrorCode,
+} from "../scripts/tradedoubler-products.mjs";
+
+const providerProduct = (name, feedId = "118359") => ({
+  name,
+  description: `${name} opis`,
+  offers: [{ feedId }],
+});
+
+test("full snapshot extractor unwraps only exact, product-shaped collections", () => {
+  const products = [providerProduct("Zapach A"), providerProduct("Zapach B")];
+  const productMap = Object.fromEntries(products.map((product, index) => [`sku-${index}`, product]));
+
+  assert.equal(extractProviderProducts({ products }, 2, "118359"), products);
+  assert.deepEqual(extractProviderProducts(products, 2, "118359"), products);
+  assert.deepEqual(extractProviderProducts({ result: { productFeed: { products: productMap } } }, 2, "118359"), products);
+  assert.deepEqual(extractProviderProducts({ "118359": { data: [products] } }, 2, "118359"), products);
+  assert.deepEqual(extractProviderProducts(JSON.stringify({ payload: { items: products } }), 2, "118359"), products);
+});
+
+test("full snapshot extractor fails closed for unsafe or ambiguous shapes", () => {
+  const products = [providerProduct("Zapach A"), providerProduct("Zapach B")];
+  assert.equal(extractProviderProducts({ products: products.slice(0, 1) }, 2, "118359"), null);
+  assert.equal(extractProviderProducts({ products: [products[0], { name: "Kategoria", id: 2 }] }, 2, "118359"), null);
+  assert.equal(extractProviderProducts({ products: [products[0], providerProduct("Obcy", "112471")] }, 2, "118359"), null);
+  assert.equal(extractProviderProducts(JSON.stringify(JSON.stringify({ products })), 2, "118359"), null);
+  assert.equal(extractProviderProducts({ data: { response: { payload: { result: { products } } } } }, 2, "118359"), null);
+  assert.throws(
+    () => extractProviderProducts({ products, data: products.map((product) => ({ ...product })) }, 2, "118359"),
+    /provider_snapshot_ambiguous/,
+  );
+});
+
+test("full snapshot extractor recognizes only safe provider error codes", () => {
+  assert.equal(providerPayloadErrorCode({ code: "429", message: "private detail" }), "429");
+  assert.equal(providerPayloadErrorCode({ errors: [{ code: "PF_392", message: "private detail" }] }), "PF_392");
+  assert.equal(providerPayloadErrorCode({ code: "not safe!", message: "private detail" }), null);
+  assert.equal(providerPayloadErrorCode({ products: [] }), null);
+});
 
 test("proof uses the fixed bridge flow for exactly the two approved feeds", async () => {
   const originalArgv = process.argv;
@@ -274,8 +315,13 @@ test("full import versions the unlimited file from official feed metadata", asyn
     }
     assert.match(url.pathname, /\/productsUnlimited;fid=112471;sourceproducturl=true$/);
     return Response.json({
-      productHeader: { totalHits: 999 },
-      products: [{ name: "Testowa Eau de Parfum 50 ml", feedId: 112471 }],
+      data: {
+        productFeed: {
+          products: {
+            "test-sku": { name: "Testowa Eau de Parfum 50 ml", feedId: 112471 },
+          },
+        },
+      },
     });
   };
 
