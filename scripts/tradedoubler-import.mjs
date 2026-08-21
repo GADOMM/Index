@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { open, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { extractProviderProducts } from "./tradedoubler-products.mjs";
 
 const ALLOWED_FEED_IDS = new Set(["112471", "118359"]);
 const DEFAULT_FEED_IDS = [...ALLOWED_FEED_IDS];
@@ -396,9 +397,11 @@ const runFullImport = async (feedId) => {
   try {
     const fullTicket = await issueTicket(feedId, "unlimited_full", { sessionId });
     const downloaded = await fetchUnlimitedJson(fullTicket.ticket);
-    const providerProducts = Array.isArray(downloaded.payload?.products)
-      ? downloaded.payload.products
-      : Array.isArray(downloaded.payload) ? downloaded.payload : null;
+    const providerProducts = extractProviderProducts(
+      downloaded.payload,
+      expectedProductCount,
+      feedId,
+    );
     if (snapshot.snapshotHash && snapshot.snapshotHash !== downloaded.snapshotHash) {
       throw new Error("snapshot_file_mismatch");
     }
