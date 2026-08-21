@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-test("Aelia feed is configured from program 397216 and only perfumes reach the bridge", async () => {
+test("Aelia proof falls back from an unconfigured query ticket to bounded pages", async () => {
   const originalArgv = process.argv;
   const originalFetch = globalThis.fetch;
   const originalWrite = process.stdout.write;
@@ -49,9 +49,14 @@ test("Aelia feed is configured from program 397216 and only perfumes reach the b
           assert.equal(body.feedId, "397216");
           return Response.json({ ok: true, ticket: "program-feeds-aelia" });
         }
-        assert.equal(body.mode, "query");
         assert.equal(body.feedId, "220001");
-        return Response.json({ ok: true, ticket: "ticket-aelia" });
+        if (body.mode === "query") {
+          assert.equal(Object.hasOwn(body, "page"), false);
+          return Response.json({ ok: true, ticket: "ticket-aelia-query" });
+        }
+        assert.equal(body.mode, "page");
+        assert.ok([1, 2].includes(body.page));
+        return Response.json({ ok: true, ticket: `ticket-aelia-page-${body.page}` });
       }
       if (body.action === "configure_store_feed") {
         assert.equal(body.store, "aelia");
@@ -61,13 +66,20 @@ test("Aelia feed is configured from program 397216 and only perfumes reach the b
       assert.equal(body.action, "import_payload");
       assert.equal(body.payload.products.length, 1);
       assert.equal(body.payload.products[0].name, "Aelia Eau de Parfum 50 ml");
+      const importTicket = init.headers["x-perfumetr-bridge-ticket"];
+      if (importTicket === "ticket-aelia-query") {
+        return Response.json({ ok: false, error: "feed_not_configured" }, { status: 409 });
+      }
+      assert.equal(importTicket, "ticket-aelia-page-2");
       return Response.json({ ok: true, matchedCandidates: 1, storeLiveOffers: 1 });
     }
     if (url.hostname === "perfumetr.borodzicz85.chatgpt.site") {
       const ticket = url.searchParams.get("ticket");
       const path = ticket === "program-feeds-aelia"
         ? "productFeeds.json"
-        : "products.json;fid=220001;q=woda%20perfumowana;pageSize=100;sourceproducturl=true";
+        : ticket === "ticket-aelia-query"
+          ? "products.json;fid=220001;q=woda%20perfumowana;pageSize=100;sourceproducturl=true"
+          : `products.json;page=${ticket?.endsWith("-2") ? 2 : 1};pageSize=100;fid=220001;sourceproducturl=true`;
       return new Response(null, {
         status: 302,
         headers: {
@@ -76,12 +88,27 @@ test("Aelia feed is configured from program 397216 and only perfumes reach the b
       });
     }
     if (url.pathname.endsWith("/productFeeds.json")) return Response.json(programPayload);
+    if (url.pathname.includes(";q=woda%20perfumowana;")) {
+      return Response.json({
+        productHeader: { totalHits: 2 },
+        products: [
+          { name: "Aelia Eau de Parfum 50 ml", feedId: "220001" },
+          { name: "Perfumowany balsam do ciała", feedId: "220001" },
+        ],
+      });
+    }
+    if (url.pathname.includes(";page=1;")) {
+      return Response.json({
+        productHeader: { totalHits: 101 },
+        products: Array.from({ length: 100 }, (_, index) => ({
+          name: `Aelia szampon ${index + 1}`,
+          feedId: "220001",
+        })),
+      });
+    }
     return Response.json({
-      productHeader: { totalHits: 2 },
-      products: [
-        { name: "Aelia Eau de Parfum 50 ml", feedId: "220001" },
-        { name: "Perfumowany balsam do ciała", feedId: "220001" },
-      ],
+      productHeader: { totalHits: 101 },
+      products: [{ name: "Aelia Eau de Parfum 50 ml", feedId: "220001" }],
     });
   };
 
@@ -94,12 +121,18 @@ test("Aelia feed is configured from program 397216 and only perfumes reach the b
       "configure_store_feed",
       "issue_browser_ticket",
       "import_payload",
+      "issue_browser_ticket",
+      "issue_browser_ticket",
+      "import_payload",
     ]);
     assert.equal(report.results[0].sourceKey, "aelia-pl");
     assert.equal(report.results[0].programId, "397216");
     assert.equal(report.results[0].feedId, "220001");
-    assert.equal(report.results[0].receivedProducts, 2);
+    assert.equal(report.results[0].receivedProducts, 1);
+    assert.equal(report.results[0].scannedProducts, 101);
     assert.equal(report.results[0].perfumeProducts, 1);
+    assert.equal(report.results[0].transport, "page");
+    assert.equal(report.results[0].page, 2);
     assert.doesNotMatch(output, new RegExp(`${requestToken}|${providerToken}|ticket-aelia|program-feeds-aelia`));
   } finally {
     process.argv = originalArgv;

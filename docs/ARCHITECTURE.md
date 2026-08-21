@@ -26,11 +26,20 @@ or logged. AWIN and CJ credentials remain entirely server-side.
    for program, PLN, eligibility and domain validation.
 6. Request a one-use browser ticket for feed metadata or provider data.
 7. Validate the provider redirect host and token shape without logging it.
-8. For a full import, compare exact feed metadata before and after download.
-9. Count every raw provider product.
-10. Apply `perfume-v1` before sending a chunk to the catalog.
-11. Send raw count and filtered payload separately.
-12. Complete the snapshot only after cursor, hash, count and version checks.
+8. For a proof, try the existing bounded query first. Only an invalid or empty
+   successful response, no perfume result, or `bridge_feed_not_configured`
+   permits scanning up to ten exact `page` tickets.
+9. For a full import, compare exact feed metadata before and after download.
+10. Use Products Unlimited as the primary full transport. Only the exact safe
+    `provider_snapshot_incomplete_missing_object_*_<expectedCount>` shape may
+    switch to page transport. HTTP 429 and unrelated errors remain fatal.
+11. On page transport, require the same metadata `totalHits` on every page,
+    exactly 100 records except the final remainder, the exact combined count
+    and no more than 10,000 pages. Hash the combined JSON snapshot with SHA-256.
+12. Count every raw provider product.
+13. Apply `perfume-v1` before sending a chunk to the catalog.
+14. Send raw count and filtered payload separately.
+15. Complete the snapshot only after cursor, hash, count and version checks.
 
 Aelia program ticket request:
 
@@ -99,8 +108,15 @@ stops that source. Safe allowlisted numeric counters from `overview` are copied
 to the GitHub report, including `receivedCount`, `reviewCount`, `excludedCount`,
 `importedCount`, `liveOffers`, `storedProducts` and `activeCoupons` when present.
 
-GitHub performs at most 24 steps per source by default and at most 48 by
-configuration. Every source has an independent try/catch boundary.
+Exactly `orchestrator_feed_not_found`, `orchestrator_feed_access_denied` and
+`orchestrator_not_configured` are expected provider-activation blockers. They
+produce `ok: true` with `blocked: true`, so a later scheduled cycle retries them
+without making the entire workflow red. Every other exception and every
+unexplained `failed` state remains fatal.
+
+The workflow configures at most 48 steps per source. Every source has an
+independent try/catch boundary. Partners run at 02:47, 08:47, 14:17 and 20:47
+UTC. The full TradeDoubler snapshot runs only at 14:17 UTC.
 
 ## Classifier contract
 

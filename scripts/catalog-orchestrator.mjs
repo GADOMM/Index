@@ -7,6 +7,11 @@ const ALLOWED_SOURCE_IDS = new Set([
   "cj:notino",
   "cj:brasty",
 ]);
+const EXPECTED_BLOCKERS = new Set([
+  "orchestrator_feed_not_found",
+  "orchestrator_feed_access_denied",
+  "orchestrator_not_configured",
+]);
 const requested = process.argv.slice(2).length ? process.argv.slice(2) : [...ALLOWED_SOURCE_IDS];
 const sources = [...new Set(requested.map((value) => value.trim()))];
 if (!sources.length || sources.some((source) => !ALLOWED_SOURCE_IDS.has(source))) {
@@ -131,12 +136,22 @@ for (const source of sources) {
     if (!result.ok) failed = true;
     results.push(result);
   } catch (error) {
+    const errorCode = error instanceof Error && /^[a-z0-9_]{1,120}$/i.test(error.message)
+      ? error.message : "orchestrator_failed";
+    if (EXPECTED_BLOCKERS.has(errorCode)) {
+      results.push({
+        ok: true,
+        source,
+        blocked: true,
+        error: errorCode,
+      });
+      continue;
+    }
     failed = true;
     results.push({
       ok: false,
       source,
-      error: error instanceof Error && /^[a-z0-9_]{1,120}$/i.test(error.message)
-        ? error.message : "orchestrator_failed",
+      error: errorCode,
     });
   }
 }
