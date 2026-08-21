@@ -429,9 +429,9 @@ const runProofImport = async (feedId) => {
 };
 
 const runFullImport = async (feedId) => {
-  const lastUpdatedTicket = await issueTicket(feedId, "last_updated");
-  const lastUpdated = await fetchProviderJson(lastUpdatedTicket.ticket);
-  const snapshot = await bridgePost({ action: "begin_unlimited_snapshot", feedId, lastUpdated });
+  const metadataTicket = await issueTicket(feedId, "feed_metadata");
+  const feedMetadata = await fetchProviderJson(metadataTicket.ticket);
+  const snapshot = await bridgePost({ action: "begin_unlimited_snapshot", feedId, lastUpdated: feedMetadata });
   if (!snapshot.required) return { ok: true, mode: "full", feedId, unchanged: true };
 
   const sessionId = snapshot.sessionId;
@@ -475,13 +475,13 @@ const runFullImport = async (feedId) => {
         payload: chunks[index],
       });
     }
-    const confirmationTicket = await issueTicket(feedId, "last_updated");
-    const confirmedLastUpdated = await fetchProviderJson(confirmationTicket.ticket);
+    const confirmationTicket = await issueTicket(feedId, "feed_metadata");
+    const confirmedFeedMetadata = await fetchProviderJson(confirmationTicket.ticket);
     const completion = await bridgePost({
       action: "complete_unlimited_snapshot",
       feedId,
       sessionId,
-      lastUpdated: confirmedLastUpdated,
+      lastUpdated: confirmedFeedMetadata,
       rawProductCount: providerProducts.length,
     });
     return {

@@ -20,9 +20,12 @@ test("proof uses the fixed bridge flow for exactly the two approved feeds", asyn
   process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = oidcRequestToken;
   process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
   process.argv = [process.execPath, "scripts/tradedoubler-import.mjs", "112471", "118359"];
-  process.stdout.write = ((value) => {
-    output += String(value);
-    return true;
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      output += value;
+      return true;
+    }
+    return originalWrite.call(process.stdout, value, ...args);
   });
   globalThis.fetch = async (input, init = {}) => {
     const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
@@ -120,7 +123,13 @@ test("proof checks both feeds and reports only safe provider codes when each is 
   process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = oidcRequestToken;
   process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
   process.argv = [process.execPath, "scripts/tradedoubler-import.mjs", "112471", "118359"];
-  process.stdout.write = ((value) => { stdout += String(value); return true; });
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
   process.stderr.write = ((value) => { stderr += String(value); return true; });
   globalThis.fetch = async (input, init = {}) => {
     const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
@@ -170,6 +179,125 @@ test("proof checks both feeds and reports only safe provider codes when each is 
     process.stdout.write = originalStdout;
     process.stderr.write = originalStderr;
     process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_MODE;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("full import versions the unlimited file from official feed metadata", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalStdout = process.stdout.write;
+  const oidcRequestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", typ: "JWT", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("test-signature").toString("base64url"),
+  ].join(".");
+  const providerToken = "c".repeat(40);
+  const sessionId = "11111111-1111-4111-8111-111111111111";
+  const issuedModes = [];
+  const bridgeActions = [];
+  let output = "";
+
+  process.env.PERFUMETR_MODE = "full";
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = oidcRequestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/tradedoubler-import.mjs", "112471"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      output += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    const method = init.method ?? (input instanceof Request ? input.method : "GET");
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    if (url.hostname === "perfumetr.borodzicz85.chatgpt.site" && method === "POST") {
+      const body = JSON.parse(init.body);
+      bridgeActions.push(body.action);
+      if (body.action === "issue_browser_ticket") {
+        issuedModes.push(body.mode);
+        return Response.json({ ok: true, ticket: `${body.mode}-112471` });
+      }
+      if (body.action === "begin_unlimited_snapshot") {
+        assert.equal(body.lastUpdated.lastModifiedTime, "2026-08-21T12:00:00Z");
+        return Response.json({
+          ok: true,
+          required: true,
+          sessionId,
+          nextChunk: 0,
+          rawCount: 0,
+          snapshotHash: null,
+        });
+      }
+      if (body.action === "import_unlimited_chunk") {
+        assert.equal(body.sessionId, sessionId);
+        assert.equal(body.chunkIndex, 0);
+        assert.equal(body.payload.products.length, 1);
+        return Response.json({ ok: true, matchedCandidates: 1, storeLiveOffers: 1 });
+      }
+      assert.equal(body.action, "complete_unlimited_snapshot");
+      assert.equal(body.lastUpdated.lastModifiedTime, "2026-08-21T12:00:00Z");
+      assert.equal(body.rawProductCount, 1);
+      return Response.json({ ok: true, liveOffers: 1, importedCount: 1 });
+    }
+    if (url.hostname === "perfumetr.borodzicz85.chatgpt.site") {
+      const ticket = url.searchParams.get("ticket") ?? "";
+      const path = ticket.startsWith("feed_metadata-")
+        ? "productFeeds/112471"
+        : "productsUnlimited;fid=112471;sourceproducturl=true";
+      return new Response(null, {
+        status: 302,
+        headers: { location: `https://api.tradedoubler.com/1.0/${path}?token=${providerToken}` },
+      });
+    }
+    assert.equal(url.hostname, "api.tradedoubler.com");
+    if (url.pathname.includes("/productFeeds/112471")) {
+      return Response.json({
+        feedId: 112471,
+        lastModifiedTime: "2026-08-21T12:00:00Z",
+        numberOfProducts: 1,
+      });
+    }
+    assert.match(url.pathname, /\/productsUnlimited;fid=112471;sourceproducturl=true$/);
+    return Response.json({
+      productHeader: { totalHits: 1 },
+      products: [{ name: "Testowa Eau de Parfum 50 ml", feedId: 112471 }],
+    });
+  };
+
+  try {
+    await import(`../scripts/tradedoubler-import.mjs?full-test=${Date.now()}`);
+    const report = JSON.parse(output);
+    assert.equal(report.ok, true);
+    assert.equal(report.mode, "full");
+    assert.deepEqual(issuedModes, ["feed_metadata", "unlimited_full", "feed_metadata"]);
+    assert.equal(issuedModes.includes("last_updated"), false);
+    assert.deepEqual(bridgeActions, [
+      "issue_browser_ticket",
+      "begin_unlimited_snapshot",
+      "issue_browser_ticket",
+      "import_unlimited_chunk",
+      "issue_browser_ticket",
+      "complete_unlimited_snapshot",
+    ]);
+    assert.equal(report.results[0].providerProducts, 1);
+    assert.equal(report.results[0].perfumeProducts, 1);
+    assert.equal(report.results[0].liveOffers, 1);
+    assert.equal(report.results[0].importedCount, 1);
+    assert.doesNotMatch(output, new RegExp(`${oidcRequestToken}|${providerToken}|${sessionId}`));
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    process.stdout.write = originalStdout;
     delete process.env.PERFUMETR_MODE;
     delete process.env.PERFUMETR_ORIGIN;
     delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
