@@ -5,6 +5,7 @@ import { join } from "node:path";
 import {
   extractProviderProducts,
   providerPayloadErrorCode,
+  providerPayloadShapeCode,
 } from "./tradedoubler-products.mjs";
 
 const ALLOWED_FEED_IDS = new Set(["112471", "118359"]);
@@ -412,7 +413,8 @@ const runFullImport = async (feedId) => {
     }
     if (!providerProducts || providerProducts.length !== expectedProductCount) {
       const received = providerProducts ? providerProducts.length : "missing";
-      throw new Error(`provider_snapshot_incomplete_${received}_${expectedProductCount}`);
+      const shape = providerProducts ? "products" : providerPayloadShapeCode(downloaded.payload);
+      throw new Error(`provider_snapshot_incomplete_${received}_${shape}_${expectedProductCount}`);
     }
     const perfumeProducts = providerProducts.reduce(
       (count, product) => count + (isPerfumeProduct(product) ? 1 : 0),

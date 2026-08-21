@@ -1,5 +1,5 @@
-const MAXIMUM_DEPTH = 4;
-const MAXIMUM_VISITED_NODES = 32;
+const MAXIMUM_DEPTH = 6;
+const MAXIMUM_VISITED_NODES = 128;
 const MAXIMUM_ENCODED_BYTES = 512 * 1024 * 1024;
 
 const WRAPPER_KEYS = new Set([
@@ -50,6 +50,15 @@ export const providerPayloadErrorCode = (payload) => {
     && /^[A-Za-z0-9_-]{1,40}$/.test(String(value))
   ));
   return code === undefined ? null : String(code);
+};
+
+export const providerPayloadShapeCode = (payload) => {
+  if (Array.isArray(payload)) return `array_${Math.min(payload.length, 9_999_999)}`;
+  if (!isRecord(payload)) return payload === null ? "null" : typeof payload;
+  const keys = Object.keys(payload).slice(0, 3).map((key) => (
+    key.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 10) || "key"
+  ));
+  return `object_${keys.length ? keys.join("_") : "empty"}`;
 };
 
 const explicitFeedIds = (product) => {
@@ -134,11 +143,14 @@ export const extractProviderProducts = (payload, expectedProductCount, requested
     const controlled = entries.filter(([key]) => (
       WRAPPER_KEYS.has(key.toLowerCase()) || key === feedId
     ));
-    if (controlled.length) {
-      for (const [, child] of controlled) visit(child, depth + 1, decoded);
-      return;
+    const remaining = entries.filter(([key]) => (
+      !WRAPPER_KEYS.has(key.toLowerCase()) && key !== feedId
+    ));
+    for (const [, child] of [...controlled, ...remaining]) {
+      if (typeof child === "string" || Array.isArray(child) || isRecord(child)) {
+        visit(child, depth + 1, decoded);
+      }
     }
-    if (entries.length === 1) visit(entries[0][1], depth + 1, decoded);
   };
 
   visit(payload, 0, false);
