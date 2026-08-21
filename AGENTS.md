@@ -61,7 +61,7 @@ must remain within the user's current authorization and provider quota.
 
 After every important deployment or major production investigation, update both
 `PROJECT_STATE.md` and `docs/CHAT_CONTINUITY.md`. Record the UTC timestamp,
-current `master` commit, important pull requests, latest Actions run, last
+current `master` baseline, important pull requests, latest Actions run, last
 production importer run, Sites version and deployment, exact offer counts,
 tests, completed work, work still in progress, what works, what does not work,
 external blockers, report-delivery state and the exact next task. Never put
@@ -73,11 +73,22 @@ that follows `docs/CHAT_CONTINUITY.md`. Do not ask the user to summarize the old
 chat. The receiving chat must read the four required project files and verify
 GitHub and Sites before it changes code, imports, configuration or production.
 
-The user requires a numbered and dated report after every important deployment,
-both in chat and by email to `support@perfumetr.pl`. The report must clearly
-distinguish verified facts, unfinished work and next steps, and it must include
-test results, active blockers and delivery state. Use the real Perfumetr.
-wordmark and this footer:
+The current reporting rule supersedes the earlier per-deployment rule. Do not
+send a report automatically after each visual deployment. The user wants one
+consolidated report after the workday and will explicitly say when it should be
+sent. Until that instruction arrives, record the report as deferred at the
+user's request.
+
+Before preparing the next report, inspect the delivered report `#003` in Sent
+and reproduce that exact visual template, including its Perfumetr. wordmark,
+layout, typography and footer. Do not improvise a new email design. Recheck the
+latest delivered number before assigning the next sequential number. The last
+confirmed delivered report at the 2026-08-21 v120 checkpoint is `#005`; this
+fact must be verified again immediately before sending.
+
+Every requested report goes to `support@perfumetr.pl`, includes its date,
+sequential number, clear change summary, test result, working and non-working
+elements, blockers and next step, and ends with:
 
 ```text
 Pozdrawiamy,
@@ -87,6 +98,5 @@ perfumetr.pl
 support@perfumetr.pl
 ```
 
-Record the last report as `sent`, `pending` or `not required`. Claim `sent`
-only after delivery is confirmed, and verify the last delivered report number
-before assigning the next sequential number.
+Claim `sent` only after delivery is confirmed. Otherwise record `deferred`,
+`pending` or `not required` accurately.
