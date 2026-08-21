@@ -200,6 +200,7 @@ test("full import versions the unlimited file from official feed metadata", asyn
   const sessionId = "11111111-1111-4111-8111-111111111111";
   const issuedModes = [];
   const bridgeActions = [];
+  let chunkAttempts = 0;
   let output = "";
 
   process.env.PERFUMETR_MODE = "full";
@@ -242,6 +243,10 @@ test("full import versions the unlimited file from official feed metadata", asyn
         assert.equal(body.sessionId, sessionId);
         assert.equal(body.chunkIndex, 0);
         assert.equal(body.payload.products.length, 1);
+        chunkAttempts += 1;
+        if (chunkAttempts === 1) {
+          return Response.json({ ok: false, error: "already_running" }, { status: 409 });
+        }
         return Response.json({ ok: true, matchedCandidates: 1, storeLiveOffers: 1 });
       }
       assert.equal(body.action, "complete_unlimited_snapshot");
@@ -286,9 +291,11 @@ test("full import versions the unlimited file from official feed metadata", asyn
       "begin_unlimited_snapshot",
       "issue_browser_ticket",
       "import_unlimited_chunk",
+      "import_unlimited_chunk",
       "issue_browser_ticket",
       "complete_unlimited_snapshot",
     ]);
+    assert.equal(chunkAttempts, 2);
     assert.equal(report.results[0].providerProducts, 1);
     assert.equal(report.results[0].perfumeProducts, 1);
     assert.equal(report.results[0].liveOffers, 1);
