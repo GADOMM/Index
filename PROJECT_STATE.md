@@ -19,8 +19,8 @@ Repository baseline verified before this continuity branch:
 * merged pull request `#14`: strict chat-continuity runbook;
 * merged pull request `#15`: Sites v114 store-rail continuity record;
 * merged pull request `#16`: Sites v120 catalog continuity record;
-* this v121 continuity update is documentation only and does not change the
-  importer, catalog data or production runtime.
+* pull request `#17` is the documentation-only v121 continuity record and does
+  not change the importer, catalog data or production runtime.
 
 GitHub Actions evidence:
 
