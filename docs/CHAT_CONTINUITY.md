@@ -179,16 +179,18 @@ Dopiero potem przejdź do następnego zadania.
 
 ## Current continuity checkpoint
 
-Verified at 2026-08-21 23:08 UTC before the v120 continuity branch:
+Verified at 2026-08-21 23:31 UTC before pull request `#17`:
 
 1. `master` baseline commit:
-   `15cdffc860d319bc82705ea903e3127b2145c985`;
-2. pull requests `#12`, `#13`, `#14` and `#15` are merged;
-3. latest Actions run is number `32`, ID `32527917523`, attempt `1`,
-   pull-request validation, succeeded from 21:18:57 to 21:19:07 UTC;
-4. run 32 completed the validation job and skipped the import job;
+   `05bb754f70526314d0c301fea6e27878fe8aeb4e`;
+2. pull requests `#12`, `#13`, `#14`, `#15` and `#16` are merged;
+   pull request `#17` is the documentation-only v121 continuity record;
+3. latest Actions run before PR `#17` is number `33`, ID `32535949248`,
+   attempt `1`, pull-request validation, succeeded from 23:11:27 to
+   23:11:40 UTC;
+4. run 33 completed the validation job successfully and skipped the import job;
 5. latest scheduled production partner run remains number `31`, ID
-   `32526426619`, attempt `1`, succeeded from 21:00:42 to 21:01:08 UTC;
+   `32526426619`, attempt `1`, successful from 21:00:42 to 21:01:08 UTC;
 6. run 31 passed importer validation `14/14`, skipped the full TradeDoubler
    snapshot and successfully advanced partner sources;
 7. latest full production importer remains run `28`, ID `32497431067`,
@@ -200,34 +202,47 @@ Verified at 2026-08-21 23:08 UTC before the v120 continuity branch:
    coupons;
 10. AWIN Flaconi remains externally blocked by
     `orchestrator_feed_not_found`; the blocker did not fail the workflow;
-11. Sites v120 is deployed successfully from source commit
-    `4302d9133a5cc99eec4d4f5da7e3358108561b60`;
-12. v120 version ID is
-    `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e30e538bc74081918bfdc3fa5c7c8706`;
-13. v120 deployment ID is `appgdep_6a88d9d0cd048191b6ff07192ccbeef4`
+11. Sites v121 is deployed successfully from source commit
+    `8e41f34be3ec5fe390e287c959ae0c16d552f2f0`;
+12. v121 version ID is
+    `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_946ac9bc18f48191b469baae459a807b`;
+13. v121 deployment ID is `appgdep_6a88df699204819198a3982e8045bad2`
     and its directly rechecked status is `succeeded`;
-14. the production build succeeded and the full Sites suite passed `47/47`;
-    lint has zero errors and two pre-existing warnings;
-15. `perfumetr.pl` and `beta.perfumetr.pl` report active domain, provider and
-    SSL state with no domain error; Sites reports `https://beta.perfumetr.pl`
-    as the live URL;
-16. the v114-v119 homepage and beta visual refinements remain deployed;
-17. v120 replaces the earlier catalog drawer with the Catalog Canvas: calm
-    centered desktop surface, full-screen mobile layout, searchable brand
-    selection, radio refinements, synchronized active chips, simpler cards,
-    integrated back action and automatic first price-capable volume lookup;
-18. request cancellation, focus and scroll restoration, error states,
-    reduced-motion handling and mobile safe areas remain preserved;
-19. the redesign has technical verification but has not yet received the user's
-    subjective visual and full interaction review on a physical phone and
-    desktop;
-20. report `#005` remains the last confirmed delivered report;
-21. no v120 report was sent because the user requires a consolidated report only
-    after explicitly asking for it; when requested, the exact visual template
-    from delivered report `#003` must be reused;
-22. no code change, import, Sites deployment or email delivery is in progress;
-23. the exact next task is the user's desktop and real-phone review of v120 on
-    `beta.perfumetr.pl`, followed only by the specific refinements requested.
+14. the production build succeeded, focused catalog tests passed `2/2`, the
+    full Sites suite passed `47/47`, and lint has zero errors with two
+    pre-existing warnings;
+15. Sites reports latest version `121`, the project is active and public, and
+    `https://beta.perfumetr.pl` is the current live URL;
+16. `perfumetr.pl` and `beta.perfumetr.pl` last reported active domain,
+    provider and SSL state at the preceding checkpoint; v121 did not change
+    domain settings;
+17. the v114-v119 homepage, beta landing, store rail, search, feedback and
+    responsive-footer refinements remain deployed and were not changed in v121;
+18. v121 replaces the rejected cream Catalog Canvas with a full-viewport
+    transparent dark layer integrated with the beta background;
+19. v121 removes extra headings, slogans, nested filter panels, the decorative
+    filter icon, the visible result heading, audience badges and repeated
+    `Zobacz ceny` calls;
+20. the catalog now shows one title, one category/control rail, flat radio
+    refinements, brand suggestions only after typing and lightweight cardless
+    products;
+21. automatic first price-capable volume selection, price lookup, accessible
+    radio semantics, draft/applied filter safety, request cancellation, focus
+    and scroll restoration, error states and reduced-motion handling remain
+    preserved;
+22. two independent read-only reviews found no blocking regression; mobile blur
+    was reduced and touch cards have an active-state response;
+23. the redesign has technical and deployment verification but has not yet
+    received the user's subjective visual approval on real desktop and phone;
+24. report `#005` remains the last confirmed delivered report; no v120 or v121
+    report was sent because the user requires one consolidated report only after
+    explicitly requesting it, and delivered report `#003` must supply the exact
+    email template;
+25. no code change, import, Sites deployment or email delivery is currently in
+    progress;
+26. the exact next task is the user's desktop and real-phone review of v121 on
+    `beta.perfumetr.pl`, followed only by the specific catalog refinements the
+    user requests.
 
 Treat this checkpoint as dated evidence, not as a substitute for a fresh GitHub
 and Sites check.
