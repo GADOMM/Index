@@ -269,7 +269,7 @@ test("full import versions the unlimited file from official feed metadata", asyn
     }
     assert.match(url.pathname, /\/productsUnlimited;fid=112471;sourceproducturl=true$/);
     return Response.json({
-      productHeader: { totalHits: 1 },
+      productHeader: { totalHits: 999 },
       products: [{ name: "Testowa Eau de Parfum 50 ml", feedId: 112471 }],
     });
   };
