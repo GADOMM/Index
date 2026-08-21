@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { extractProviderProducts } from "../scripts/tradedoubler-products.mjs";
+import {
+  extractProviderProducts,
+  providerPayloadErrorCode,
+} from "../scripts/tradedoubler-products.mjs";
 
 const providerProduct = (name, feedId = "118359") => ({
   name,
@@ -30,6 +33,13 @@ test("full snapshot extractor fails closed for unsafe or ambiguous shapes", () =
     () => extractProviderProducts({ products, data: products.map((product) => ({ ...product })) }, 2, "118359"),
     /provider_snapshot_ambiguous/,
   );
+});
+
+test("full snapshot extractor recognizes only safe provider error codes", () => {
+  assert.equal(providerPayloadErrorCode({ code: "429", message: "private detail" }), "429");
+  assert.equal(providerPayloadErrorCode({ errors: [{ code: "PF_392", message: "private detail" }] }), "PF_392");
+  assert.equal(providerPayloadErrorCode({ code: "not safe!", message: "private detail" }), null);
+  assert.equal(providerPayloadErrorCode({ products: [] }), null);
 });
 
 test("proof uses the fixed bridge flow for exactly the two approved feeds", async () => {
