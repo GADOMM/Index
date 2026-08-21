@@ -347,6 +347,7 @@ const buildChunks = (products) => {
     sessionId: "00000000-0000-4000-8000-000000000000",
     chunkIndex: 1_000_000,
     snapshotHash: "f".repeat(64),
+    rawProductCount: chunk.products.length,
     payload: chunk,
   })) > BRIDGE_MAXIMUM_BYTES)) {
     throw new Error("bridge_payload_too_large");
@@ -434,13 +435,19 @@ const runFullImport = async (feedId) => {
 
     let latest = null;
     for (let index = nextChunk; index < chunks.length; index += 1) {
+      const rawChunk = chunks[index];
+      const perfumeChunk = {
+        ...rawChunk,
+        products: rawChunk.products.filter(isPerfumeProduct),
+      };
       latest = await importUnlimitedChunk({
         action: "import_unlimited_chunk",
         feedId,
         sessionId,
         chunkIndex: index,
         snapshotHash: downloaded.snapshotHash,
-        payload: chunks[index],
+        rawProductCount: rawChunk.products.length,
+        payload: perfumeChunk,
       });
     }
     const confirmationTicket = await issueTicket(feedId, "feed_metadata");
