@@ -369,3 +369,250 @@ test("full import versions the unlimited file from official feed metadata", asyn
     delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
   }
 });
+
+test("full import replaces a live-shaped missing Unlimited object with an exact two-page snapshot", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalStdout = process.stdout.write;
+  const requestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const providerToken = "e".repeat(40);
+  const sessionId = "22222222-2222-4222-8222-222222222222";
+  const issuedModes = [];
+  const importedChunks = [];
+  let output = "";
+
+  process.env.PERFUMETR_MODE = "full";
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = requestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/tradedoubler-import.mjs", "112471"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      output += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    const method = init.method ?? (input instanceof Request ? input.method : "GET");
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    if (url.hostname === "perfumetr.borodzicz85.chatgpt.site" && method === "POST") {
+      const body = JSON.parse(init.body);
+      if (body.action === "issue_browser_ticket") {
+        issuedModes.push(body.mode);
+        if (body.mode === "page") {
+          assert.ok([1, 2].includes(body.page));
+          return Response.json({ ok: true, ticket: `page-${body.page}` });
+        }
+        return Response.json({ ok: true, ticket: `${body.mode}-112471` });
+      }
+      if (body.action === "begin_unlimited_snapshot") {
+        return Response.json({
+          ok: true,
+          required: true,
+          sessionId,
+          nextChunk: 0,
+          rawCount: 0,
+          snapshotHash: null,
+        });
+      }
+      if (body.action === "import_unlimited_chunk") {
+        assert.equal(body.sessionId, sessionId);
+        assert.match(body.snapshotHash, /^[a-f0-9]{64}$/);
+        assert.equal(body.payload.productHeader.totalHits, 101);
+        assert.equal(body.payload.products.every((product) => /Eau de Parfum/.test(product.name)), true);
+        importedChunks.push({
+          chunkIndex: body.chunkIndex,
+          rawProductCount: body.rawProductCount,
+          perfumeProducts: body.payload.products.length,
+          snapshotHash: body.snapshotHash,
+        });
+        return Response.json({ ok: true, matchedCandidates: importedChunks.length, storeLiveOffers: 2 });
+      }
+      assert.equal(body.action, "complete_unlimited_snapshot");
+      assert.equal(body.rawProductCount, 101);
+      return Response.json({ ok: true, liveOffers: 2, importedCount: 2 });
+    }
+    if (url.hostname === "perfumetr.borodzicz85.chatgpt.site") {
+      const ticket = url.searchParams.get("ticket") ?? "";
+      const path = ticket.startsWith("feed_metadata-")
+        ? "productFeeds/112471"
+        : ticket.startsWith("unlimited_full-")
+          ? "productsUnlimited;fid=112471;sourceproducturl=true"
+          : `products.json;page=${ticket.endsWith("-2") ? 2 : 1};pageSize=100;fid=112471;sourceproducturl=true`;
+      return new Response(null, {
+        status: 302,
+        headers: { location: `https://api.tradedoubler.com/1.0/${path}?token=${providerToken}` },
+      });
+    }
+    assert.equal(url.hostname, "api.tradedoubler.com");
+    if (url.pathname.includes("/productFeeds/112471")) {
+      return Response.json({
+        feedId: 112471,
+        lastModifiedTime: "2026-08-21T13:00:00Z",
+        numberOfProducts: 101,
+      });
+    }
+    if (url.pathname.includes("/productsUnlimited;")) {
+      return Response.json({ message: "Products Unlimited returned no product collection" });
+    }
+    if (url.pathname.includes(";page=1;")) {
+      return Response.json({
+        productHeader: { totalHits: 101 },
+        products: Array.from({ length: 100 }, (_, index) => ({
+          name: index === 0 ? "Aelia Eau de Parfum 50 ml" : `Aelia szampon ${index}`,
+          feedId: 112471,
+        })),
+      });
+    }
+    assert.match(url.pathname, /;page=2;pageSize=100;fid=112471;/);
+    return Response.json({
+      productHeader: { totalHits: 101 },
+      products: [{ name: "Aelia Eau de Parfum 100 ml", feedId: 112471 }],
+    });
+  };
+
+  try {
+    await import(`../scripts/tradedoubler-import.mjs?page-full-test=${Date.now()}`);
+    const report = JSON.parse(output);
+    assert.equal(report.ok, true);
+    assert.deepEqual(issuedModes, [
+      "feed_metadata",
+      "unlimited_full",
+      "page",
+      "page",
+      "feed_metadata",
+    ]);
+    assert.deepEqual(importedChunks.map(({ chunkIndex, rawProductCount, perfumeProducts }) => ({
+      chunkIndex,
+      rawProductCount,
+      perfumeProducts,
+    })), [
+      { chunkIndex: 0, rawProductCount: 100, perfumeProducts: 1 },
+      { chunkIndex: 1, rawProductCount: 1, perfumeProducts: 1 },
+    ]);
+    assert.equal(importedChunks[0].snapshotHash, importedChunks[1].snapshotHash);
+    assert.equal(report.results[0].transport, "page");
+    assert.equal(report.results[0].pages, 2);
+    assert.equal(report.results[0].providerProducts, 101);
+    assert.equal(report.results[0].scannedProducts, 101);
+    assert.equal(report.results[0].perfumeProducts, 2);
+    assert.equal(report.results[0].importedCount, 2);
+    assert.doesNotMatch(output, new RegExp(`${requestToken}|${providerToken}|${sessionId}`));
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    process.stdout.write = originalStdout;
+    delete process.env.PERFUMETR_MODE;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("full import never turns a Products Unlimited HTTP 429 into page traffic", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const providerToken = "f".repeat(40);
+  const issuedModes = [];
+  let stdout = "";
+  let stderr = "";
+
+  process.env.PERFUMETR_MODE = "full";
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = "github-runner-request-token";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/tradedoubler-import.mjs", "112471"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  process.stderr.write = ((value) => { stderr += String(value); return true; });
+
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    const method = init.method ?? (input instanceof Request ? input.method : "GET");
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    if (url.hostname === "perfumetr.borodzicz85.chatgpt.site" && method === "POST") {
+      const body = JSON.parse(init.body);
+      if (body.action === "issue_browser_ticket") {
+        issuedModes.push(body.mode);
+        return Response.json({ ok: true, ticket: `${body.mode}-112471` });
+      }
+      if (body.action === "begin_unlimited_snapshot") {
+        return Response.json({
+          ok: true,
+          required: true,
+          sessionId: "33333333-3333-4333-8333-333333333333",
+          nextChunk: 0,
+          rawCount: 0,
+          snapshotHash: null,
+        });
+      }
+      assert.equal(body.action, "fail_unlimited_snapshot");
+      assert.equal(body.errorCode, "provider_429");
+      return Response.json({ ok: true });
+    }
+    if (url.hostname === "perfumetr.borodzicz85.chatgpt.site") {
+      const ticket = url.searchParams.get("ticket") ?? "";
+      const path = ticket.startsWith("feed_metadata-")
+        ? "productFeeds/112471"
+        : "productsUnlimited;fid=112471;sourceproducturl=true";
+      return new Response(null, {
+        status: 302,
+        headers: { location: `https://api.tradedoubler.com/1.0/${path}?token=${providerToken}` },
+      });
+    }
+    if (url.pathname.includes("/productFeeds/112471")) {
+      return Response.json({
+        feedId: 112471,
+        lastModifiedTime: "2026-08-21T14:00:00Z",
+        numberOfProducts: 1,
+      });
+    }
+    return Response.json({ code: "429", message: "private rate limit detail" }, { status: 429 });
+  };
+
+  try {
+    await import(`../scripts/tradedoubler-import.mjs?full-429-test=${Date.now()}`);
+    assert.equal(stdout, "");
+    assert.equal(process.exitCode, 1);
+    assert.deepEqual(issuedModes, ["feed_metadata", "unlimited_full"]);
+    const report = JSON.parse(stderr.replace(/^tradedoubler_result=/, ""));
+    assert.equal(report.ok, false);
+    assert.equal(report.results[0].error, "provider_429");
+    assert.doesNotMatch(stderr, /private rate limit detail|page-/);
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_MODE;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});

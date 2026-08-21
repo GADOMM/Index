@@ -13,6 +13,9 @@ import { isPerfumeProduct } from "./perfume-classifier.mjs";
 const BRIDGE_MAXIMUM_BYTES = 2 * 1024 * 1024;
 const CHUNK_TARGET_BYTES = 1_500_000;
 const PROVIDER_MAXIMUM_BYTES = 512 * 1024 * 1024;
+const PAGE_SIZE = 100;
+const PROOF_PAGE_LIMIT = 10;
+const FULL_PAGE_LIMIT = 10_000;
 const OIDC_AUDIENCE = "perfumetr-tradedoubler-bridge";
 const mode = process.env.PERFUMETR_MODE === "full" ? "full"
   : process.env.PERFUMETR_MODE === "proof" ? "proof" : null;
@@ -299,6 +302,68 @@ const importTicketPayload = (ticket, providerPayload) => bridgePost(
   { "x-perfumetr-bridge-ticket": ticket },
 );
 
+const pagePayloadProducts = (payload, page, expectedTotal = null) => {
+  const products = Array.isArray(payload?.products) ? payload.products : null;
+  const totalHits = Number(payload?.productHeader?.totalHits);
+  if (!Number.isSafeInteger(page) || page < 1 || page > FULL_PAGE_LIMIT
+    || !products || products.length > PAGE_SIZE
+    || !Number.isSafeInteger(totalHits) || totalHits < 0
+    || (expectedTotal !== null && totalHits !== expectedTotal)) {
+    throw new Error("provider_page_invalid");
+  }
+  const remaining = Math.max(0, totalHits - ((page - 1) * PAGE_SIZE));
+  const expectedPageCount = Math.min(PAGE_SIZE, remaining);
+  if (products.length !== expectedPageCount) {
+    throw new Error("provider_page_count_mismatch");
+  }
+  return { products, totalHits };
+};
+
+const fetchPagedSnapshot = async (feedId, expectedProductCount) => {
+  const pageCount = Math.ceil(expectedProductCount / PAGE_SIZE);
+  if (!Number.isSafeInteger(pageCount) || pageCount < 1 || pageCount > FULL_PAGE_LIMIT) {
+    throw new Error("provider_page_limit_exceeded");
+  }
+  const products = [];
+  let encodedProductBytes = 0;
+  for (let page = 1; page <= pageCount; page += 1) {
+    const issued = await issueTicket(feedId, "page", { page });
+    const payload = await fetchProviderJson(issued.ticket);
+    const pageResult = pagePayloadProducts(payload, page, expectedProductCount);
+    const validatedProducts = extractProviderProducts(
+      { products: pageResult.products },
+      pageResult.products.length,
+      feedId,
+    );
+    if (!validatedProducts || validatedProducts.length !== pageResult.products.length) {
+      throw new Error("provider_page_products_invalid");
+    }
+    encodedProductBytes += Buffer.byteLength(JSON.stringify(validatedProducts));
+    if (encodedProductBytes > PROVIDER_MAXIMUM_BYTES) {
+      throw new Error("provider_payload_too_large");
+    }
+    products.push(...validatedProducts);
+  }
+  if (products.length !== expectedProductCount) {
+    throw new Error("provider_page_total_mismatch");
+  }
+  const payload = {
+    productHeader: { totalHits: expectedProductCount },
+    products,
+  };
+  const serialized = JSON.stringify(payload);
+  if (Buffer.byteLength(serialized) > PROVIDER_MAXIMUM_BYTES) {
+    throw new Error("provider_payload_too_large");
+  }
+  return {
+    payload,
+    products,
+    snapshotHash: createHash("sha256").update(serialized).digest("hex"),
+    transport: "page",
+    pages: pageCount,
+  };
+};
+
 const buildChunks = (products) => {
   const chunks = [];
   let current = [];
@@ -363,34 +428,92 @@ const configureProgramFeed = async (source, programId) => {
   return [feedId];
 };
 
-const runProofImport = async (feedId) => {
-  const issued = await issueTicket(feedId, "query");
-  const payload = await fetchProviderJson(issued.ticket);
+const proofPayloadProducts = (payload) => {
   const products = Array.isArray(payload?.products) ? payload.products : null;
   const totalHits = Number(payload?.productHeader?.totalHits);
   if (!products || products.length < 1 || products.length > 100
     || !Number.isSafeInteger(totalHits) || totalHits < products.length) {
     throw new Error("provider_proof_invalid");
   }
-  const perfumeProducts = products.filter(isPerfumeProduct);
-  if (!perfumeProducts.length) throw new Error("no_perfume_products");
-  const imported = await importTicketPayload(issued.ticket, {
-    ...payload,
-    products: perfumeProducts,
-  });
-  return {
-    ok: true,
-    mode: "proof",
-    feedId,
-    receivedProducts: products.length,
-    perfumeProducts: perfumeProducts.length,
-    providerTotalHits: totalHits,
-    candidates: Number(imported.candidates ?? 0),
-    reviewCandidates: Number(imported.reviewCandidates ?? 0),
-    matchedCandidates: Number(imported.matchedCandidates ?? 0),
-    liveOffers: Number(imported.liveOffers ?? 0),
-    storeLiveOffers: Number(imported.storeLiveOffers ?? 0),
-  };
+  return { products, totalHits };
+};
+
+const proofResult = (feedId, imported, details) => ({
+  ok: true,
+  mode: "proof",
+  feedId,
+  receivedProducts: details.products.length,
+  scannedProducts: details.scannedProducts,
+  perfumeProducts: details.perfumeProducts.length,
+  providerTotalHits: details.totalHits,
+  transport: details.transport,
+  ...(details.page ? { page: details.page } : {}),
+  candidates: Number(imported.candidates ?? 0),
+  reviewCandidates: Number(imported.reviewCandidates ?? 0),
+  matchedCandidates: Number(imported.matchedCandidates ?? 0),
+  liveOffers: Number(imported.liveOffers ?? 0),
+  storeLiveOffers: Number(imported.storeLiveOffers ?? 0),
+});
+
+const runPageProofImport = async (feedId) => {
+  let scannedProducts = 0;
+  let expectedTotal = null;
+  for (let page = 1; page <= PROOF_PAGE_LIMIT; page += 1) {
+    const issued = await issueTicket(feedId, "page", { page });
+    const payload = await fetchProviderJson(issued.ticket);
+    const pageResult = pagePayloadProducts(payload, page, expectedTotal);
+    if (expectedTotal === null) expectedTotal = pageResult.totalHits;
+    scannedProducts += pageResult.products.length;
+    const perfumeProducts = pageResult.products.filter(isPerfumeProduct);
+    if (perfumeProducts.length) {
+      const imported = await importTicketPayload(issued.ticket, {
+        ...payload,
+        products: perfumeProducts,
+      });
+      return proofResult(feedId, imported, {
+        products: pageResult.products,
+        scannedProducts,
+        perfumeProducts,
+        totalHits: pageResult.totalHits,
+        transport: "page",
+        page,
+      });
+    }
+    if (page * PAGE_SIZE >= pageResult.totalHits) break;
+  }
+  throw new Error("no_perfume_products");
+};
+
+const proofFallbackErrors = new Set([
+  "bridge_feed_not_configured",
+  "no_perfume_products",
+  "provider_empty_body",
+  "provider_invalid_json",
+  "provider_proof_invalid",
+]);
+
+const runProofImport = async (feedId) => {
+  try {
+    const issued = await issueTicket(feedId, "query");
+    const payload = await fetchProviderJson(issued.ticket);
+    const { products, totalHits } = proofPayloadProducts(payload);
+    const perfumeProducts = products.filter(isPerfumeProduct);
+    if (!perfumeProducts.length) throw new Error("no_perfume_products");
+    const imported = await importTicketPayload(issued.ticket, {
+      ...payload,
+      products: perfumeProducts,
+    });
+    return proofResult(feedId, imported, {
+      products,
+      scannedProducts: products.length,
+      perfumeProducts,
+      totalHits,
+      transport: "query",
+    });
+  } catch (error) {
+    if (!(error instanceof Error) || !proofFallbackErrors.has(error.message)) throw error;
+  }
+  return runPageProofImport(feedId);
 };
 
 const runFullImport = async (feedId) => {
@@ -407,21 +530,27 @@ const runFullImport = async (feedId) => {
   const sessionId = snapshot.sessionId;
   try {
     const fullTicket = await issueTicket(feedId, "unlimited_full", { sessionId });
-    const downloaded = await fetchUnlimitedJson(fullTicket.ticket);
+    let downloaded = await fetchUnlimitedJson(fullTicket.ticket);
     const payloadErrorCode = providerPayloadErrorCode(downloaded.payload);
     if (payloadErrorCode) throw new Error(`provider_${payloadErrorCode}`);
-    const providerProducts = extractProviderProducts(
+    let providerProducts = extractProviderProducts(
       downloaded.payload,
       expectedProductCount,
       feedId,
     );
-    if (snapshot.snapshotHash && snapshot.snapshotHash !== downloaded.snapshotHash) {
-      throw new Error("snapshot_file_mismatch");
-    }
     if (!providerProducts || providerProducts.length !== expectedProductCount) {
       const received = providerProducts ? providerProducts.length : "missing";
       const shape = providerProducts ? "products" : providerPayloadShapeCode(downloaded.payload);
-      throw new Error(`provider_snapshot_incomplete_${received}_${shape}_${expectedProductCount}`);
+      const incompleteCode = `provider_snapshot_incomplete_${received}_${shape}_${expectedProductCount}`;
+      const safePageFallback = new RegExp(
+        `^provider_snapshot_incomplete_missing_object_[a-z0-9_]+_${expectedProductCount}$`,
+      );
+      if (!safePageFallback.test(incompleteCode)) throw new Error(incompleteCode);
+      downloaded = await fetchPagedSnapshot(feedId, expectedProductCount);
+      providerProducts = downloaded.products;
+    }
+    if (snapshot.snapshotHash && snapshot.snapshotHash !== downloaded.snapshotHash) {
+      throw new Error("snapshot_file_mismatch");
     }
     const perfumeProducts = providerProducts.reduce(
       (count, product) => count + (isPerfumeProduct(product) ? 1 : 0),
@@ -475,8 +604,11 @@ const runFullImport = async (feedId) => {
       feedId,
       unchanged: false,
       providerProducts: providerProducts.length,
+      scannedProducts: providerProducts.length,
       perfumeProducts,
       chunks: chunks.length,
+      transport: downloaded.transport ?? "unlimited",
+      ...(downloaded.pages ? { pages: downloaded.pages } : {}),
       liveOffers: Number(completion.liveOffers ?? latest?.storeLiveOffers ?? 0),
       importedCount: Number(completion.importedCount ?? latest?.matchedCandidates ?? 0),
     };

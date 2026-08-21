@@ -37,7 +37,10 @@ on:
           - partners
           - all
   schedule:
+    - cron: "47 2 * * *"
+    - cron: "47 8 * * *"
     - cron: "17 14 * * *"
+    - cron: "47 20 * * *"
 
 permissions:
   contents: read
@@ -109,7 +112,7 @@ jobs:
         run: node scripts/tradedoubler-import.mjs
 
       - name: Run the full TradeDoubler import
-        if: always() && (github.event_name == 'push' || github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'full' || inputs.mode == 'all')))
+        if: always() && (github.event_name == 'push' || (github.event_name == 'schedule' && github.event.schedule == '17 14 * * *') || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'full' || inputs.mode == 'all')))
         env:
           PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
           PERFUMETR_MODE: full
@@ -119,7 +122,7 @@ jobs:
         if: always() && (github.event_name == 'push' || github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'partners' || inputs.mode == 'all')))
         env:
           PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
-          PERFUMETR_ORCHESTRATOR_STEPS: 24
+          PERFUMETR_ORCHESTRATOR_STEPS: 48
         run: node scripts/catalog-orchestrator.mjs
 
       - name: Publish the first live import result

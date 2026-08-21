@@ -28,15 +28,26 @@ others.
 
 ## Modes
 
-`proof` downloads a bounded TradeDoubler query, applies the perfume classifier
-and imports only accepted perfume records.
+`proof` first downloads the existing bounded TradeDoubler query, applies the
+perfume classifier and imports only accepted perfume records. If that query has
+an invalid or empty successful response, contains no perfumes, or its import is
+rejected specifically as `feed_not_configured`, the runner scans at most ten
+strict 100-product `page` tickets. It stops at the first page with perfumes and
+reports both the successful transport and the number of scanned records.
 
 `full` verifies the complete provider snapshot, counts every raw record and
 sends only perfume records to Perfumetr in resumable chunks. Raw counts remain
-independent from accepted counts, including chunks with zero perfumes.
+independent from accepted counts, including chunks with zero perfumes. The
+primary transport remains Products Unlimited. Only its exact safe
+`provider_snapshot_incomplete_missing_object_*_<expectedCount>` result enables
+the page fallback. Every page must repeat the metadata count and contain the
+exact expected number of records; the combined snapshot is SHA-256 hashed
+before resumable import. HTTP 429 and unrelated failures never enable fallback.
 
 The shared AWIN/CJ orchestrator performs a bounded number of server-side import
-steps. Existing server-side cursors remain authoritative.
+steps. Existing server-side cursors remain authoritative. A missing,
+access-denied or not-yet-configured feed is reported as `blocked` and retried by
+the next cycle without failing the workflow. Every other error remains fatal.
 
 ## Automation
 
@@ -44,7 +55,8 @@ steps. Existing server-side cursors remain authoritative.
 OIDC verifier trusts that exact workflow path. Its visible name is broader than
 TradeDoubler because it now coordinates all catalog sources.
 
-The scheduled run starts daily at 14:17 UTC. Manual modes are:
+Partner sources run daily at 02:47, 08:47, 14:17 and 20:47 UTC. The complete
+TradeDoubler import runs only at 14:17 UTC. Manual modes are:
 
 * `proof`
 * `full`
@@ -67,8 +79,9 @@ perfume categories. It rejects sets, testers, samples, refills, body care,
 deodorants, mists, candles, diffusers and similar non-perfume products.
 Description-only mentions of perfumes are not sufficient for acceptance.
 
-The complete TradeDoubler file is still downloaded for completeness checks.
-Filtering currently reduces catalog traffic and writes, not provider download
+The complete TradeDoubler snapshot is still downloaded for completeness
+checks, either through Products Unlimited or strictly validated 100-record
+pages. Filtering reduces catalog traffic and writes, not provider download
 size. A future streaming parser can also reduce peak memory.
 
 ## Security
@@ -85,7 +98,7 @@ tickets, provider redirect URLs or affiliate API tokens.
 
 ## Deployment and verification order
 
-The required backward-compatible Sites contracts are deployed in version 111.
+The required backward-compatible Sites contracts are deployed in version 112.
 Publish GitHub changes through a pull request, require the validation job to
 pass, then merge. The first push to `master` performs the bounded TradeDoubler
 proof, the full TradeDoubler cycle and the shared partner cycle. Do not remove
