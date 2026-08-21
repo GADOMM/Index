@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   extractProviderProducts,
   providerPayloadErrorCode,
+  providerPayloadShapeCode,
 } from "../scripts/tradedoubler-products.mjs";
 
 const providerProduct = (name, feedId = "118359") => ({
@@ -20,6 +21,11 @@ test("full snapshot extractor unwraps only exact, product-shaped collections", (
   assert.deepEqual(extractProviderProducts({ result: { productFeed: { products: productMap } } }, 2, "118359"), products);
   assert.deepEqual(extractProviderProducts({ "118359": { data: [products] } }, 2, "118359"), products);
   assert.deepEqual(extractProviderProducts(JSON.stringify({ payload: { items: products } }), 2, "118359"), products);
+  assert.deepEqual(extractProviderProducts({
+    productHeader: { totalHits: 2 },
+    undocumentedEnvelope: { recordsCollection: products },
+    generatedAt: "2026-08-21T00:00:00Z",
+  }, 2, "118359"), products);
 });
 
 test("full snapshot extractor fails closed for unsafe or ambiguous shapes", () => {
@@ -28,7 +34,7 @@ test("full snapshot extractor fails closed for unsafe or ambiguous shapes", () =
   assert.equal(extractProviderProducts({ products: [products[0], { name: "Kategoria", id: 2 }] }, 2, "118359"), null);
   assert.equal(extractProviderProducts({ products: [products[0], providerProduct("Obcy", "112471")] }, 2, "118359"), null);
   assert.equal(extractProviderProducts(JSON.stringify(JSON.stringify({ products })), 2, "118359"), null);
-  assert.equal(extractProviderProducts({ data: { response: { payload: { result: { products } } } } }, 2, "118359"), null);
+  assert.equal(extractProviderProducts({ a: { b: { c: { d: { e: { f: { g: { products } } } } } } } }, 2, "118359"), null);
   assert.throws(
     () => extractProviderProducts({ products, data: products.map((product) => ({ ...product })) }, 2, "118359"),
     /provider_snapshot_ambiguous/,
@@ -40,6 +46,8 @@ test("full snapshot extractor recognizes only safe provider error codes", () => 
   assert.equal(providerPayloadErrorCode({ errors: [{ code: "PF_392", message: "private detail" }] }), "PF_392");
   assert.equal(providerPayloadErrorCode({ code: "not safe!", message: "private detail" }), null);
   assert.equal(providerPayloadErrorCode({ products: [] }), null);
+  assert.equal(providerPayloadShapeCode({ productHeader: {}, undocumentedEnvelope: {}, generatedAt: "now" }),
+    "object_producthea_undocument_generateda");
 });
 
 test("proof uses the fixed bridge flow for exactly the two approved feeds", async () => {
