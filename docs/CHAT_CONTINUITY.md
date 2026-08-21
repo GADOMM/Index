@@ -172,27 +172,43 @@ Dopiero potem przejdź do następnego zadania.
 
 ## Current continuity checkpoint
 
-Verified at 2026-08-21 19:01 UTC before this documentation branch:
+Verified at 2026-08-21 21:16 UTC before the v114 continuity branch:
 
-1. `master` commit:
-   `5162f5ebf487de60083147b1be587d5c83fe283c`;
-2. pull request `#13` is merged and records the verified production handoff;
-3. Actions run number `29`, ID `32502783967`, succeeded as pull request
-   validation and skipped the live importer;
-4. Actions run number `28`, ID `32497431067`, attempt `3`, is the last
-   successful production importer run;
-5. Sites v113 is deployed successfully from commit
-   `4e2adaf13f07fe197504677006c141e6b61dbb82` with 44 of 44 tests passing;
-6. both custom domains have active provider and SSL status, while Sites reports
-   `https://beta.perfumetr.pl` as the live URL;
-7. verified live offers total `7,977`: Aelia `1,049`, Cocolita `793`,
-   Drogeria.pl `814`, Notino `4,422` and Brasty `899`;
-8. AWIN Flaconi remains blocked by `orchestrator_feed_not_found`;
-9. no code change, import or Sites deployment is in progress;
-10. the next task is the read-only visual and routing audit of the homepage,
-    beta page, store rail, `perfumetr.pl` and `beta.perfumetr.pl`;
-11. this documentation-only change does not require a deployment email;
-12. the last delivered report number is not yet verified in the repository.
+1. `master` baseline commit:
+   `2013b37e4e3d3d7c21d0fa259dd80dd9e48eddfe`;
+2. pull requests `#12`, `#13` and `#14` are merged; `#14` contains the strict
+   continuity and deployment-report runbook;
+3. Actions run number `31`, ID `32526426619`, attempt `1`, succeeded as a
+   scheduled partner-only cycle from 21:00:42 to 21:01:08 UTC;
+4. run 31 passed importer validation `14/14`, skipped the full TradeDoubler
+   product import and successfully advanced partner sources;
+5. the last full production importer remains run number `28`, ID
+   `32497431067`, attempt `3`, successful at 2026-08-21 16:20 UTC;
+6. run 31 reconfirmed Notino `4,422` and Brasty `899` live offers; the
+   TradeDoubler counts remain the verified run 28 results: Aelia `1,049`,
+   Cocolita `793` and Drogeria.pl `814`; verified total `7,977`;
+7. TradeDoubler vouchers remain fresh with 4 received, 4 excluded and 0 active
+   coupons;
+8. AWIN Flaconi remains externally blocked by
+   `orchestrator_feed_not_found`; the blocker did not fail the workflow;
+9. Sites v114 is deployed successfully from commit
+   `8b336271e686dc72bafc9d6ee8872c329e7378ed` with 44 of 44 tests passing;
+10. v114 version ID is
+    `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_939b330cebc08191b015140731063b17`
+    and deployment ID is `appgdep_6a88bed270388191a99b8e7e185865f7`;
+11. `perfumetr.pl` and `beta.perfumetr.pl` have active domain, provider and SSL
+    status; Sites reports `https://beta.perfumetr.pl` as the live URL;
+12. the new store rail is deployed on the homepage and beta page: glass-style
+    container, logo capsules, fade on both ends, 40 px mobile height,
+    reduced-motion handling and a separate dynamic coverage message with
+    `Wkrótce więcej`;
+13. the deployment is technically verified, but subjective appearance on a
+    physical phone still awaits the user's visual review;
+14. report `#005` was sent to `support@perfumetr.pl` at 2026-08-21 21:13 UTC
+    with the Perfumetr. logo and approved footer; Gmail confirms it in Sent;
+15. no code change, import or Sites deployment is currently in progress;
+16. the exact next task is the user's real-phone visual review of v114, followed
+    only by the specific visual refinements requested.
 
 Treat this checkpoint as dated evidence, not as a substitute for a fresh GitHub
 and Sites check.
