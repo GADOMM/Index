@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "sourceKey": "cocolita-pl",
+      "storeSlug": "cocolita",
+      "storeName": "Cocolita",
+      "currency": "PLN",
+      "allowedDomains": ["cocolita.pl"],
+      "feedIds": ["112471"],
+      "programIds": []
+    },
+    {
+      "sourceKey": "drogeria-pl",
+      "storeSlug": "drogeria",
+      "storeName": "Drogeria.pl",
+      "currency": "PLN",
+      "allowedDomains": ["drogeria.pl"],
+      "feedIds": ["118359"],
+      "programIds": []
+    },
+    {
+      "sourceKey": "aelia-pl",
+      "storeSlug": "aelia",
+      "storeName": "Aelia.pl",
+      "currency": "PLN",
+      "allowedDomains": ["aelia.pl"],
+      "feedIds": [],
+      "programIds": ["397216"]
+    }
+  ]
+}
