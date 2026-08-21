@@ -11,9 +11,9 @@ After every important deployment or major production investigation, update both
 
 1. the UTC verification timestamp;
 2. the confirmed state of every project area;
-3. the exact current `master` commit;
+3. the exact verified `master` baseline and the continuity pull request;
 4. important pull request numbers and their state;
-5. the latest GitHub Actions run and the last production importer run as two
+5. the latest GitHub Actions run and the last production importer run as
    separate facts;
 6. the current Sites version, source commit and deployment state;
 7. exact live-offer counts for every active store and their total;
@@ -23,11 +23,10 @@ After every important deployment or major production investigation, update both
 11. any work still in progress, with its exact stage;
 12. external blockers and ownership;
 13. the exact next task;
-14. the deployment-report number, recipient, sent timestamp and delivery state.
+14. the report number, recipient, delivery state and current user instruction.
 
 Use only directly verified facts. Never present work in progress, an unverified
-deployment or a launched workflow as completed. Do not wait for ChatGPT to show
-a conversation-length warning.
+deployment or a launched workflow as completed.
 
 ## Immediate transfer trigger
 
@@ -124,6 +123,7 @@ Importer: [stan]
 Sieci afiliacyjne: [stan]
 Strona główna: [stan]
 Strona beta: [stan]
+Katalog i filtry: [stan]
 Pasek sklepów i dynamiczna liczba sklepów: [stan]
 Panel integracji: [stan]
 Domeny i SSL: [stan]
@@ -152,10 +152,15 @@ DOKŁADNE NASTĘPNE ZADANIE
 [jeden konkretny i bezpieczny krok]
 
 RAPORTY WDROŻENIOWE
-Po każdym ważnym wdrożeniu wyślij raport także na support@perfumetr.pl.
-Raport musi mieć datę, kolejny numer, czytelny opis zmian, wynik testów, stan
-działających i niedziałających elementów, blokady, następny krok, właściwe logo
-Perfumetr. oraz stopkę:
+Nie wysyłaj raportu automatycznie po każdym wizualnym wdrożeniu. Użytkownik
+poprosi o jeden skonsolidowany raport po zakończeniu dnia. Przed wysłaniem
+odczytaj raport #003 z folderu Wysłane i odwzoruj dokładnie jego szablon,
+wordmark, układ, typografię oraz stopkę. Nie twórz nowego wyglądu wiadomości.
+Sprawdź ostatni faktycznie dostarczony numer przed wybraniem kolejnego.
+
+Każdy zamówiony raport wyślij na support@perfumetr.pl. Musi mieć datę, kolejny
+numer, czytelny opis zmian, wynik testów, stan działających i niedziałających
+elementów, blokady, następny krok, właściwe logo Perfumetr. oraz stopkę:
 
 Pozdrawiamy,
 Zespół Perfumetr
@@ -163,7 +168,9 @@ Ten sam zapach. Różne ceny.
 perfumetr.pl
 support@perfumetr.pl
 
-Ostatni raport: [numer, data, stan wysłany, oczekuje albo niewymagany]
+Ostatni raport: [numer, data i stan]
+Raport bieżącego wdrożenia: [wysłany, oczekuje, odroczony na prośbę użytkownika
+albo niewymagany]
 Nie twierdź, że raport został wysłany bez potwierdzenia dostarczenia.
 
 Najpierw potwierdź użytkownikowi, co odczytałeś i jaki jest rzeczywisty stan.
@@ -172,67 +179,78 @@ Dopiero potem przejdź do następnego zadania.
 
 ## Current continuity checkpoint
 
-Verified at 2026-08-21 21:16 UTC before the v114 continuity branch:
+Verified at 2026-08-21 23:08 UTC before the v120 continuity branch:
 
 1. `master` baseline commit:
-   `2013b37e4e3d3d7c21d0fa259dd80dd9e48eddfe`;
-2. pull requests `#12`, `#13` and `#14` are merged; `#14` contains the strict
-   continuity and deployment-report runbook;
-3. Actions run number `31`, ID `32526426619`, attempt `1`, succeeded as a
-   scheduled partner-only cycle from 21:00:42 to 21:01:08 UTC;
-4. run 31 passed importer validation `14/14`, skipped the full TradeDoubler
-   product import and successfully advanced partner sources;
-5. the last full production importer remains run number `28`, ID
-   `32497431067`, attempt `3`, successful at 2026-08-21 16:20 UTC;
-6. run 31 reconfirmed Notino `4,422` and Brasty `899` live offers; the
+   `15cdffc860d319bc82705ea903e3127b2145c985`;
+2. pull requests `#12`, `#13`, `#14` and `#15` are merged;
+3. latest Actions run is number `32`, ID `32527917523`, attempt `1`,
+   pull-request validation, succeeded from 21:18:57 to 21:19:07 UTC;
+4. run 32 completed the validation job and skipped the import job;
+5. latest scheduled production partner run remains number `31`, ID
+   `32526426619`, attempt `1`, succeeded from 21:00:42 to 21:01:08 UTC;
+6. run 31 passed importer validation `14/14`, skipped the full TradeDoubler
+   snapshot and successfully advanced partner sources;
+7. latest full production importer remains run `28`, ID `32497431067`,
+   attempt `3`, successful at 16:20 UTC;
+8. run 31 reconfirmed Notino `4,422` and Brasty `899` live offers; the
    TradeDoubler counts remain the verified run 28 results: Aelia `1,049`,
    Cocolita `793` and Drogeria.pl `814`; verified total `7,977`;
-7. TradeDoubler vouchers remain fresh with 4 received, 4 excluded and 0 active
+9. TradeDoubler vouchers remain fresh with 4 received, 4 excluded and 0 active
    coupons;
-8. AWIN Flaconi remains externally blocked by
-   `orchestrator_feed_not_found`; the blocker did not fail the workflow;
-9. Sites v114 is deployed successfully from commit
-   `8b336271e686dc72bafc9d6ee8872c329e7378ed` with 44 of 44 tests passing;
-10. v114 version ID is
-    `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_939b330cebc08191b015140731063b17`
-    and deployment ID is `appgdep_6a88bed270388191a99b8e7e185865f7`;
-11. `perfumetr.pl` and `beta.perfumetr.pl` have active domain, provider and SSL
-    status; Sites reports `https://beta.perfumetr.pl` as the live URL;
-12. the new store rail is deployed on the homepage and beta page: glass-style
-    container, logo capsules, fade on both ends, 40 px mobile height,
-    reduced-motion handling and a separate dynamic coverage message with
-    `Wkrótce więcej`;
-13. the deployment is technically verified, but subjective appearance on a
-    physical phone still awaits the user's visual review;
-14. report `#005` was sent to `support@perfumetr.pl` at 2026-08-21 21:13 UTC
-    with the Perfumetr. logo and approved footer; Gmail confirms it in Sent;
-15. no code change, import or Sites deployment is currently in progress;
-16. the exact next task is the user's real-phone visual review of v114, followed
-    only by the specific visual refinements requested.
+10. AWIN Flaconi remains externally blocked by
+    `orchestrator_feed_not_found`; the blocker did not fail the workflow;
+11. Sites v120 is deployed successfully from source commit
+    `4302d9133a5cc99eec4d4f5da7e3358108561b60`;
+12. v120 version ID is
+    `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e30e538bc74081918bfdc3fa5c7c8706`;
+13. v120 deployment ID is `appgdep_6a88d9d0cd048191b6ff07192ccbeef4`
+    and its directly rechecked status is `succeeded`;
+14. the production build succeeded and the full Sites suite passed `47/47`;
+    lint has zero errors and two pre-existing warnings;
+15. `perfumetr.pl` and `beta.perfumetr.pl` report active domain, provider and
+    SSL state with no domain error; Sites reports `https://beta.perfumetr.pl`
+    as the live URL;
+16. the v114-v119 homepage and beta visual refinements remain deployed;
+17. v120 replaces the earlier catalog drawer with the Catalog Canvas: calm
+    centered desktop surface, full-screen mobile layout, searchable brand
+    selection, radio refinements, synchronized active chips, simpler cards,
+    integrated back action and automatic first price-capable volume lookup;
+18. request cancellation, focus and scroll restoration, error states,
+    reduced-motion handling and mobile safe areas remain preserved;
+19. the redesign has technical verification but has not yet received the user's
+    subjective visual and full interaction review on a physical phone and
+    desktop;
+20. report `#005` remains the last confirmed delivered report;
+21. no v120 report was sent because the user requires a consolidated report only
+    after explicitly asking for it; when requested, the exact visual template
+    from delivered report `#003` must be reused;
+22. no code change, import, Sites deployment or email delivery is in progress;
+23. the exact next task is the user's desktop and real-phone review of v120 on
+    `beta.perfumetr.pl`, followed only by the specific refinements requested.
 
 Treat this checkpoint as dated evidence, not as a substitute for a fresh GitHub
 and Sites check.
 
 ## Report delivery rules
 
-After every important deployment, send the same numbered and dated report in
-chat and to `support@perfumetr.pl`. Use the real Perfumetr. wordmark, a readable
-human summary and the approved footer shown in the handoff template.
+The current user instruction supersedes the earlier automatic per-deployment
+email rule.
 
-Record one of these states in `PROJECT_STATE.md`:
-
-1. `sent`, only after delivery is confirmed;
-2. `pending`, when a report still needs to be sent or delivery is unconfirmed;
-3. `not required`, only when no important deployment occurred.
-
-Verify the last delivered report number before choosing the next sequential
-number. Never invent or reuse a number.
-
-## Information that must never enter a handoff
-
-Never store tokens, passwords, provider download URLs, OIDC assertions, browser
-tickets, administrator cookies, private provider payloads or copied mailbox
-content. Use safe error codes and authorized dashboard links instead.
+1. Do not send a report merely because a visual deployment completed.
+2. Wait for the user to explicitly request the consolidated report, normally
+   after the workday.
+3. Before composing it, retrieve delivered report `#003` from Sent and use that
+   exact visual template. Preserve its wordmark, spacing, typography, colors,
+   content structure and approved footer.
+4. Verify the latest delivered report number in Sent. At this checkpoint `#005`
+   is latest, but this must be rechecked before assigning `#006`.
+5. Send only to `support@perfumetr.pl` unless the user explicitly changes the
+   recipient.
+6. Record `sent` only after delivery is confirmed. Otherwise use `deferred`,
+   `pending` or `not required`.
+7. Never put credentials, provider payloads or private mailbox content into the
+   repository.
 
 ## When GitHub and Sites disagree
 
@@ -240,3 +258,9 @@ Stop before deployment. Verify both sides directly. A GitHub script can be
 correct while the required Sites endpoint is absent, and a successful import
 can still be hidden by separate public-catalog rules. Update the continuity
 files only after the mismatch is understood.
+
+## Information that must never enter a handoff
+
+Never store tokens, passwords, provider download URLs, OIDC assertions, browser
+tickets, administrator cookies, private provider payloads or copied mailbox
+content. Use safe error codes and authorized dashboard links instead.
