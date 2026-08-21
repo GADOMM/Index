@@ -58,6 +58,32 @@ const oidcExpiration = (token) => {
   }
 };
 
+const safeOidcContext = (token) => {
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+  try {
+    const claims = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf8"));
+    const allowedKeys = [
+      "iss", "aud", "sub", "repository", "repository_id", "repository_owner",
+      "repository_owner_id", "ref", "ref_type", "workflow_ref", "job_workflow_ref",
+      "event_name", "repository_visibility", "runner_environment", "actor", "actor_id",
+      "run_id", "run_attempt", "sha", "workflow_sha", "iat", "nbf", "exp",
+    ];
+    return Object.fromEntries(allowedKeys.flatMap((key) => {
+      const value = claims[key];
+      if (typeof value === "string" && value.length <= 300) return [[key, value]];
+      if (typeof value === "number" && Number.isSafeInteger(value)) return [[key, value]];
+      if (Array.isArray(value) && value.length <= 3
+        && value.every((item) => typeof item === "string" && item.length <= 300)) {
+        return [[key, value]];
+      }
+      return [];
+    }));
+  } catch {
+    return null;
+  }
+};
+
 const getOidcToken = async () => {
   const nowSeconds = Math.floor(Date.now() / 1000);
   if (cachedOidc && cachedOidc.expiresAt > nowSeconds + 60) return cachedOidc.token;
@@ -127,6 +153,10 @@ const bridgePost = async (body, extraHeaders = {}) => {
   }
   if (!response) throw new Error("bridge_unavailable");
   const payload = await response.json().catch(() => ({}));
+  if (response.status === 404 && cachedOidc?.token) {
+    const context = safeOidcContext(cachedOidc.token);
+    if (context) console.error(`oidc_context=${JSON.stringify(context)}`);
+  }
   if (!response.ok || payload.ok === false) throw safeBridgeError(payload, response.status);
   return payload;
 };
