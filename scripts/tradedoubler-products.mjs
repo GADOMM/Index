@@ -34,6 +34,24 @@ const PRODUCT_MARKERS = [
 
 const isRecord = (value) => Boolean(value && typeof value === "object" && !Array.isArray(value));
 
+export const providerPayloadErrorCode = (payload) => {
+  if (!isRecord(payload)) return null;
+  const candidates = [
+    payload.code,
+    payload.statusCode,
+    payload.errorCode,
+    isRecord(payload.error) ? payload.error.code : null,
+    ...(Array.isArray(payload.errors)
+      ? payload.errors.slice(0, 20).map((error) => isRecord(error) ? error.code : null)
+      : []),
+  ];
+  const code = candidates.find((value) => (
+    ["string", "number"].includes(typeof value)
+    && /^[A-Za-z0-9_-]{1,40}$/.test(String(value))
+  ));
+  return code === undefined ? null : String(code);
+};
+
 const explicitFeedIds = (product) => {
   const identifiers = [];
   for (const [key, value] of Object.entries(product)) {
