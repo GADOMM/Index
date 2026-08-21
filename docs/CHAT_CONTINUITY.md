@@ -2,6 +2,11 @@
 
 The repository, not a single chat, is the durable project memory.
 
+Use one ChatGPT Project for Perfumetr and a separate chat for each major task or
+deployment. Start a new task chat before the previous conversation becomes
+slow. ChatGPT Projects keep related chats and files together:
+https://learn.chatgpt.com/docs/projects
+
 ## Before a chat becomes long
 
 After every important deployment or major investigation:
@@ -32,6 +37,18 @@ affiliate credentials in chat.
 Then provide only the current task. There is no need to paste the entire old
 conversation.
 
+## Recommended chat split
+
+Keep these as separate chats inside the same Project:
+
+1. importer and affiliate networks;
+2. homepage and beta product work;
+3. catalog quality and matching;
+4. social media and brand assets;
+5. reports and operational follow-up.
+
+The repository files remain the common handoff between them.
+
 ## Handoff checklist
 
 A useful handoff answers all of these questions:
@@ -56,5 +73,5 @@ Use safe error codes and links to authorized dashboards instead.
 
 Stop before deployment. Verify both sides directly. A GitHub script can be
 correct while the required Sites endpoint is absent, and a successful import
-can still be hidden by separate public-catalog rules. Update `PROJECT_STATE.md`
-only after the mismatch is understood.
+can still be hidden by separate public-catalog rules. Update
+`PROJECT_STATE.md` only after the mismatch is understood.

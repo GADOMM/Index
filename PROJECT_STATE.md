@@ -1,9 +1,9 @@
 # Perfumetr project state
 
-Updated: 2026-08-21 14:54 UTC
+Updated: 2026-08-21 16:20 UTC
 
 This file contains no credentials. Verify every external status again before a
-new deployment.
+new deployment or report.
 
 ## Current production evidence
 
@@ -11,83 +11,130 @@ Repository: `GADOMM/Index`
 
 Default branch: `master`
 
-Last verified production commit: `1d8f3b2299cd214ab6eb6499ee4c0c5ccdcb0f7c`
+Importer release:
 
-Last verified workflow run:
-`https://github.com/GADOMM/Index/actions/runs/32489397241`
+* pull request `#12`;
+* merged commit `2f6ebf778151a5a618dd6653d393cbdb8b36989d`;
+* successful production run:
+  `https://github.com/GADOMM/Index/actions/runs/32497431067`;
+* run attempt 3 completed successfully at 2026-08-21 16:20 UTC;
+* GitHub Actions is the only automatic scheduler;
+* TradeDoubler, AWIN and CJ are coordinated by the same bounded workflow;
+* provider credentials and resumable import state remain server-side in Sites;
+* the legacy Worker cron and traffic-triggered catalog refresh are removed.
 
-Production result from that run:
+Sites version 113 is deployed successfully:
 
-| Source | State | Verified result |
-| --- | --- | --- |
-| Cocolita, Feed `112471` | successful, unchanged full snapshot | proof reported 793 store offers |
-| Drogeria.pl, Feed `118359` | successful full snapshot | 32,324 raw records, 1,564 perfumes, 814 live offers |
-| Aelia.pl, Program `397216` | not connected to the GitHub importer | Feed ID still must be discovered, never guessed |
-| TradeDoubler vouchers | server endpoint exists | included in the local shared-orchestrator draft |
-| AWIN Flaconi | server importer exists outside this repository | GitHub orchestration not deployed |
-| CJ Notino and Brasty | server importers exist outside this repository | GitHub orchestration not deployed |
-
-Sites version 111 is deployed and succeeded:
-
-* commit `539736b4e115837ce6e7f4ce0d341dbb856f719b`;
-* version `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_0cc54540be888191bac6dbc7b528bd88`;
-* deployment `appgdep_6a886666304c8191a45115b011de6794`;
+* commit `4e2adaf13f07fe197504677006c141e6b61dbb82`;
+* version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_d209fd34641081918a60ad20cc19d61b`;
+* deployment `appgdep_6a887781599081918d1cef47c3e05d81`;
 * URL `https://perfumetr.borodzicz85.chatgpt.site`.
 
-That version provides the exact OIDC bridge for Aelia, the shared catalog
-orchestrator, operational integration status, dynamic public visibility for
-verified active merchants and the automatically counted store rail on the
-homepage and beta.
+Site tests pass: `44/44`. No production Worker errors were found after the
+deployment.
 
-## Local draft in this workspace
+## Verified importer results
 
-The uncommitted local draft adds:
+| Source | State | Verified production result |
+| --- | --- | --- |
+| TradeDoubler Cocolita, Feed `112471` | active, full snapshot unchanged | proof: 100 received, 29 perfumes, 793 store live offers |
+| TradeDoubler Drogeria.pl, Feed `118359` | active, full snapshot unchanged | proof: 100 received, 25 perfumes, 814 store live offers |
+| TradeDoubler Aelia.pl, Feed `258031`, Program `397216` | full import completed | 8,426 provider and scanned products, 1,799 perfumes, 85 chunks, 1,049 imported and live offers |
+| TradeDoubler vouchers | completed, fresh | 4 received, 4 excluded, 0 active coupons |
+| CJ Notino | completed, fresh | 7,005 received, 3,776 imported, 445 review, 2,784 excluded, 4,422 live offers |
+| CJ Brasty | completed, fresh | 13,598 received, 1,982 imported, 11,324 review, 292 excluded, 899 live offers |
+| AWIN Flaconi | blocked, retried automatically | `orchestrator_feed_not_found`; the partner feed still requires external activation |
 
-1. non-secret TradeDoubler source configuration;
-2. Aelia configuration from the official program `397216` payload;
-3. source-level failure isolation;
-4. the `perfume-v1` classifier;
-5. a bounded AWIN/CJ GitHub orchestrator;
-6. broader workflow and tests;
-7. durable project and chat handoff documentation.
+A blocked source does not stop successful TradeDoubler or CJ sources. Scheduled
+cycles retry the AWIN blocker automatically after the feed becomes available.
 
-This draft has not been published and is not production state.
+The importer applies the strict `perfume-v1` classifier before catalog
+publication. Only perfume candidates are submitted to matching and comparison.
+The final Aelia log does not emit separate review or excluded counters, so no
+unverified split is recorded here.
 
-## Deployed server contracts
+## Automatic schedule
 
-Sites version 111 provides:
+Partner sources run at:
 
-1. verified OIDC access to the existing `program_feeds` ticket and
-   `configure_store_feed` flow for Aelia;
-2. `/api/internal/catalog-orchestrator` with actions `status` and
-   `advance_source`;
-3. an exact allowlist for `tradedoubler:vouchers`, `awin:flaconi`, `cj:notino`
-   and `cj:brasty`;
-4. OIDC access from the existing trusted workflow path and audience;
-5. unified persisted source status for the integrations panel;
-6. safe generation restart after `feed_changed`, `incomplete_feed` and
-   `pagination_incomplete`.
+* 02:47 UTC;
+* 08:47 UTC;
+* 14:17 UTC;
+* 20:47 UTC.
 
-## Known risks
+The full TradeDoubler snapshot runs at 14:17 UTC. Proof imports and bounded
+server-side steps isolate source failures so one unavailable partner does not
+block the remaining stores.
 
-1. The TradeDoubler full payload is still parsed fully in memory after download.
-2. The classifier is intentionally strict and requires live Aelia sampling to
-   measure false negatives.
-3. The current 120 minute workflow may become too short as sources grow.
-4. GitHub scheduled workflows in inactive public repositories can be disabled
-   by GitHub; a missing-success alert is still required.
-5. A new TradeDoubler store still needs an allowlisted Sites store profile and
-   a non-secret source entry before GitHub may discover its feed.
+## Public store visibility
 
-## Next action
+The homepage and beta use a compact animated store rail based on verified active
+merchants with fresh public offers.
 
-Publish this draft through a pull request. Require CI to pass, merge, then
-inspect the first push workflow and record the real result for every source.
-Only after the GitHub cycle is verified may the legacy Worker fallback be
-removed from Sites.
+The rail currently exposes five stores:
 
-## Do not claim yet
+1. Notino;
+2. Brasty;
+3. Cocolita;
+4. Drogeria.pl;
+5. Aelia.pl.
 
-Do not claim that Aelia imports, that AWIN/CJ are controlled by GitHub, that the
-integrations panel is repaired or that future shops enroll automatically until
-each behavior has direct production evidence.
+The rail uses store names and styled wordmarks. Its visible store count is
+calculated automatically from the same production data. A newly verified store
+can appear without manually editing the count.
+
+## Integrations panel
+
+The panel reads persisted source status and refreshes lightweight status views
+automatically. It does not start normal imports during page interaction.
+
+The obsolete TradeDoubler PRODUCTS connection probe and its misleading error
+are removed. The TradeDoubler card reports GitHub automation, catalog, fresh
+offers and coupons. AWIN clearly reports the feed activation blocker. CJ reports
+the latest persisted importer state, and `paused` can be a normal resumable
+next cycle.
+
+Emergency authenticated backend import routes remain available for controlled
+recovery, but the panel is not a second scheduler. Manual coupon confirmation
+remains a separate guarded operation.
+
+## Adding future stores
+
+The shared workflow and source-level isolation are ready for further
+TradeDoubler stores and partner sources. Enrollment is not zero-configuration:
+a new store still needs an allowlisted Sites profile, provider eligibility or
+feed access, and a non-secret repository source entry. After that setup, normal
+product refresh and publication are automatic.
+
+## Chat continuity
+
+The repository is the durable project memory. Before a chat becomes long, update
+this file and the exact production evidence, then start a separate task chat
+inside the same ChatGPT Project. The next chat should read `AGENTS.md`, this
+file, `docs/ARCHITECTURE.md` and `docs/CHAT_CONTINUITY.md` before changing
+production.
+
+## Known risks and blockers
+
+1. AWIN Flaconi cannot import until the external feed is approved and exposed to
+   the server importer.
+2. Full TradeDoubler snapshots are still parsed in memory after download.
+3. GitHub scheduled workflows can be disabled on inactive public repositories;
+   a missing-success alert is still recommended.
+4. A future provider schema change may require a new bounded adapter or source
+   profile.
+5. The production domain and final visual state of the homepage and beta need a
+   dedicated follow-up review.
+
+## Next work
+
+Start the dedicated homepage and beta cleanup pass. Include layout
+shortcomings, visual verification of the store rail in the final domain, and
+the production-domain availability issue observed during the previous check.
+
+## Do not claim
+
+Do not claim that AWIN Flaconi is active while its state remains
+`orchestrator_feed_not_found`. Do not invent Aelia review or excluded counters
+that the final workflow log did not emit.
