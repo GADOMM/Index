@@ -86,6 +86,9 @@ const safeCounterKeys = [
   "matchedCandidates",
   "reviewCandidates",
   "storeLiveOffers",
+  "automaticReviewCount",
+  "pendingFreshOfferCount",
+  "maintenanceProcessedCount",
 ];
 const responseCounters = (payload) => {
   const counters = {};
@@ -99,6 +102,20 @@ const responseCounters = (payload) => {
   }
   return counters;
 };
+const cjMaintenanceCounters = (source, counters) => {
+  if (!source.startsWith("cj:")) return null;
+  const required = ["automaticReviewCount", "pendingFreshOfferCount", "maintenanceProcessedCount"];
+  if (required.some((key) => counters[key] === undefined)) {
+    throw new Error("orchestrator_invalid_response");
+  }
+  return {
+    automaticReviewCount: counters.automaticReviewCount,
+    pendingFreshOfferCount: counters.pendingFreshOfferCount,
+    maintenanceProcessedCount: counters.maintenanceProcessedCount,
+  };
+};
+const hasMaintenanceBacklog = (maintenance) => Boolean(maintenance
+  && (maintenance.automaticReviewCount > 0 || maintenance.pendingFreshOfferCount > 0));
 const runSource = async (source) => {
   const initial = await post({ action: "status", source });
   let state = responseState(initial);
@@ -107,14 +124,25 @@ const runSource = async (source) => {
   let skipped = responseSkipped(initial);
   let busy = responseBusy(initial);
   let counters = responseCounters(initial);
+  let inCjMaintenance = state === "completed"
+    && hasMaintenanceBacklog(cjMaintenanceCounters(source, counters));
   while (!skipped && !busy && steps < configuredSteps) {
     latest = await post({ action: "advance_source", source });
     state = responseState(latest);
     skipped = responseSkipped(latest);
     busy = responseBusy(latest);
-    counters = { ...counters, ...responseCounters(latest) };
+    const stepCounters = responseCounters(latest);
+    const maintenance = cjMaintenanceCounters(source, stepCounters);
+    counters = { ...counters, ...stepCounters };
     steps += 1;
-    if (["completed", "failed"].includes(state)) break;
+    if (skipped || busy || state === "failed") break;
+    if (state !== "completed") {
+      inCjMaintenance = false;
+      continue;
+    }
+    if (!maintenance || !hasMaintenanceBacklog(maintenance)) break;
+    if (inCjMaintenance && maintenance.maintenanceProcessedCount === 0) break;
+    inCjMaintenance = true;
   }
   return {
     ok: state !== "failed",
