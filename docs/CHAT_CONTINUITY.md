@@ -59,7 +59,145 @@ change:
 8. make no code, import, configuration or production change until the checks are
    complete.
 
-## Current continuity checkpoint
+## Latest continuity checkpoint
+
+Verified at 2026-08-22 17:20 UTC for Sites v128 and catalog recovery. This
+checkpoint supersedes the lower v123 checkpoint retained for history.
+
+1. verified `master` before continuity PR #22:
+   `8eab30aac9d9209c3d73a19cfcddaa08ed6787ce`;
+2. PR #20 and PR #21 are merged; PR #22 is the documentation-only continuity
+   record for this checkpoint and its final state must be checked directly;
+3. GitHub Actions run #47, ID `32581506389`, attempt 15, production job
+   `97065393622`, completed successfully from 17:16:44 to 17:17:26 UTC;
+4. attempt 15 reported no HTTP 429 or workflow error; run #28 remains the
+   latest full TradeDoubler snapshot;
+5. Sites v128 source commit is
+   `7f4943aac6d4256faccb2f62ebb50f9bf56589d5`;
+6. v128 version ID is
+   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_54ab4c69fcac8191a673e5dccda17080`;
+7. deployment `appgdep_6a89d93b1f988191886c838226132d0f` is
+   `succeeded`;
+8. the build passed, the full Sites suite passed 47/47, lint has zero errors
+   and three existing warnings, and an independent review found no blocker;
+9. the safe Notino coverage backlog fell from 1,381 to 0 and added 701 live
+   offers;
+10. final live counts are Aelia 1,185, Cocolita 830, Drogeria.pl 835,
+    Notino 5,297 and Brasty 6,041, total 14,188;
+11. Notino is completed with 209 review, 0 automatic and 0 pending fresh;
+12. Brasty is completed with 220 review, 0 automatic and 0 pending fresh;
+13. the remaining review cases are true manual cases and are not presented as
+    safe automatic matches;
+14. the exact homepage spotlight shows Notino, 5 stores, 217.40 PLN total and
+    220.50 PLN saving for Stronger With You EDT 50 ml;
+15. prices and offer details remain dynamic; no screenshot price or manual
+    product JSON was inserted;
+16. TradeDoubler vouchers remain 4 received, 4 excluded, 0 imported and 0
+    active;
+17. Flaconi remains externally blocked by
+    `orchestrator_feed_not_found`;
+18. report #006 remains the latest confirmed delivered report; no report was
+    sent for this work;
+19. there is no code change, import, deployment, pull request merge or email
+    delivery in progress except the documentation-only PR #22 until its final
+    state is confirmed;
+20. the next time-based task is the read-only homepage rotation check after
+    2026-08-23 09:20 UTC.
+
+Treat this as dated evidence and recheck all unstable values before a new
+change.
+
+## Latest paste-ready handoff baseline
+
+```text
+KONTYNUUJEMY PROJEKT PERFUMETR
+
+Nie zakładaj, że widzisz historię poprzedniego czatu.
+
+Najpierw niczego nie zmieniaj. Użyj GitHuba i Sites wyłącznie do odczytu.
+Przeczytaj w GADOMM/Index:
+AGENTS.md
+PROJECT_STATE.md
+docs/ARCHITECTURE.md
+docs/CHAT_CONTINUITY.md
+
+Następnie sprawdź aktualny master, najnowszy GitHub Actions run, ostatni pełny
+TradeDoubler, bieżącą wersję i wdrożenie Sites, domeny perfumetr.pl i
+beta.perfumetr.pl oraz produkcję. Jeżeli wystąpi rozbieżność, najpierw opisz ją
+użytkownikowi. Nie zmieniaj kodu, importera, konfiguracji ani produkcji przed
+zakończeniem tej kontroli.
+
+CZAS WERYFIKACJI
+22 sierpnia 2026, 17:20 UTC.
+
+GITHUB
+Master przed PR #22:
+8eab30aac9d9209c3d73a19cfcddaa08ed6787ce
+PR #20 i #21 są scalone. PR #22 zapisuje ten stan i trzeba sprawdzić jego
+ostateczny CI oraz merge.
+Najnowszy cykl: run #47, ID 32581506389, attempt 15, job 97065393622,
+success, 17:16:44–17:17:26 UTC. Nie wystąpił HTTP 429.
+Ostatni pełny TradeDoubler: run #28, ID 32497431067, attempt 3.
+GitHub Actions jest jedynym automatycznym harmonogramem.
+
+SITES
+Wersja v128.
+Commit: 7f4943aac6d4256faccb2f62ebb50f9bf56589d5
+Version ID:
+appgprj_6a8236775b808191b6b4979c4d86d889~appgver_54ab4c69fcac8191a673e5dccda17080
+Deployment: appgdep_6a89d93b1f988191886c838226132d0f
+Status: succeeded.
+Provider URL: https://perfumetr.borodzicz85.chatgpt.site
+Build działa, testy 47/47, lint 0 błędów i 3 wcześniejsze ostrzeżenia.
+Obie domeny zachowują poprzedni aktywny stan; sprawdź go ponownie przed zmianą.
+
+AUTOMATYZACJA KATALOGU
+Importer używa oficjalnych danych dostawców. Nie dodano ręcznego JSON ani ceny
+ze zrzutu. Bezpieczne mapowanie wymaga jednoznacznego pełnego GTIN. Stare
+oferty są odświeżane przez oficjalne zapytanie po ID produktu. Audyt pokrycia
+szuka brakujących ofert tylko dla zweryfikowanych wariantów z aktywną ofertą
+innego zweryfikowanego sklepu. GitHub opróżnia ograniczone paczki i zatrzymuje
+się przy braku postępu, błędzie, cooldownie, busy albo limicie 48 kroków.
+Konflikty po świeżym odczycie przechodzą do prawdziwej ręcznej kontroli i nie
+zapętlają automatu.
+
+WYNIK
+Aelia: 1185 aktywnych ofert.
+Cocolita: 830.
+Drogeria.pl: 835.
+Notino: 5297, review 209, automatic 0, pending fresh 0.
+Brasty: 6041, review 220, automatic 0, pending fresh 0.
+Łącznie: 14188.
+Backlog pokrycia Notino spadł z 1381 do 0, a Notino zyskało 701 ofert.
+Pozostałe review to rzeczywiste przypadki ręczne, nie bezpieczne automatyczne
+dopasowania.
+Kupony: 4 odebrane, 4 wykluczone, 0 aktywnych.
+Flaconi: zewnętrzna blokada orchestrator_feed_not_found.
+
+STRONA GŁÓWNA
+Bezpośrednia kontrola po attempt 15: HTTP 200, Stronger With You EDT 50 ml,
+Notino, 5 sklepów, 217,40 zł łącznie i 220,50 zł oszczędności. Dane są
+dynamiczne z D1. Cena ze zrzutu nie została wpisana na stałe.
+
+PRACA W TOKU
+Brak po scaleniu dokumentacyjnego PR #22. Nie ma edycji, importu, wdrożenia ani
+wysyłki e-mail.
+
+NASTĘPNE ZADANIE CZASOWE
+Po 23 sierpnia 2026 o 09:20 UTC wyłącznie odczytowo sprawdź, czy czasowy
+spotlight wygasł, wróciła zwykła pięciodniowa rotacja, oferta jest dynamiczna i
+nie ma pustego ani starego hero. Nie wdrażaj niczego, jeśli powrót zadziałał.
+
+RAPORTY
+Raport #006 pozostaje ostatnim potwierdzonym. Dla tej pracy nie wysłano raportu.
+Nie wysyłaj kolejnego bez wyraźnego polecenia użytkownika. Przed raportem
+sprawdź Wysłane i odwzoruj dokładnie szablon raportu #003.
+
+Najpierw krótko potwierdź użytkownikowi rzeczywisty odczytany stan i każdą
+rozbieżność. Dopiero potem wykonuj następne konkretne zadanie.
+```
+
+## Earlier continuity checkpoint retained for history
 
 Verified at 2026-08-22 13:44 UTC for Sites v123; continuity pull request
 `#20` records this checkpoint:
@@ -125,7 +263,7 @@ Verified at 2026-08-22 13:44 UTC for Sites v123; continuity pull request
 Treat this checkpoint as dated evidence, not as a substitute for a fresh GitHub
 and Sites check.
 
-## Current paste-ready handoff baseline
+## Earlier paste-ready handoff baseline retained for history
 
 When the transfer trigger occurs, first refresh every unstable value. Then
 return one self-contained Polish message using the following baseline and
