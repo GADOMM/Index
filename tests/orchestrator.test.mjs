@@ -53,7 +53,10 @@ test("one partner failure does not prevent CJ and TradeDoubler vouchers from adv
       if (body.source === "cj:notino") {
         return Response.json({
           ok: true,
-          overview: { state: "paused", receivedCount: 100, reviewCount: 5 },
+          overview: {
+            state: "paused", receivedCount: 100, reviewCount: 5,
+            automaticReviewCount: 5, pendingFreshOfferCount: 0, maintenanceProcessedCount: 0,
+          },
         });
       }
       if (body.source === "tradedoubler:vouchers") {
@@ -62,7 +65,15 @@ test("one partner failure does not prevent CJ and TradeDoubler vouchers from adv
           overview: { state: "completed" },
         });
       }
-      return Response.json({ ok: true, overview: { state: "running" } });
+      return Response.json({
+        ok: true,
+        overview: {
+          state: "running",
+          automaticReviewCount: 0,
+          pendingFreshOfferCount: 0,
+          maintenanceProcessedCount: 0,
+        },
+      });
     }
     if (body.source === "awin:flaconi") {
       return Response.json({ ok: true, overview: { state: "failed" } });
@@ -75,7 +86,16 @@ test("one partner failure does not prevent CJ and TradeDoubler vouchers from adv
       });
     }
     if (body.source === "cj:brasty") {
-      return Response.json({ ok: true, overview: { state: "running" }, busy: true });
+      return Response.json({
+        ok: true,
+        overview: {
+          state: "running",
+          automaticReviewCount: 0,
+          pendingFreshOfferCount: 0,
+          maintenanceProcessedCount: 0,
+        },
+        busy: true,
+      });
     }
     return Response.json({
       ok: true,
@@ -86,6 +106,9 @@ test("one partner failure does not prevent CJ and TradeDoubler vouchers from adv
         excludedCount: 156,
         importedCount: 42,
         liveOffers: 35,
+        automaticReviewCount: 0,
+        pendingFreshOfferCount: 0,
+        maintenanceProcessedCount: 0,
       },
     });
   };
@@ -117,6 +140,9 @@ test("one partner failure does not prevent CJ and TradeDoubler vouchers from adv
       excludedCount: 156,
       importedCount: 42,
       liveOffers: 35,
+      automaticReviewCount: 0,
+      pendingFreshOfferCount: 0,
+      maintenanceProcessedCount: 0,
     });
     assert.equal(report.sources[2].source, "tradedoubler:vouchers");
     assert.equal(report.sources[2].ok, true);
@@ -127,6 +153,118 @@ test("one partner failure does not prevent CJ and TradeDoubler vouchers from adv
     assert.equal(report.sources[3].busy, true);
     assert.equal(report.sources[3].completed, false);
     assert.doesNotMatch(stderr, new RegExp(requestToken));
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.PERFUMETR_ORCHESTRATOR_STEPS;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("drains completed CJ maintenance batches and stops a zero-progress cooldown", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const requestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const calls = [];
+  const notinoSteps = [
+    { automaticReviewCount: 2, pendingFreshOfferCount: 2, maintenanceProcessedCount: 0 },
+    { automaticReviewCount: 1, pendingFreshOfferCount: 1, maintenanceProcessedCount: 4 },
+    { automaticReviewCount: 0, pendingFreshOfferCount: 0, maintenanceProcessedCount: 2 },
+  ];
+  let stdout = "";
+  let stderr = "";
+
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.PERFUMETR_ORCHESTRATOR_STEPS = "6";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = requestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/catalog-orchestrator.mjs", "cj:notino", "cj:brasty"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  process.stderr.write = ((value) => { stderr += String(value); return true; });
+
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    const body = JSON.parse(init.body);
+    calls.push([body.source, body.action]);
+    if (body.action === "status" && body.source === "cj:notino") {
+      return Response.json({ ok: true, overview: {
+        state: "paused",
+        automaticReviewCount: 2,
+        pendingFreshOfferCount: 0,
+        maintenanceProcessedCount: 0,
+      } });
+    }
+    if (body.source === "cj:notino") {
+      const counters = notinoSteps.shift();
+      assert.ok(counters);
+      return Response.json({ ok: true, overview: { state: "completed", ...counters } });
+    }
+    if (body.action === "status") {
+      return Response.json({ ok: true, overview: {
+        state: "completed",
+        automaticReviewCount: 0,
+        pendingFreshOfferCount: 3,
+        maintenanceProcessedCount: 0,
+      } });
+    }
+    return Response.json({ ok: true, overview: {
+      state: "completed",
+      automaticReviewCount: 0,
+      pendingFreshOfferCount: 3,
+      maintenanceProcessedCount: 0,
+    } });
+  };
+
+  try {
+    await import(`../scripts/catalog-orchestrator.mjs?maintenance-test=${Date.now()}`);
+    assert.equal(stderr, "");
+    assert.notEqual(process.exitCode, 1);
+    const report = JSON.parse(stdout);
+    assert.equal(report.ok, true);
+    assert.deepEqual(calls, [
+      ["cj:notino", "status"],
+      ["cj:notino", "advance_source"],
+      ["cj:notino", "advance_source"],
+      ["cj:notino", "advance_source"],
+      ["cj:brasty", "status"],
+      ["cj:brasty", "advance_source"],
+    ]);
+    assert.equal(report.sources[0].steps, 3);
+    assert.equal(report.sources[0].completed, true);
+    assert.deepEqual(report.sources[0].counters, {
+      automaticReviewCount: 0,
+      pendingFreshOfferCount: 0,
+      maintenanceProcessedCount: 2,
+    });
+    assert.equal(report.sources[1].steps, 1);
+    assert.equal(report.sources[1].completed, true);
+    assert.deepEqual(report.sources[1].counters, {
+      automaticReviewCount: 0,
+      pendingFreshOfferCount: 3,
+      maintenanceProcessedCount: 0,
+    });
   } finally {
     process.argv = originalArgv;
     globalThis.fetch = originalFetch;
