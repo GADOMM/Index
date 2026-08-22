@@ -1,6 +1,6 @@
 # Perfumetr project state
 
-Updated: 2026-08-22 09:45 UTC
+Updated: 2026-08-22 13:44 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
@@ -23,7 +23,9 @@ Repository baseline verified before continuity pull request `#19`:
 * pull request `#18`: report #006 and tester-feedback continuity record;
 * pull request `#19`: documentation-only Sites v122 Stronger With You
   spotlight continuity record, merged as
-  `5e06942de9d7df90a6a608e95ce608fd3234b47a`.
+  `5e06942de9d7df90a6a608e95ce608fd3234b47a`;
+* pull request `#20`: documentation-only Sites v123 meaningful-savings
+  continuity record; verify its current CI and merge state directly.
 
 GitHub Actions evidence:
 
@@ -44,40 +46,44 @@ GitHub Actions evidence:
 
 ## Current Sites deployment
 
-Sites v122 is deployed successfully:
+Sites v123 is deployed successfully:
 
-* source commit `11e1639fe7a8e1f3d95802c3ecd22f07de3802f1`;
+* source commit `9333dfcbcb02bdb172908b2c9bb7191e369f3b9d`;
 * version
-  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_0439d4ebf1308191abc69eb241a03494`;
-* deployment `appgdep_6a896c851c308191bed86741aaf78c4b`;
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_8168714f30308191bec15294142b87e9`;
+* deployment `appgdep_6a89a78633c88191b681c5d81d89dda8`;
 * deployment status `succeeded`, directly verified at
-  2026-08-22 09:32 UTC;
+  2026-08-22 13:44 UTC;
 * provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
-* Sites reports version `122` and `https://beta.perfumetr.pl` as the
+* Sites reports version `123` and `https://beta.perfumetr.pl` as the
   current live URL;
 * the Sites project is active and public;
-* `perfumetr.pl` and `beta.perfumetr.pl` were directly rechecked at this
-  checkpoint and both report active domain, provider and SSL state with no
-  recorded error.
+* `perfumetr.pl` and `beta.perfumetr.pl` retain active domain, provider
+  and SSL state with no recorded error.
 
-The v122 production build completed successfully. The full Sites test suite
+The v123 production build completed successfully. The full Sites test suite
 passes `47/47`. Lint reports zero errors and three existing unused-variable
-warnings. Two independent read-only reviews found no blocking regression in
-the spotlight logic or the transparent bottle asset.
+warnings. An independent read-only review found no blocking regression in the
+meaningful-savings guard or its fallback.
+
+A direct production HTTPS check at 2026-08-22 13:44 UTC returned Stronger With
+You EDT 50 ml, Brasty, 4 stores and 239.74 PLN. The third hero metric now shows
+`pojemność` and `50 ml`; it no longer advertises the negligible 0.08 PLN
+difference as a saving.
 
 No importer, database schema, source configuration, automatic schedule or
-domain setting changed in v122.
+domain setting changed in v123.
 
 ## Project area checkpoint
 
 | Area | Confirmed state at this checkpoint |
 | --- | --- |
 | Repository and CI | PR #19 merged as `5e06942...`; latest Actions run 43 succeeded; scheduled production run 41 succeeded; run 28 remains the latest full TradeDoubler import |
-| Sites | v122 deployed successfully from `11e1639...`; production build and 47/47 tests passed |
-| Importer | TradeDoubler and CJ paths remain operational; v122 did not change importer code or schedules |
+| Sites | v123 deployed successfully from `9333dfc...`; production build and 47/47 tests passed |
+| Importer | TradeDoubler and CJ paths remain operational; v123 did not change importer code or schedules |
 | Affiliate sources | Aelia, Cocolita, Drogeria.pl, Notino and Brasty have live offers; AWIN Flaconi remains externally blocked |
 | Domains | `perfumetr.pl` and `beta.perfumetr.pl` report active provider and SSL state; Sites reports beta as the live URL |
-| Homepage | v122 temporarily spotlights Emporio Armani Stronger With You EDT 50 ml for exactly 24 hours; its commercial data remains dynamic |
+| Homepage | v123 keeps the active Stronger With You spotlight and suppresses negligible savings; 0.08 PLN is replaced by the 50 ml volume metric |
 | Beta landing page | Search, browse trigger, feedback prominence, metadata and responsive footer refinements remain deployed and unchanged in v122 |
 | Catalog browser | The v121 transparent minimal catalog, flat filters, automatic price-capable volume selection and accessible interaction remain deployed |
 | Store rail | Five store logos loop continuously, blend into the page on both ends and retain the compact mobile treatment |
@@ -121,6 +127,35 @@ snapshot runs at 14:17 UTC. GitHub may start a scheduled run later than the
 configured minute. Source-level isolation prevents one unavailable partner from
 blocking the remaining stores.
 
+## Sites v123 meaningful-savings guard
+
+The user reported that the homepage hero showed `oszczędzasz 0,08 zł · −0%`,
+which made the offer look unreliable.
+
+Completed behavior:
+
+1. the homepage labels a value as `oszczędzasz` only when the saving is at
+   least 5 PLN and at least 2%;
+2. smaller or zero-value differences fall back to the existing `pojemność`
+   metric and the live bottle volume;
+3. the current Stronger With You spotlight therefore shows `pojemność` and
+   `50 ml` instead of `0,08 zł · −0%`;
+4. meaningful discounts such as the tested 200 PLN and 40% fixture remain
+   visible;
+5. price, merchant, store count, delivery and coupon effects remain dynamic;
+6. no catalog, importer, schedule, database or domain behavior changed.
+
+Verification:
+
+* production build: passed;
+* full automated suite: `47/47`;
+* targeted negligible-saving regression test: passed;
+* lint: zero errors, three existing warnings;
+* independent read-only logic review: no blocker;
+* deployment v123: directly confirmed `succeeded`;
+* direct `perfumetr.pl` check: HTTP 200 and the expected `pojemność 50 ml`
+  metric, with no visible `oszczędzasz 0,08 zł`.
+
 ## Sites v122 Stronger With You spotlight
 
 The user requested one targeted homepage change and no unrelated visual work.
@@ -158,10 +193,10 @@ the Sites workflow did not require a subjective re-review of unrelated areas.
 
 ## Earlier visual work retained
 
-The v114-v121 homepage, beta landing and catalog refinements remain part of the
+The v114-v122 homepage, beta landing, catalog and spotlight refinements remain part of the
 current build. They include the continuously looping store rail, separate
 store-count message, browse trigger, refreshed search, prominent feedback
-action, responsive footer and minimal transparent catalog. v122 did not rebuild
+action, responsive footer and minimal transparent catalog. v123 did not rebuild
 or reverse those areas.
 
 ## Integrations panel
@@ -181,7 +216,7 @@ Report `#006`, dated 2026-08-22, remains the latest confirmed delivered message
 to `support@perfumetr.pl`. It uses the exact visual template, wordmark, layout,
 typography, inline Perfumetr logo and footer from delivered report `#003`.
 
-No report was sent for v122. The user instructed that visual deployments should
+No report was sent for v122 or v123. The user instructed that visual deployments should
 be consolidated and reported only after an explicit end-of-day request.
 
 Current reporting instruction:
@@ -206,18 +241,21 @@ support@perfumetr.pl
 ## Current operational handoff
 
 No code change, import, Sites deployment or email delivery is currently in
-progress. The last production change is the v122 Stronger With You spotlight,
-deployed from source commit
-`11e1639fe7a8e1f3d95802c3ecd22f07de3802f1`, with a successful production
-build, `47/47` tests and a directly confirmed `succeeded` deployment.
-Pull request `#19` is the merged documentation-only continuity record for this
-checkpoint; its merge commit is
-`5e06942de9d7df90a6a608e95ce608fd3234b47a` and validation run 43 succeeded.
+progress. The last production change is Sites v123, deployed from source commit
+`9333dfcbcb02bdb172908b2c9bb7191e369f3b9d`. It hides the negligible
+0.08 PLN homepage saving and shows the current 50 ml volume instead. The
+production build passed, the full suite passed `47/47`, lint has zero errors
+and three existing warnings, and the deployment was directly confirmed
+`succeeded`.
 
-The exact next task is to verify, after 2026-08-23 09:20 UTC, that the normal
-five-day homepage rotation resumed. Before then, respond only to concrete tester
-feedback or the user's next targeted visual request; do not proactively alter
-unrelated interface areas.
+Pull request `#20` is the documentation-only continuity record for this
+checkpoint. Its current merge and CI state must be verified directly before a
+future change.
+
+The exact next task remains to verify, after 2026-08-23 09:20 UTC, that the
+normal five-day homepage rotation resumed. Before then, respond only to
+concrete tester feedback or the user's next targeted visual request; do not
+proactively alter unrelated interface areas.
 
 ## Known risks and blockers
 
@@ -249,7 +287,7 @@ production before that verification.
 
 ## Do not claim
 
-Do not claim that AWIN Flaconi is active while its state remains
+Do not advertise a saving below 5 PLN or 2% in the homepage hero. Do not claim that AWIN Flaconi is active while its state remains
 `orchestrator_feed_not_found`. Do not describe Brasty run 41 as a completed
 refresh. Do not describe run 41 as a full TradeDoubler import. Do not claim that
 the screenshot price is fixed on the homepage. Do not claim that any deployment
