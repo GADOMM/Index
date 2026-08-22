@@ -61,19 +61,22 @@ change:
 
 ## Current continuity checkpoint
 
-Verified at 2026-08-22 09:38 UTC before continuity pull request `#19`:
+Verified at 2026-08-22 09:42 UTC after continuity pull request `#19`:
 
-1. `master` baseline commit:
-   `f741cb7c4198f7eeea98d13c05669c5a79b3cd88`;
-2. pull requests `#12` through `#18` are merged; pull request `#19` is the
-   documentation-only v122 continuity record;
-3. latest Actions run is number `41`, ID `32563903356`, attempt `1`,
-   scheduled, conclusion `success`, from 09:03:07 to 09:07:08 UTC;
-4. run 41 passed importer validation, skipped the full TradeDoubler snapshot and
-   advanced partner sources successfully;
-5. latest full TradeDoubler importer remains run `28`, ID
-   `32497431067`, attempt `3`, successful at 2026-08-21 16:20 UTC;
-6. GitHub Actions is the only automatic scheduler;
+1. `master` before PR #19 was
+   `f741cb7c4198f7eeea98d13c05669c5a79b3cd88`; PR #19 merged as
+   `5e06942de9d7df90a6a608e95ce608fd3234b47a`;
+2. pull requests `#12` through `#19` are merged;
+3. latest Actions run before this metadata-only refresh is number `43`, ID
+   `32565560052`, attempt `1`, pull-request validation, conclusion
+   `success`;
+4. run 43 passed importer validation and skipped the production import job;
+5. latest scheduled production partner cycle is run `41`, ID
+   `32563903356`, attempt `1`, successful from 09:03:07 to 09:07:08 UTC;
+6. run 41 skipped the full TradeDoubler snapshot and advanced partner sources;
+   latest full TradeDoubler importer remains run `28`, ID
+   `32497431067`, attempt `3`, and GitHub Actions is the only automatic
+   scheduler;
 7. run 41 reports Aelia `1,049`, Cocolita `793`, Drogeria.pl `814`,
    Notino `4,422` and Brasty `1,092` live offers, total `8,170`;
 8. the TradeDoubler counts remain verified run 28 results because run 41 did
@@ -150,17 +153,17 @@ przekazaniem. Jeżeli wystąpi rozbieżność, najpierw ją opisz. Nie zmieniaj 
 importera, konfiguracji ani produkcji przed zakończeniem tej weryfikacji.
 
 CZAS OSTATNIEJ WERYFIKACJI
-2026-08-22 09:38 UTC
+2026-08-22 09:42 UTC
 
 REPOZYTORIUM I CI
-Master przed PR dokumentacyjnym #19:
-f741cb7c4198f7eeea98d13c05669c5a79b3cd88
-Ważne PR-y: #12 importer produkcyjny; #13 stan produkcji; #14 ciągłość;
-#15 Sites v114; #16 Sites v120; #17 Sites v121; #18 raport #006;
-#19 zapis Sites v122.
-Najnowszy Actions: run #41, ID 32563903356, attempt 1, schedule, success,
-2026-08-22 09:03:07–09:07:08 UTC. Walidacja importera przeszła, pełny
-TradeDoubler został pominięty, źródła partnerskie zostały przesunięte.
+Master przed PR #19: f741cb7c4198f7eeea98d13c05669c5a79b3cd88.
+PR #19 został scalony jako 5e06942de9d7df90a6a608e95ce608fd3234b47a.
+Ważne PR-y #12–#19 są scalone.
+Najnowszy Actions: run #43, ID 32565560052, attempt 1, pull_request, success.
+Walidacja importera przeszła, a import produkcyjny został pominięty.
+Ostatni produkcyjny cykl partnerski: run #41, ID 32563903356, attempt 1,
+schedule, success, 2026-08-22 09:03:07–09:07:08 UTC. Pełny TradeDoubler został
+pominięty, a źródła partnerskie przesunięte.
 Ostatni pełny TradeDoubler: run #28, ID 32497431067, attempt 3, success.
 GitHub Actions jest jedynym automatycznym harmonogramem.
 
