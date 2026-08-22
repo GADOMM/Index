@@ -179,70 +179,74 @@ Dopiero potem przejdź do następnego zadania.
 
 ## Current continuity checkpoint
 
-Verified at 2026-08-21 23:31 UTC before pull request `#17`:
+Verified at 2026-08-22 00:15 UTC before the current documentation-only
+continuity pull request:
 
 1. `master` baseline commit:
-   `05bb754f70526314d0c301fea6e27878fe8aeb4e`;
-2. pull requests `#12`, `#13`, `#14`, `#15` and `#16` are merged;
-   pull request `#17` is the documentation-only v121 continuity record;
-3. latest Actions run before PR `#17` is number `33`, ID `32535949248`,
-   attempt `1`, pull-request validation, succeeded from 23:11:27 to
-   23:11:40 UTC;
-4. run 33 completed the validation job successfully and skipped the import job;
+   `a4111f32cc7625f1c9f5e06a9e782bb42bd24988`;
+2. pull requests `#12`, `#13`, `#14`, `#15`, `#16` and `#17` are
+   merged; the current report-and-feedback continuity update changes
+   documentation only;
+3. latest Actions run before this continuity update is number `36`, ID
+   `32537373923`, attempt `1`, pull-request validation, conclusion
+   `success`;
+4. run 36 completed `Validate importer` successfully and skipped
+   `Import all configured catalog sources`;
 5. latest scheduled production partner run remains number `31`, ID
-   `32526426619`, attempt `1`, successful from 21:00:42 to 21:01:08 UTC;
+   `32526426619`, attempt `1`, successful from 21:00:42 to 21:01:08 UTC on
+   2026-08-21;
 6. run 31 passed importer validation `14/14`, skipped the full TradeDoubler
    snapshot and successfully advanced partner sources;
 7. latest full production importer remains run `28`, ID `32497431067`,
-   attempt `3`, successful at 16:20 UTC;
-8. run 31 reconfirmed Notino `4,422` and Brasty `899` live offers; the
+   attempt `3`, successful at 16:20 UTC on 2026-08-21;
+8. GitHub Actions is the only automatic scheduler;
+9. run 31 reconfirmed Notino `4,422` and Brasty `899` live offers; the
    TradeDoubler counts remain the verified run 28 results: Aelia `1,049`,
    Cocolita `793` and Drogeria.pl `814`; verified total `7,977`;
-9. TradeDoubler vouchers remain fresh with 4 received, 4 excluded and 0 active
-   coupons;
-10. AWIN Flaconi remains externally blocked by
-    `orchestrator_feed_not_found`; the blocker did not fail the workflow;
-11. Sites v121 is deployed successfully from source commit
-    `8e41f34be3ec5fe390e287c959ae0c16d552f2f0`;
-12. v121 version ID is
+10. TradeDoubler vouchers remain fresh with 4 received, 4 excluded, 0 imported
+    and 0 active coupons;
+11. AWIN Flaconi remains externally blocked by
+    `orchestrator_feed_not_found`; the blocker did not fail the workflow and
+    requires external feed activation;
+12. Sites v121 remains the latest deployed production version, from source
+    commit `8e41f34be3ec5fe390e287c959ae0c16d552f2f0`;
+13. v121 version ID is
     `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_946ac9bc18f48191b469baae459a807b`;
-13. v121 deployment ID is `appgdep_6a88df699204819198a3982e8045bad2`
+14. v121 deployment ID is `appgdep_6a88df699204819198a3982e8045bad2`
     and its directly rechecked status is `succeeded`;
-14. the production build succeeded, focused catalog tests passed `2/2`, the
+15. the production build succeeded, focused catalog tests passed `2/2`, the
     full Sites suite passed `47/47`, and lint has zero errors with two
     pre-existing warnings;
-15. Sites reports latest version `121`, the project is active and public, and
+16. Sites reports version `121`, the project is active and public, and
     `https://beta.perfumetr.pl` is the current live URL;
-16. `perfumetr.pl` and `beta.perfumetr.pl` last reported active domain,
+17. `perfumetr.pl` and `beta.perfumetr.pl` last reported active domain,
     provider and SSL state at the preceding checkpoint; v121 did not change
     domain settings;
-17. the v114-v119 homepage, beta landing, store rail, search, feedback and
+18. the v114-v119 homepage, beta landing, store rail, search, feedback and
     responsive-footer refinements remain deployed and were not changed in v121;
-18. v121 replaces the rejected cream Catalog Canvas with a full-viewport
-    transparent dark layer integrated with the beta background;
-19. v121 removes extra headings, slogans, nested filter panels, the decorative
-    filter icon, the visible result heading, audience badges and repeated
-    `Zobacz ceny` calls;
-20. the catalog now shows one title, one category/control rail, flat radio
-    refinements, brand suggestions only after typing and lightweight cardless
-    products;
+19. the store rail loops five logos continuously, has no rounded outer strip,
+    blends into the theme on both ends and keeps the coverage text separate;
+20. v121 uses a full-viewport transparent dark catalog layer integrated with the
+    beta background, one title, one category/control rail, flat filters,
+    on-demand brand suggestions and lightweight cardless products;
 21. automatic first price-capable volume selection, price lookup, accessible
-    radio semantics, draft/applied filter safety, request cancellation, focus
-    and scroll restoration, error states and reduced-motion handling remain
-    preserved;
-22. two independent read-only reviews found no blocking regression; mobile blur
-    was reduced and touch cards have an active-state response;
-23. the redesign has technical and deployment verification but has not yet
-    received the user's subjective visual approval on real desktop and phone;
-24. report `#005` remains the last confirmed delivered report; no v120 or v121
-    report was sent because the user requires one consolidated report only after
-    explicitly requesting it, and delivered report `#003` must supply the exact
-    email template;
-25. no code change, import, Sites deployment or email delivery is currently in
+    radio semantics, draft/applied filter safety, cancellation, focus and scroll
+    restoration, errors and reduced motion remain preserved;
+22. the beta has been shared with several new people and their feedback is
+    expected on 2026-08-22;
+23. this tester feedback has not yet been received or triaged and is not being
+    represented as completed work;
+24. report `#005` was confirmed as the latest delivered number immediately
+    before preparing the new report;
+25. report `#006`, dated 2026-08-22, was sent at 00:14 UTC to
+    `support@perfumetr.pl` and confirmed in Sent;
+26. report `#006` uses the exact visual template, wordmark, layout, typography,
+    inline Perfumetr logo and footer from delivered report `#003`;
+27. no code change, import, Sites deployment or email delivery is currently in
     progress;
-26. the exact next task is the user's desktop and real-phone review of v121 on
-    `beta.perfumetr.pl`, followed only by the specific catalog refinements the
-    user requests.
+28. the exact next task is to collect and triage the incoming beta feedback
+    before any further visual change, then implement only the smallest confirmed
+    refinement requested by the user.
 
 Treat this checkpoint as dated evidence, not as a substitute for a fresh GitHub
 and Sites check.
@@ -257,14 +261,17 @@ email rule.
    after the workday.
 3. Before composing it, retrieve delivered report `#003` from Sent and use that
    exact visual template. Preserve its wordmark, spacing, typography, colors,
-   content structure and approved footer.
-4. Verify the latest delivered report number in Sent. At this checkpoint `#005`
-   is latest, but this must be rechecked before assigning `#006`.
+   content structure, inline Perfumetr logo and approved footer.
+4. Verify the latest delivered report number in Sent immediately before
+   assigning the next number.
 5. Send only to `support@perfumetr.pl` unless the user explicitly changes the
    recipient.
 6. Record `sent` only after delivery is confirmed. Otherwise use `deferred`,
    `pending` or `not required`.
-7. Never put credentials, provider payloads or private mailbox content into the
+7. Report `#006`, dated 2026-08-22, is the latest confirmed delivered report at
+   this checkpoint. If the sequence remains unchanged when rechecked, the next
+   report number is `#007`.
+8. Never put credentials, provider payloads or private mailbox content into the
    repository.
 
 ## When GitHub and Sites disagree
