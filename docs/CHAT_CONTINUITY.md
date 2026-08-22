@@ -61,70 +61,64 @@ change:
 
 ## Current continuity checkpoint
 
-Verified at 2026-08-22 09:45 UTC after continuity pull request `#19`:
+Verified at 2026-08-22 13:44 UTC for Sites v123; continuity pull request
+`#20` records this checkpoint:
 
-1. `master` before PR #19 was
-   `f741cb7c4198f7eeea98d13c05669c5a79b3cd88`; PR #19 merged as
-   `5e06942de9d7df90a6a608e95ce608fd3234b47a`;
-2. pull requests `#12` through `#19` are merged;
-3. latest Actions run before this metadata-only refresh is number `43`, ID
+1. `master` before PR #20 was
+   `aaec7bbe009426f98d922d2356b027d4650b66c2`;
+2. pull requests `#12` through `#19` are merged; PR #20 is the
+   documentation-only v123 continuity record and its live state must be checked;
+3. latest Actions run before this continuity PR is number `43`, ID
    `32565560052`, attempt `1`, pull-request validation, conclusion
    `success`;
-4. run 43 passed importer validation and skipped the production import job;
-5. latest scheduled production partner cycle is run `41`, ID
+4. run 43 passed importer validation `14/14` and skipped production import;
+5. latest scheduled production partner cycle remains run `41`, ID
    `32563903356`, attempt `1`, successful from 09:03:07 to 09:07:08 UTC;
 6. run 41 skipped the full TradeDoubler snapshot and advanced partner sources;
-   latest full TradeDoubler importer remains run `28`, ID
-   `32497431067`, attempt `3`, and GitHub Actions is the only automatic
-   scheduler;
-7. run 41 reports Aelia `1,049`, Cocolita `793`, Drogeria.pl `814`,
-   Notino `4,422` and Brasty `1,092` live offers, total `8,170`;
-8. the TradeDoubler counts remain verified run 28 results because run 41 did
-   not execute a full TradeDoubler product snapshot;
-9. Notino completed in run 41 with 7,005 received, 3,776 imported, 445 review,
-   2,784 excluded, 8,291 stored and 4,422 live offers;
-10. Brasty paused incomplete in run 41 with 9,540 received, 1,514 imported,
-    7,885 review, 141 excluded, 6,582 stored and 1,092 live offers;
-11. TradeDoubler vouchers are fresh with 4 received, 4 excluded, 0 imported and
-    0 active coupons;
-12. AWIN Flaconi remains externally blocked by
+   latest full TradeDoubler remains run `28`, ID `32497431067`, attempt
+   `3`;
+7. the latest verified live-offer counters remain Aelia `1,049`, Cocolita
+   `793`, Drogeria.pl `814`, Notino `4,422` and Brasty `1,092`,
+   total `8,170`;
+8. Notino remains completed in run 41 and Brasty remains paused incomplete;
+9. TradeDoubler vouchers remain 4 received, 4 excluded, 0 imported and
+   0 active coupons;
+10. AWIN Flaconi remains externally blocked by
     `orchestrator_feed_not_found`;
-13. Sites v122 is deployed from source commit
-    `11e1639fe7a8e1f3d95802c3ecd22f07de3802f1`;
-14. v122 version ID is
-    `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_0439d4ebf1308191abc69eb241a03494`;
-15. v122 deployment ID is `appgdep_6a896c851c308191bed86741aaf78c4b`
+11. Sites v123 is deployed from source commit
+    `9333dfcbcb02bdb172908b2c9bb7191e369f3b9d`;
+12. v123 version ID is
+    `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_8168714f30308191bec15294142b87e9`;
+13. v123 deployment ID is `appgdep_6a89a78633c88191b681c5d81d89dda8`
     and its directly rechecked status is `succeeded`;
-16. the provider URL is `https://perfumetr.borodzicz85.chatgpt.site`;
-17. Sites reports version `122`, the project is active and public, and
+14. the provider URL remains
+    `https://perfumetr.borodzicz85.chatgpt.site`;
+15. Sites reports version `123`, the project is active and public, and
     `https://beta.perfumetr.pl` is the current live URL;
-18. `perfumetr.pl` and `beta.perfumetr.pl` both report active domain,
-    provider and SSL state;
-19. the production build passed, the full Sites suite passed `47/47`, and
+16. `perfumetr.pl` and `beta.perfumetr.pl` retain active domain, provider
+    and SSL state;
+17. the production build passed, the full Sites suite passed `47/47`, and
     lint has zero errors with three existing warnings;
-20. v122 spotlights Emporio Armani Stronger With You EDT 50 ml, GTIN
-    `3605522040281`, from 2026-08-22 09:20 UTC through
-    2026-08-23 09:20 UTC;
-21. the asset contains only the bottle on a transparent background;
-22. price, merchant, offer count, delivery and coupon effects remain dynamic
-    from D1 rather than copied from the screenshot; a direct production HTTPS
-    check at 09:44 UTC returned Brasty, 4 stores and 239.74 PLN for the 50 ml
-    EDT variant;
-23. the saved five-day rotation is not overwritten and resumes automatically
-    after the spotlight interval;
-24. the v114-v121 homepage, beta, store rail, search, footer and minimal catalog
-    refinements remain deployed and were not changed in v122;
-25. no importer, schema, schedule, source or domain configuration changed in
-    v122;
-26. the beta has been shared with several people and their feedback has not yet
-    been triaged;
-27. report `#006`, dated 2026-08-22, remains the latest confirmed delivered
+18. the active Stronger With You spotlight still reads Brasty, 4 stores and
+    239.74 PLN for the 50 ml EDT variant;
+19. the homepage now displays `pojemność 50 ml` instead of the negligible
+    `oszczędzasz 0,08 zł · −0%`;
+20. savings are shown in the hero only when they are at least 5 PLN and 2%;
+21. meaningful discounts remain visible and the price, merchant, store count,
+    delivery and coupon effects remain dynamic;
+22. the Stronger With You spotlight interval, fallback and saved five-day
+    rotation were not changed;
+23. the beta, search, catalog, filters, store rail, footer and integrations
+    panel were not changed in v123;
+24. no importer, schema, schedule, source or domain configuration changed in
+    v123;
+25. report `#006`, dated 2026-08-22, remains the latest confirmed delivered
     report;
-28. no report was sent for v122, following the user's explicit daily-report
+26. no report was sent for v122 or v123, following the user's daily-report
     policy;
-29. no code change, import, Sites deployment or email delivery is currently in
+27. no code change, import, Sites deployment or email delivery is currently in
     progress;
-30. the exact next task is to verify after 2026-08-23 09:20 UTC that the normal
+28. the exact next task is to verify after 2026-08-23 09:20 UTC that the normal
     homepage rotation resumed, or before then respond to concrete tester
     feedback or the user's next targeted visual request.
 
@@ -155,11 +149,11 @@ przekazaniem. Jeżeli wystąpi rozbieżność, najpierw ją opisz. Nie zmieniaj 
 importera, konfiguracji ani produkcji przed zakończeniem tej weryfikacji.
 
 CZAS OSTATNIEJ WERYFIKACJI
-2026-08-22 09:45 UTC
+2026-08-22 13:44 UTC
 
 REPOZYTORIUM I CI
-Master przed PR #19: f741cb7c4198f7eeea98d13c05669c5a79b3cd88.
-PR #19 został scalony jako 5e06942de9d7df90a6a608e95ce608fd3234b47a.
+Master przed PR #20: aaec7bbe009426f98d922d2356b027d4650b66c2.
+PR #20 zapisuje wdrożenie Sites v123; jego aktualny stan trzeba sprawdzić.
 Ważne PR-y #12–#19 są scalone.
 Najnowszy Actions: run #43, ID 32565560052, attempt 1, pull_request, success.
 Walidacja importera przeszła, a import produkcyjny został pominięty.
@@ -171,11 +165,11 @@ GitHub Actions jest jedynym automatycznym harmonogramem.
 
 SITES I DOMENY
 Projekt Perfumetr jest aktywny i publiczny.
-Aktualna wersja: v122.
-Commit źródłowy: 11e1639fe7a8e1f3d95802c3ecd22f07de3802f1.
+Aktualna wersja: v123.
+Commit źródłowy: 9333dfcbcb02bdb172908b2c9bb7191e369f3b9d.
 Version ID:
-appgprj_6a8236775b808191b6b4979c4d86d889~appgver_0439d4ebf1308191abc69eb241a03494
-Deployment: appgdep_6a896c851c308191bed86741aaf78c4b, succeeded.
+appgprj_6a8236775b808191b6b4979c4d86d889~appgver_8168714f30308191bec15294142b87e9
+Deployment: appgdep_6a89a78633c88191b681c5d81d89dda8, succeeded.
 Testy: 47/47; lint: 0 błędów i 3 istniejące ostrzeżenia.
 Provider URL: https://perfumetr.borodzicz85.chatgpt.site
 Sites live URL: https://beta.perfumetr.pl
@@ -196,23 +190,21 @@ Flaconi: zewnętrzna blokada orchestrator_feed_not_found.
 Nie traktuj ograniczonych proof importów jako wielkości pełnego feedu.
 
 STAN WSZYSTKICH ELEMENTÓW
-Repozytorium i CI działają. Sites v122 działa. Importer i harmonogram nie były
-zmieniane w v122. Pięć źródeł ma aktywne oferty; Flaconi jest zewnętrznie
-zablokowane. Strona główna ma czasowy spotlight Stronger With You. Strona beta,
+Repozytorium i CI działają. Sites v123 działa. Importer i harmonogram nie były
+zmieniane w v123. Pięć źródeł ma aktywne oferty; Flaconi jest zewnętrznie
+zablokowane. Strona główna ma czasowy spotlight Stronger With You i pokazuje
+pojemność 50 ml zamiast symbolicznej oszczędności 0,08 zł. Strona beta,
 wyszukiwarka, katalog, filtry, pasek pięciu sklepów, licznik sklepów, stopka i
 panel integracji zachowują stan v121. Obie domeny i SSL są aktywne. Feedback
 testerów może nadejść i nie został jeszcze przeanalizowany.
 
 OSTATNIO ZAKOŃCZONA PRACA
-Sites v122 ustawia Emporio Armani Stronger With You EDT 50 ml, GTIN
-3605522040281, na stronie głównej dokładnie od 22 sierpnia 09:20 UTC do
-23 sierpnia 09:20 UTC, czyli do 11:20 czasu polskiego. Obraz zawiera tylko
-flakon na przezroczystym tle. Cena, sklep, liczba ofert, dostawa i kupony są
-dynamiczne. Bezpośrednia kontrola produkcji o 09:44 UTC pokazała Brasty,
-4 sklepy i 239,74 zł dla wariantu 50 ml EDT; to stan chwilowy, a nie cena
-wpisana na stałe. Po wygaśnięciu wraca zwykła pięciodniowa rotacja. Jeśli oferta
-zniknie wcześniej, działa bezpieczny fallback. Nie zmieniono importera,
-schematu, harmonogramu ani domen.
+Sites v123 usuwa odstraszający komunikat „oszczędzasz 0,08 zł · −0%” z hero.
+Oszczędność jest teraz pokazywana tylko od 5 zł i 2%. Przy mniejszej różnicy
+trzecia metryka pokazuje pojemność flakonu, obecnie 50 ml. Stronger With You,
+Brasty, 4 sklepy, cena 239,74 zł, czas spotlightu i dynamiczne dane pozostały
+bez zmian. Produkcja odpowiada HTTP 200, testy przeszły 47/47, a wdrożenie v123
+ma status succeeded.
 
 CO NIE DZIAŁA LUB POZOSTAJE ZEWNĘTRZNE
 AWIN Flaconi czeka na aktywację feedu po stronie zewnętrznego partnera.
@@ -229,7 +221,7 @@ głównej. Wcześniej reagować wyłącznie na konkretny feedback testerów lub 
 precyzyjną prośbę wizualną użytkownika.
 
 RAPORTY
-Raport #006 z 2026-08-22 jest ostatnim potwierdzonym raportem. Dla v122 nie
+Raport #006 z 2026-08-22 jest ostatnim potwierdzonym raportem. Dla v122 ani v123 nie
 wysłano raportu. Nie wysyłaj raportu automatycznie po każdym wizualnym
 wdrożeniu. Użytkownik poprosi o jeden raport po zakończeniu dnia.
 Przed wysłaniem odczytaj raport #003 z Wysłanych i odwzoruj dokładnie jego
