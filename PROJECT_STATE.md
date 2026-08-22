@@ -1,9 +1,13 @@
 # Perfumetr project state
 
-Updated: 2026-08-22 00:15 UTC
+Updated: 2026-08-22 09:36 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
+
+## Sites v122 continuity update
+
+Sites v122 deployed successfully from source commit `11e1639fe7a8e1f3d95802c3ecd22f07de3802f1`; this branch records the exact 24-hour Stronger With You homepage spotlight. The full current-state rewrite follows in this same continuity pull request.
 
 ## Current production evidence
 
