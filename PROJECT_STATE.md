@@ -1,11 +1,108 @@
 # Perfumetr project state
 
-Updated: 2026-08-22 13:44 UTC
+Updated: 2026-08-22 17:20 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
-## Current production evidence
+## Latest production checkpoint
+
+Verified at 2026-08-22 17:20 UTC. This checkpoint supersedes the lower dated
+v123 evidence, which is retained only for history.
+
+Repository and automation:
+
+* repository: `GADOMM/Index`;
+* verified `master` before continuity pull request `#22`:
+  `8eab30aac9d9209c3d73a19cfcddaa08ed6787ce`;
+* pull request `#20` is merged as
+  `792657f3e91621efa6e450e8d98fa1200745a7d1`;
+* pull request `#21` is merged as
+  `8eab30aac9d9209c3d73a19cfcddaa08ed6787ce` and lets the GitHub
+  orchestrator drain bounded CJ maintenance batches;
+* pull request `#22` is the documentation-only continuity record for this
+  checkpoint; verify its final CI and merge state directly;
+* GitHub Actions run `#47`, database ID `32581506389`, attempt `15`,
+  completed successfully; the production job ID is `97065393622`;
+* the attempt-15 production job ran from 17:16:44 to 17:17:26 UTC, reported no
+  HTTP 429 and no workflow error;
+* the latest full TradeDoubler snapshot remains run `#28`, database ID
+  `32497431067`, attempt `3`;
+* GitHub Actions remains the only automatic scheduler.
+
+Current Sites deployment:
+
+* Sites version `128`;
+* source commit `7f4943aac6d4256faccb2f62ebb50f9bf56589d5`;
+* version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_54ab4c69fcac8191a673e5dccda17080`;
+* deployment `appgdep_6a89d93b1f988191886c838226132d0f`;
+* deployment status `succeeded`, directly rechecked after publication;
+* provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
+* production build passed, the full suite passed `47/47`, and lint has zero
+  errors with three existing warnings;
+* an independent read-only review found no data-safety blocker.
+
+The catalog recovery was completed without manual product JSON and without
+copying screenshot prices into the database:
+
+1. exact complete GTINs are mapped only when the catalog match is unique;
+2. fresh CJ product-ID queries replace stale queued price data before an offer
+   is published;
+3. completed imports detect legacy active products that have no live listing;
+4. a bounded exact-GTIN coverage audit queries official CJ data for verified
+   variants that already have a fresh offer in another verified store;
+5. the GitHub orchestrator drains bounded maintenance work and stops on zero
+   progress, cooldown, busy state, an error or the 48-step safety limit;
+6. v128 converts unresolved fresh mapping or classification conflicts into
+   explicit manual-review cases, so they no longer loop through the automatic
+   queue; a later complete provider generation can still improve them.
+
+Verified production result:
+
+| Source | Live offers | Review | Automatic | Pending fresh |
+| --- | ---: | ---: | ---: | ---: |
+| Aelia.pl | 1,185 | bounded TradeDoubler proof | not applicable | not applicable |
+| Cocolita | 830 | bounded TradeDoubler proof | not applicable | not applicable |
+| Drogeria.pl | 835 | bounded TradeDoubler proof | not applicable | not applicable |
+| Notino | 5,297 | 209 | 0 | 0 |
+| Brasty | 6,041 | 220 | 0 | 0 |
+
+The verified total is `14,188` live offers. During the recovery, the Notino
+coverage backlog fell from `1,381` to `0` and Notino gained `701` live
+offers, from `4,596` to `5,297`. The final attempt kept Notino at `5,297`
+live offers and completed four maintenance operations that moved the last two
+looping conflicts into true manual review. The remaining `209` Notino and
+`220` Brasty review rows are not represented as safe automatic matches.
+
+Final CJ counters from run #47 attempt 15:
+
+* Notino: state `completed`, 7,005 received, 3,945 imported, 2,869 excluded,
+  9,106 stored, 5,297 live, 209 review, 0 automatic and 0 pending fresh;
+* Brasty: state `completed`, 13,598 received, 5,221 imported, 321 excluded,
+  6,582 stored, 6,041 live, 220 review, 0 automatic and 0 pending fresh.
+
+TradeDoubler proof in the same successful attempt confirmed Aelia `1,185`,
+Cocolita `830` and Drogeria.pl `835` live offers. The `100 received`
+values for Cocolita and Drogeria.pl remain bounded proof samples, not provider
+feed sizes. Vouchers remain 4 received, 4 excluded, 0 imported and 0 active.
+
+AWIN Flaconi remains externally blocked by
+`orchestrator_feed_not_found`. Do not describe it as active.
+
+A direct `perfumetr.pl` check after attempt 15 returned HTTP 200 and showed
+the exact Stronger With You EDT 50 ml spotlight with Notino, 5 stores,
+217.40 PLN total and 220.50 PLN saving. The price, merchant, store count,
+delivery and saving remain dynamic D1 results. The screenshot price was not
+hard-coded.
+
+No email report was sent. Report `#006` remains the latest confirmed
+delivered report. There is no code edit, import, deployment or email delivery
+in progress. The exact next time-based task remains the read-only check after
+2026-08-23 09:20 UTC that the temporary spotlight expired and the saved
+five-day homepage rotation resumed without an empty or stale hero.
+
+## Earlier production evidence retained for history
 
 Repository: `GADOMM/Index`
 
@@ -44,7 +141,7 @@ GitHub Actions evidence:
   2026-08-21 16:20 UTC;
 * GitHub Actions remains the only automatic scheduler.
 
-## Current Sites deployment
+## Earlier Sites deployment retained for history
 
 Sites v123 is deployed successfully:
 
@@ -74,7 +171,7 @@ difference as a saving.
 No importer, database schema, source configuration, automatic schedule or
 domain setting changed in v123.
 
-## Project area checkpoint
+## Earlier project area checkpoint retained for history
 
 | Area | Confirmed state at this checkpoint |
 | --- | --- |
@@ -92,7 +189,7 @@ domain setting changed in v123.
 | Reporting | Report #006 remains the latest confirmed delivered report; no report was sent for v122 |
 | Human feedback | The beta has been shared with several people; their feedback may arrive and has not yet been triaged |
 
-## Verified importer results
+## Earlier verified importer results retained for history
 
 | Source | State | Latest verified production result |
 | --- | --- | --- |
@@ -238,7 +335,7 @@ Ten sam zapach. Różne ceny.
 perfumetr.pl
 support@perfumetr.pl
 
-## Current operational handoff
+## Earlier operational handoff retained for history
 
 No code change, import, Sites deployment or email delivery is currently in
 progress. The last production change is Sites v123, deployed from source commit
