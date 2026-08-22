@@ -1,6 +1,6 @@
 # Perfumetr project state
 
-Updated: 2026-08-22 09:42 UTC
+Updated: 2026-08-22 09:45 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
@@ -135,6 +135,9 @@ Completed behavior:
    `2026-08-23T09:20:00.000Z`, which is 11:20 to 11:20 in Poland;
 4. the current D1 catalog supplies the price, merchant, offer count, delivery
    cost and coupon effects dynamically; the screenshot price is not hard-coded;
+   a direct production HTTPS check at 2026-08-22 09:44 UTC returned Brasty,
+   4 stores and 239.74 PLN for this 50 ml EDT variant; this is point-in-time
+   evidence and remains subject to the live D1 data;
 5. the normal saved five-day rotation is not overwritten;
 6. after the interval expires, the normal rotation resumes automatically
    without another deployment;
