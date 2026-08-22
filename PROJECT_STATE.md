@@ -20,8 +20,9 @@ Repository baseline verified before this continuity branch:
 * merged pull request `#15`: Sites v114 store-rail continuity record;
 * merged pull request `#16`: Sites v120 catalog continuity record;
 * merged pull request `#17`: Sites v121 minimal-catalog continuity record;
-* this report-and-feedback continuity update is documentation only and does not
-  change the importer, catalog data or production runtime.
+* pull request `#18` is the documentation-only report-and-feedback
+  continuity record and does not change the importer, catalog data or production
+  runtime.
 
 GitHub Actions evidence:
 
