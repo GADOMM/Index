@@ -61,7 +61,7 @@ change:
 
 ## Current continuity checkpoint
 
-Verified at 2026-08-22 09:42 UTC after continuity pull request `#19`:
+Verified at 2026-08-22 09:45 UTC after continuity pull request `#19`:
 
 1. `master` before PR #19 was
    `f741cb7c4198f7eeea98d13c05669c5a79b3cd88`; PR #19 merged as
@@ -107,7 +107,9 @@ Verified at 2026-08-22 09:42 UTC after continuity pull request `#19`:
     2026-08-23 09:20 UTC;
 21. the asset contains only the bottle on a transparent background;
 22. price, merchant, offer count, delivery and coupon effects remain dynamic
-    from D1 rather than copied from the screenshot;
+    from D1 rather than copied from the screenshot; a direct production HTTPS
+    check at 09:44 UTC returned Brasty, 4 stores and 239.74 PLN for the 50 ml
+    EDT variant;
 23. the saved five-day rotation is not overwritten and resumes automatically
     after the spotlight interval;
 24. the v114-v121 homepage, beta, store rail, search, footer and minimal catalog
@@ -153,7 +155,7 @@ przekazaniem. Jeżeli wystąpi rozbieżność, najpierw ją opisz. Nie zmieniaj 
 importera, konfiguracji ani produkcji przed zakończeniem tej weryfikacji.
 
 CZAS OSTATNIEJ WERYFIKACJI
-2026-08-22 09:42 UTC
+2026-08-22 09:45 UTC
 
 REPOZYTORIUM I CI
 Master przed PR #19: f741cb7c4198f7eeea98d13c05669c5a79b3cd88.
@@ -206,7 +208,9 @@ Sites v122 ustawia Emporio Armani Stronger With You EDT 50 ml, GTIN
 3605522040281, na stronie głównej dokładnie od 22 sierpnia 09:20 UTC do
 23 sierpnia 09:20 UTC, czyli do 11:20 czasu polskiego. Obraz zawiera tylko
 flakon na przezroczystym tle. Cena, sklep, liczba ofert, dostawa i kupony są
-dynamiczne. Po wygaśnięciu wraca zwykła pięciodniowa rotacja. Jeśli oferta
+dynamiczne. Bezpośrednia kontrola produkcji o 09:44 UTC pokazała Brasty,
+4 sklepy i 239,74 zł dla wariantu 50 ml EDT; to stan chwilowy, a nie cena
+wpisana na stałe. Po wygaśnięciu wraca zwykła pięciodniowa rotacja. Jeśli oferta
 zniknie wcześniej, działa bezpieczny fallback. Nie zmieniono importera,
 schematu, harmonogramu ani domen.
 
