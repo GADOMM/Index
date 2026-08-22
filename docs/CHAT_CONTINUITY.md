@@ -179,14 +179,13 @@ Dopiero potem przejdź do następnego zadania.
 
 ## Current continuity checkpoint
 
-Verified at 2026-08-22 00:15 UTC before the current documentation-only
-continuity pull request:
+Verified at 2026-08-22 00:15 UTC before pull request `#18`:
 
 1. `master` baseline commit:
    `a4111f32cc7625f1c9f5e06a9e782bb42bd24988`;
 2. pull requests `#12`, `#13`, `#14`, `#15`, `#16` and `#17` are
-   merged; the current report-and-feedback continuity update changes
-   documentation only;
+   merged; pull request `#18` is the documentation-only
+   report-and-feedback continuity record;
 3. latest Actions run before this continuity update is number `36`, ID
    `32537373923`, attempt `1`, pull-request validation, conclusion
    `success`;
