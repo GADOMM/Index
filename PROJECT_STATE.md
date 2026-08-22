@@ -1,6 +1,6 @@
 # Perfumetr project state
 
-Updated: 2026-08-21 23:31 UTC
+Updated: 2026-08-22 00:15 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
@@ -13,21 +13,22 @@ Default branch: `master`
 
 Repository baseline verified before this continuity branch:
 
-* `master` commit `05bb754f70526314d0c301fea6e27878fe8aeb4e`;
+* `master` commit `a4111f32cc7625f1c9f5e06a9e782bb42bd24988`;
 * merged pull request `#12`: production importer release;
 * merged pull request `#13`: verified importer production state;
 * merged pull request `#14`: strict chat-continuity runbook;
 * merged pull request `#15`: Sites v114 store-rail continuity record;
 * merged pull request `#16`: Sites v120 catalog continuity record;
-* pull request `#17` is the documentation-only v121 continuity record and does
-  not change the importer, catalog data or production runtime.
+* merged pull request `#17`: Sites v121 minimal-catalog continuity record;
+* pull request `#18` is the documentation-only report-and-feedback
+  continuity record and does not change the importer, catalog data or production
+  runtime.
 
 GitHub Actions evidence:
 
-* latest workflow run before this continuity branch: number `33`, database ID
-  `32535949248`, attempt `1`, event `pull_request`, succeeded from
-  2026-08-21 23:11:27 UTC to 23:11:40 UTC;
-* run 33 validated the importer successfully and skipped the import job because
+* latest workflow run before this continuity branch: number `36`, database ID
+  `32537373923`, attempt `1`, event `pull_request`, conclusion `success`;
+* run 36 validated the importer successfully and skipped the import job because
   it was pull-request documentation validation;
 * latest scheduled production partner cycle remains run number `31`, database
   ID `32526426619`, attempt `1`, success from 2026-08-21 21:00:42 UTC to
@@ -61,7 +62,7 @@ found no blocking regression.
 
 | Area | Confirmed state at this checkpoint |
 | --- | --- |
-| Repository and CI | `master` baseline `05bb754...`; run 33 succeeded; run 31 remains the latest scheduled partner import and run 28 the latest full TradeDoubler import |
+| Repository and CI | `master` baseline `a4111f3...`; run 36 succeeded; run 31 remains the latest scheduled partner import and run 28 the latest full TradeDoubler import |
 | Sites | v121 deployed successfully from `8e41f34...`; production build and 47/47 tests passed |
 | Importer | TradeDoubler and CJ sources remain operational; no importer code, schedule or data changed in v121 |
 | Affiliate sources | Aelia, Cocolita, Drogeria.pl, Notino and Brasty active; AWIN Flaconi externally blocked |
@@ -72,8 +73,8 @@ found no blocking regression.
 | Store rail | Five active store logos loop continuously, blend into the page on both ends and use the compact mobile treatment |
 | Store count | Dynamic coverage message remains outside the logo rail and states that more stores are coming |
 | Integrations panel | Persisted read-only status model remains deployed; page interaction does not start normal imports |
-| Reporting | Last confirmed delivered report is #005; reports are consolidated and sent only when the user explicitly requests one; no v120 or v121 report was sent |
-| Human visual verification | Automated and production deployment verification are complete; the user's subjective review of v121 on real phone and desktop is pending |
+| Reporting | Report #006 was requested after the workday, sent to `support@perfumetr.pl` in the exact #003 visual template and confirmed in Sent |
+| Human visual verification | Automated and production checks are complete; the beta has been shared with several people and their feedback is expected on 2026-08-22 |
 
 ## Verified importer results
 
@@ -192,24 +193,32 @@ remains a separate guarded operation.
 
 ## Deployment reports
 
-Report `#005`, dated 2026-08-21, is the last confirmed delivered message to
-`support@perfumetr.pl`. It was sent at 21:13 UTC and confirmed in Sent at the
-previous checkpoint.
+Report `#006`, dated 2026-08-22, is the latest confirmed delivered message to
+`support@perfumetr.pl`. It was sent at 00:14 UTC and confirmed in Sent. Before
+sending, the mailbox was checked and report `#005` was confirmed as the
+previous latest number. Report `#006` reproduces the exact visual template,
+wordmark, layout, typography, inline Perfumetr logo and footer from delivered
+report `#003`.
 
-Current user instruction:
+The report consolidates the v114-v121 visual work from the completed workday:
+the store rail, beta landing and search refinements, responsive footer work and
+the current v121 minimal catalog. It records Sites v121, `47/47` tests, merged
+pull request `#17`, successful Actions run `#36`, and that the importer and
+offer data were not changed during this visual stage.
+
+Current reporting instruction:
 
 1. do not send a report automatically after each visual deployment;
 2. wait until the user explicitly requests the consolidated report, normally
    after the workday;
 3. before writing it, retrieve delivered report `#003` from Sent and reproduce
    that exact visual template, wordmark, layout, typography and footer;
-4. do not invent a new email design;
-5. recheck the latest delivered report number immediately before assigning the
-   next sequential number.
+4. recheck the latest delivered number immediately before assigning the next
+   sequential number;
+5. after confirmed report `#006`, the next number is `#007` only if the
+   mailbox check still confirms that sequence.
 
-No report was sent for v120 or v121. Delivery is `deferred at the user's
-request`. If the user requests the next report, verify Sent first; if `#005`
-is still latest, the next number is `#006`.
+No further report is pending at this checkpoint.
 
 Required footer:
 
@@ -222,16 +231,20 @@ support@perfumetr.pl
 ## Current operational handoff
 
 No code change, import, Sites deployment or email delivery is currently in
-progress. The last completed production work is the v121 minimal catalog
-refinement deployed from Sites source commit
+progress. The last production change remains the v121 minimal catalog refinement
+deployed from Sites source commit
 `8e41f34be3ec5fe390e287c959ae0c16d552f2f0`, with a successful production
 build, `47/47` tests and a directly confirmed `succeeded` deployment.
+The end-of-day report `#006` has now been delivered and confirmed.
 
-The exact next task is the user's visual and interaction review of v121 on
-`beta.perfumetr.pl`, first on desktop and then on a real phone. Review the
-transparent background, control density, category rail, filter clarity,
-on-demand brand suggestions, product scanning, detail view and touch response.
-Make only the specific catalog refinements the user requests after that review.
+The user has shared the beta with several people. Feedback is expected on
+2026-08-22. This expected feedback is not an active change and no unverified work
+is being represented as complete.
+
+The exact next task is to collect and triage the new beta feedback before making
+another visual change. Separate reproducible defects from subjective
+preferences, compare reports across desktop and real phones, and then implement
+only the smallest confirmed interface refinement requested by the user.
 
 ## Known risks and blockers
 
@@ -244,8 +257,8 @@ Make only the specific catalog refinements the user requests after that review.
    profile.
 5. Sites reports `beta.perfumetr.pl` as the current live URL even though both
    custom domains were last confirmed active.
-6. v121 passed technical verification but has not yet received the user's
-   subjective approval on physical desktop and mobile devices.
+6. v121 passed technical verification and is now with several beta testers;
+   their external feedback is expected on 2026-08-22 and has not yet been triaged.
 
 ## Chat continuity
 
@@ -266,4 +279,4 @@ Do not claim that AWIN Flaconi is active while its state remains
 `orchestrator_feed_not_found`. Do not invent Aelia review or excluded
 counters. Do not describe run 31 as a full TradeDoubler import. Do not claim
 that v121 has subjective desktop or mobile approval before the user confirms
-it. Do not claim that a v120 or v121 email report was sent.
+it. Do not claim that any deployment report after confirmed report `#006` was sent.
