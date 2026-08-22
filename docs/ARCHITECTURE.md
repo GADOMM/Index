@@ -103,10 +103,18 @@ Allowed states are `not_started`, `paused`, `running`, `completed` and `failed`.
 `fresh`. The orchestrator always calls `advance_source` at least once after a
 normal status response, including an initial `completed` or `failed` state. The
 server can then return `skipped: "fresh"` or restart an old generation. An
-advance response with `completed`, `failed`, `skipped: "fresh"` or `busy: true`
-stops that source. Safe allowlisted numeric counters from `overview` are copied
-to the GitHub report, including `receivedCount`, `reviewCount`, `excludedCount`,
-`importedCount`, `liveOffers`, `storedProducts` and `activeCoupons` when present.
+advance response with `failed`, `skipped: "fresh"` or `busy: true` stops that
+source. A completed CJ source must also return `automaticReviewCount`,
+`pendingFreshOfferCount` and `maintenanceProcessedCount`. The orchestrator
+continues bounded maintenance after a generation first reaches `completed`, and
+while an already completed source still has automatic work and the preceding
+maintenance step processed at least one row. A completed maintenance step with
+remaining work but zero progress stops safely, for example during a retry
+cooldown. Manual and terminal review rows do not control this loop. Safe
+allowlisted numeric counters from `overview` are copied to the GitHub report,
+including `receivedCount`, `reviewCount`, `excludedCount`, `importedCount`,
+`liveOffers`, `storedProducts`, `activeCoupons`, `automaticReviewCount`,
+`pendingFreshOfferCount` and `maintenanceProcessedCount` when present.
 
 Exactly `orchestrator_feed_not_found`, `orchestrator_feed_access_denied` and
 `orchestrator_not_configured` are expected provider-activation blockers. They
