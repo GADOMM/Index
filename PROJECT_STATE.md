@@ -1,6 +1,6 @@
 # Perfumetr project state
 
-Updated: 2026-08-22 09:38 UTC
+Updated: 2026-08-22 09:42 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
@@ -22,15 +22,21 @@ Repository baseline verified before continuity pull request `#19`:
 * pull request `#17`: Sites v121 minimal-catalog continuity record;
 * pull request `#18`: report #006 and tester-feedback continuity record;
 * pull request `#19`: documentation-only Sites v122 Stronger With You
-  spotlight continuity record.
+  spotlight continuity record, merged as
+  `5e06942de9d7df90a6a608e95ce608fd3234b47a`.
 
 GitHub Actions evidence:
 
-* latest workflow run before continuity PR #19: number `41`, database ID
-  `32563903356`, attempt `1`, event `schedule`, conclusion `success`;
-* run 41 ran from 2026-08-22 09:03:07 UTC to 09:07:08 UTC;
-* importer validation passed, the full TradeDoubler snapshot was skipped, and
-  the bounded partner-source orchestrator completed successfully;
+* latest Actions run before this metadata-only refresh: number `43`, database
+  ID `32565560052`, attempt `1`, event `pull_request`, conclusion
+  `success`;
+* run 43 validated the importer successfully and skipped the production import
+  job because it was pull-request documentation validation;
+* latest scheduled production partner cycle is run number `41`, database ID
+  `32563903356`, attempt `1`, conclusion `success`, from
+  2026-08-22 09:03:07 UTC to 09:07:08 UTC;
+* run 41 passed importer validation, skipped the full TradeDoubler snapshot and
+  advanced bounded partner sources successfully;
 * latest full production TradeDoubler importer remains run number `28`,
   database ID `32497431067`, attempt `3`, successful at
   2026-08-21 16:20 UTC;
@@ -66,7 +72,7 @@ domain setting changed in v122.
 
 | Area | Confirmed state at this checkpoint |
 | --- | --- |
-| Repository and CI | `master` baseline `f741cb7...`; scheduled run 41 succeeded; run 28 remains the latest full TradeDoubler import |
+| Repository and CI | PR #19 merged as `5e06942...`; latest Actions run 43 succeeded; scheduled production run 41 succeeded; run 28 remains the latest full TradeDoubler import |
 | Sites | v122 deployed successfully from `11e1639...`; production build and 47/47 tests passed |
 | Importer | TradeDoubler and CJ paths remain operational; v122 did not change importer code or schedules |
 | Affiliate sources | Aelia, Cocolita, Drogeria.pl, Notino and Brasty have live offers; AWIN Flaconi remains externally blocked |
@@ -201,8 +207,9 @@ progress. The last production change is the v122 Stronger With You spotlight,
 deployed from source commit
 `11e1639fe7a8e1f3d95802c3ecd22f07de3802f1`, with a successful production
 build, `47/47` tests and a directly confirmed `succeeded` deployment.
-Pull request `#19` is the documentation-only continuity record for this
-checkpoint.
+Pull request `#19` is the merged documentation-only continuity record for this
+checkpoint; its merge commit is
+`5e06942de9d7df90a6a608e95ce608fd3234b47a` and validation run 43 succeeded.
 
 The exact next task is to verify, after 2026-08-23 09:20 UTC, that the normal
 five-day homepage rotation resumed. Before then, respond only to concrete tester
