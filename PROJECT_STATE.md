@@ -1,36 +1,42 @@
 # Perfumetr project state
 
-Updated: 2026-08-24 01:43 UTC
+Updated: 2026-08-24 09:35 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
 
-Verified at 2026-08-24 01:43 UTC. This checkpoint supersedes the dated v128
-checkpoint below.
+Verified at 2026-08-24 09:35 UTC. The Sites v131 deployment remains the
+directly verified production baseline from 01:43 UTC. Repository, automation,
+partner counters and report delivery were rechecked for this update. This
+checkpoint supersedes the dated v128 checkpoint below.
 
 Repository and automation:
 
 * repository: `GADOMM/Index`;
-* verified `master` before continuity pull request `#24`:
-  `9d6e73bd0c3b64abd0e92623b913ae9db73479fc`;
+* verified `master` before report-delivery pull request `#25`:
+  `deedfdb60d0129cfefb51d89631ab897f434d980`;
 * pull request `#22` is merged as
   `67e35944c9a66706cedb6c942a5dc4df25354769`;
 * pull request `#23` is merged as
   `9d6e73bd0c3b64abd0e92623b913ae9db73479fc` and exposes only
   allowlisted aggregate voucher-rejection reasons to GitHub logs;
-* pull request `#24` is the documentation-only continuity record for this
-  checkpoint; verify its final CI and merge state directly;
-* the newest workflow by creation is run `#55`, database ID `32676573902`,
-  attempt `1`, event `push`; importer validation passed `16/16` and the full
-  TradeDoubler step succeeded, while the overall run concluded `failure`
-  because the pre-v131 CJ maintenance path overloaded D1;
+* pull request `#24` is merged as
+  `deedfdb60d0129cfefb51d89631ab897f434d980` and records the Sites v131
+  production checkpoint;
+* pull request `#25` is the documentation-only record of report `#007`;
+  verify its final CI and merge state directly;
+* the newest production workflow is run `#58`, database ID `32711816055`,
+  attempt `1`, event `schedule`, completed successfully from 09:29:21 to
+  09:34:29 UTC; importer validation passed `16/16`, the full TradeDoubler step
+  was correctly skipped, and the bounded partner orchestrator succeeded;
 * the final recovery cycle is run `#53`, database ID `32666073700`, attempt
   `8`, production job `97295719976`, completed successfully from 01:36:08 to
   01:39:06 UTC with no HTTP 503 or orchestrator failure;
 * run `#55` is also the latest full TradeDoubler snapshot. Its full import
-  step ran successfully from 00:24:49 to 00:41:51 UTC;
+  step ran successfully from 00:24:49 to 00:41:51 UTC, although the overall
+  run failed on the retired pre-v131 CJ maintenance path;
 * GitHub Actions remains the only automatic scheduler.
 
 Current Sites deployment:
@@ -71,31 +77,44 @@ inserted. Hard mapping conflicts remain excluded from automatic retry. Missing
 GTIN may only reuse one exact unique semantic catalog variant and cannot expand
 the catalog.
 
-Verified production result:
+Current live offers and the newest partial CJ-generation counters:
 
 | Source | Live offers | Review | Automatic | Pending fresh |
 | --- | ---: | ---: | ---: | ---: |
 | Aelia.pl | 1,234 | bounded TradeDoubler proof | not applicable | not applicable |
 | Cocolita | 843 | bounded TradeDoubler proof | not applicable | not applicable |
 | Drogeria.pl | 841 | bounded TradeDoubler proof | not applicable | not applicable |
-| Notino | 5,344 | 146 | 0 | 0 |
-| Brasty | 6,043 | 151 | 0 | 0 |
+| Notino | 5,344 | 54 partial | 54 | 0 |
+| Brasty | 6,043 | 154 partial | 66 | 0 |
 
-The verified total is `14,305` live offers. The true manual CJ review queue is
-`297` rows, down from `429` in the v128 checkpoint. Both automatic queues and
-both pending-fresh queues are zero. The remaining rows are not represented as
-safe automatic matches.
+The verified total remains `14,305` live offers. Run #58 started new CJ
+generations and stopped both safely at the 48-step cycle limit. Their partial
+review and automatic counters are not final and must not be compared directly
+with a completed generation. The preceding completed generation ended with
+`297` true manual rows, down from `429` in the v128 checkpoint, and zero
+automatic or pending-fresh work.
 
-Final CJ counters from run #53 attempt 8:
+Current partial CJ counters from run #58:
+
+* Notino: state `paused`, 48 steps, 4,662 received, 2,544 imported, 2,027
+  excluded, 9,153 stored, 5,344 live, 54 review, 54 automatic and 0 pending
+  fresh;
+* Brasty: state `paused`, 48 steps, 4,800 received, 4,585 imported, 61
+  excluded, 6,582 stored, 6,043 live, 154 review, 66 automatic and 0 pending
+  fresh.
+
+Final CJ counters from the preceding completed generation in run #53 attempt 8:
 
 * Notino: state `completed`, 7,005 received, 3,945 imported, 2,869 excluded,
   9,153 stored, 5,344 live, 146 review, 0 automatic and 0 pending fresh;
 * Brasty: state `completed`, 13,598 received, 12,799 imported, 323 excluded,
   6,582 stored, 6,043 live, 151 review, 0 automatic and 0 pending fresh.
 
-D1 directly confirms both current CJ generations as `completed` and contains
-no remaining `sync_locks`. Flaconi remains externally blocked by
-`orchestrator_feed_not_found` and must not be described as active.
+At 01:43 UTC D1 directly confirmed the preceding generations as `completed`
+with no remaining `sync_locks`. Run #58 later returned both new generations as
+`paused` and `busy: false`; scheduled cycles can continue them. Flaconi remains
+externally blocked by `orchestrator_feed_not_found` and must not be described
+as active.
 
 The latest full TradeDoubler snapshot in run #55 confirmed:
 
@@ -123,16 +142,16 @@ The v129 catalog direction and the three new cutouts are deployed but have not
 yet received explicit visual acceptance from the user. Do not start another
 broad catalog redesign without fresh user feedback.
 
-No email report was sent. Report `#006` remains the latest confirmed delivered
-report. The user said they will request the report after the work; wait for that
-explicit request, verify Sent and reproduce report `#003` exactly. If `#006`
-is still the last delivered number, the next report is `#007`.
+Report `#007`, dated 2026-08-24, was sent to `support@perfumetr.pl` at
+09:24 UTC and confirmed in Sent. It uses the permanent visual template and
+inline Perfumetr logo from delivered report `#003`. Report `#007` is now the
+latest confirmed delivered report.
 
-There is no code edit, import, deployment or email delivery in progress after
-the continuity pull request is merged. The exact next task is either the user's
-visual feedback, an explicit report request, or safe manual/provider-assisted
-resolution of the remaining 297 review rows. Do not weaken matching rules to
-reduce that number.
+There is no manual code edit, import, deployment or email delivery in progress
+after the report-delivery pull request is merged. The automatic schedule will
+continue the paused run #58 CJ generations. The next user-driven task is visual
+feedback or safe manual/provider-assisted resolution after the new generations
+finish. Do not weaken matching rules to reduce any review counter.
 
 ## Earlier Sites v128 production checkpoint retained for history
 
@@ -438,12 +457,13 @@ separate guarded operation.
 
 ## Deployment reports
 
-Report `#006`, dated 2026-08-22, remains the latest confirmed delivered message
-to `support@perfumetr.pl`. It uses the exact visual template, wordmark, layout,
-typography, inline Perfumetr logo and footer from delivered report `#003`.
+Report `#007`, dated 2026-08-24, is the latest confirmed delivered message to
+`support@perfumetr.pl`. Delivery was confirmed in Sent. It uses the exact visual
+template, wordmark, layout, typography, inline Perfumetr logo and footer from
+delivered report `#003`.
 
-No report was sent for v122 or v123. The user instructed that visual deployments should
-be consolidated and reported only after an explicit end-of-day request.
+No separate report was sent for v122 or v123. The later work was consolidated
+in report `#007`, following the user's end-of-day reporting instruction.
 
 Current reporting instruction:
 
@@ -453,7 +473,7 @@ Current reporting instruction:
    its exact visual template, wordmark, layout, typography and footer;
 4. recheck the latest delivered report number immediately before assigning the
    next sequential number;
-5. after confirmed report `#006`, the next number is `#007` only if the
+5. after confirmed report `#007`, the next number is `#008` only if the
    mailbox check still confirms that sequence.
 
 Required footer:
@@ -515,4 +535,4 @@ Do not advertise a saving below 5 PLN or 2% in the homepage hero. Do not claim t
 `orchestrator_feed_not_found`. Do not describe Brasty run 41 as a completed
 refresh. Do not describe run 41 as a full TradeDoubler import. Do not claim that
 the screenshot price is fixed on the homepage. Do not claim that any deployment
-report after confirmed report `#006` was sent.
+report after confirmed report `#007` was sent.
