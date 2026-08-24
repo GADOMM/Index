@@ -61,6 +61,68 @@ change:
 
 ## Latest continuity checkpoint
 
+Verified at 2026-08-24 01:43 UTC for Sites v131, voucher recovery and the
+completed automatic CJ queue drain.
+
+1. verified `master` before continuity PR #24:
+   `9d6e73bd0c3b64abd0e92623b913ae9db73479fc`;
+2. PR #22 is merged as `67e35944c9a66706cedb6c942a5dc4df25354769`;
+   PR #23 is merged as `9d6e73bd0c3b64abd0e92623b913ae9db73479fc`;
+   PR #24 is the documentation-only continuity record and its final state must
+   be checked directly;
+3. the newest workflow by creation is run #55, ID `32676573902`, attempt 1;
+   validation passed 16/16 and the full TradeDoubler step succeeded, but the
+   overall run failed on the pre-v131 CJ/D1 path;
+4. the final repair cycle is run #53, ID `32666073700`, attempt 8, production
+   job `97295719976`, success from 01:36:08 to 01:39:06 UTC with no 503;
+5. run #55 is the latest full TradeDoubler snapshot and its full import step
+   succeeded from 00:24:49 to 00:41:51 UTC;
+6. Sites v131 source commit is
+   `58f4f79b450b6b630424d796da9ca1c09f0e965f`;
+7. v131 version ID is
+   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_912572e2753081919d42a89733a2b49c`;
+8. deployment `appgdep_6a8b987f78088191b6b87986b9435d01` is
+   `succeeded`, directly rechecked by the main agent;
+9. the Sites project is active and public; both custom domains have active
+   domain, provider and SSL state with no recorded error;
+10. build, artifact validation and 49/49 tests pass; lint has zero errors and
+    three existing warnings; an independent review found no blocker;
+11. v129 fixed exact voucher destination handling, simplified the catalog and
+    added three dynamic homepage cutouts; v130 forced one safe voucher refresh;
+    v131 removed the D1 quadratic maintenance path;
+12. final live counts are Aelia 1,234, Cocolita 843, Drogeria.pl 841,
+    Notino 5,344 and Brasty 6,043, total 14,305;
+13. Notino is completed with 146 review, 0 automatic and 0 pending fresh;
+14. Brasty is completed with 151 review, 0 automatic and 0 pending fresh;
+15. the remaining 297 review rows are true manual cases. Do not weaken mapping
+    rules or describe them as safe automatic matches;
+16. D1 directly confirms both CJ generations completed and no remaining
+    `sync_locks`;
+17. vouchers are 4 received, 1 imported, 3 excluded and 1 active; the three
+    exclusions have aggregate reason `tracking_url_not_approved`;
+18. an active coupon is not silently applied to prices without structured
+    owner confirmation;
+19. Flaconi remains externally blocked by
+    `orchestrator_feed_not_found`;
+20. the ordinary homepage rotation is active: YSL Libre Flowers & Flames EDP
+    50 ml, Notino, 3 stores, 359.40 PLN total and 258.50 PLN saving;
+21. five spaced production checks returned HTTP 200, beta returned HTTP 200,
+    and all three new cutout assets returned HTTP 200;
+22. the expired Stronger With You spotlight is gone; there is no empty or stale
+    hero;
+23. the catalog direction and new cutouts are deployed but do not yet have
+    explicit visual acceptance from the user;
+24. report #006 remains the latest confirmed delivered report. No new email
+    was sent; wait for the user's explicit report request;
+25. after PR #24 merges there is no code edit, import, deployment or email in
+    progress. The next task is user feedback, the explicit report request or
+    safe manual/provider-assisted handling of the remaining 297 rows.
+
+Treat this as dated evidence and recheck all unstable values before a new
+change.
+
+## Earlier Sites v128 continuity checkpoint retained for history
+
 Verified at 2026-08-22 17:20 UTC for Sites v128 and catalog recovery. This
 checkpoint supersedes the lower v123 checkpoint retained for history.
 
@@ -108,6 +170,104 @@ Treat this as dated evidence and recheck all unstable values before a new
 change.
 
 ## Latest paste-ready handoff baseline
+
+```text
+KONTYNUUJEMY PROJEKT PERFUMETR
+
+Nie zakładaj, że widzisz historię poprzedniego czatu.
+
+Najpierw niczego nie zmieniaj. Użyj GitHuba i Sites wyłącznie do odczytu.
+Przeczytaj w GADOMM/Index:
+AGENTS.md
+PROJECT_STATE.md
+docs/ARCHITECTURE.md
+docs/CHAT_CONTINUITY.md
+
+Następnie sprawdź aktualny master, najnowszy GitHub Actions run, ostatni pełny
+TradeDoubler, bieżącą wersję i wdrożenie Sites, domeny perfumetr.pl i
+beta.perfumetr.pl oraz produkcję. Jeżeli wystąpi rozbieżność, najpierw opisz ją
+użytkownikowi. Nie zmieniaj kodu, importera, konfiguracji ani produkcji przed
+zakończeniem kontroli.
+
+CZAS WERYFIKACJI
+24 sierpnia 2026, 01:43 UTC.
+
+GITHUB
+Master przed PR #24:
+9d6e73bd0c3b64abd0e92623b913ae9db73479fc
+PR #22 jest scalony jako 67e35944c9a66706cedb6c942a5dc4df25354769.
+PR #23 jest scalony jako 9d6e73bd0c3b64abd0e92623b913ae9db73479fc.
+PR #24 zapisuje ten stan i trzeba sprawdzić jego końcowy CI oraz merge.
+Najnowszy workflow według utworzenia to run #55, ID 32676573902, attempt 1.
+Walidacja 16/16 i pełny TradeDoubler przeszły, ale całość miała failure przez
+stary, później naprawiony problem CJ/D1.
+Końcowy cykl naprawczy to run #53, ID 32666073700, attempt 8, job
+97295719976, success, 01:36:08–01:39:06 UTC, bez 503.
+Run #55 jest ostatnim pełnym TradeDoublerem; jego pełny krok zakończył się
+sukcesem.
+GitHub Actions jest jedynym automatycznym harmonogramem.
+
+SITES
+Wersja v131.
+Commit: 58f4f79b450b6b630424d796da9ca1c09f0e965f
+Version ID:
+appgprj_6a8236775b808191b6b4979c4d86d889~appgver_912572e2753081919d42a89733a2b49c
+Deployment: appgdep_6a8b987f78088191b6b87986b9435d01
+Status: succeeded.
+Provider URL: https://perfumetr.borodzicz85.chatgpt.site
+Projekt jest aktywny i publiczny. Obie domeny mają aktywny provider i SSL.
+Build i artefakt działają, testy 49/49, lint 0 błędów i 3 stare ostrzeżenia.
+
+WYKONANE
+v129 uprościło katalog, naprawiło klasyfikację kuponów i dodało trzy flakony:
+Paco Rabanne 1 Million EDT 100 ml, Lattafa Khamrah EDP 100 ml i Carolina
+Herrera Good Girl Blush EDP 50 ml. Wszystkie dane ofert są dynamiczne z D1.
+v130 wymusiło dokładnie jedno odświeżenie kuponów po zmianie reguł.
+v131 usunęło kwadratowe zapytania blokujące D1 i dodało indeks utrzymaniowy.
+Nie dodano ręcznego JSON, ceny ze zrzutu ani luźniejszego dopasowania.
+
+WYNIK
+Aelia: 1234 aktywne oferty.
+Cocolita: 843.
+Drogeria.pl: 841.
+Notino: 5344, review 146, automatic 0, pending fresh 0.
+Brasty: 6043, review 151, automatic 0, pending fresh 0.
+Łącznie: 14305.
+Obie generacje CJ są completed, a D1 nie ma pozostawionej blokady.
+Pozostałe 297 review to prawdziwe przypadki ręczne. Nie wolno zgadywać ich
+dopasowania tylko po to, aby obniżyć licznik.
+
+KUPONY I BLOKADY
+Kupony TradeDoubler: 4 odebrane, 1 zaimportowany, 3 wykluczone, 1 aktywny.
+Trzy wykluczenia: tracking_url_not_approved. Aktywny kupon nie jest po cichu
+uwzględniany w cenie bez strukturalnego potwierdzenia właściciela.
+Flaconi pozostaje zewnętrznie zablokowane przez orchestrator_feed_not_found.
+
+STRONA
+Zwykła rotacja wróciła i pokazuje YSL Libre Flowers & Flames EDP 50 ml,
+Notino, 3 sklepy, 359,40 zł razem i 258,50 zł oszczędności. Stronger With You
+nie jest już przypięte, hero nie jest puste ani stare. Pięć kolejnych kontroli
+perfumetr.pl dało HTTP 200, beta dała HTTP 200, a trzy nowe assety dały 200.
+Nowy wygląd katalogu i nowe flakony są wdrożone, ale użytkownik nie ocenił ich
+jeszcze jednoznacznie. Nie zaczynaj kolejnego szerokiego redesignu bez opinii.
+
+RAPORT
+Raport #006 pozostaje ostatnim potwierdzonym. Nie wysłano nowego raportu.
+Użytkownik powiedział, że poprosi o raport po pracy, więc czekaj na jego
+wyraźne polecenie. Przed wysyłką sprawdź Wysłane i skopiuj dokładnie szablon
+#003. Jeśli #006 nadal jest ostatni, następny numer to #007.
+
+PRACA W TOKU
+Po scaleniu dokumentacyjnego PR #24 brak. Nie ma aktywnej edycji, importu,
+wdrożenia ani e-maila.
+
+NASTĘPNE ZADANIE
+Poczekaj na ocenę wyglądu, wyraźne polecenie raportu albo bezpieczny sposób
+ręcznej lub providerskiej obsługi 297 pozostałych kontroli. Nie osłabiaj reguł
+dopasowania.
+```
+
+## Earlier Sites v128 paste-ready handoff baseline retained for history
 
 ```text
 KONTYNUUJEMY PROJEKT PERFUMETR
