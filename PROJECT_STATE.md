@@ -1,11 +1,140 @@
 # Perfumetr project state
 
-Updated: 2026-08-22 17:20 UTC
+Updated: 2026-08-24 01:43 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
+
+Verified at 2026-08-24 01:43 UTC. This checkpoint supersedes the dated v128
+checkpoint below.
+
+Repository and automation:
+
+* repository: `GADOMM/Index`;
+* verified `master` before continuity pull request `#24`:
+  `9d6e73bd0c3b64abd0e92623b913ae9db73479fc`;
+* pull request `#22` is merged as
+  `67e35944c9a66706cedb6c942a5dc4df25354769`;
+* pull request `#23` is merged as
+  `9d6e73bd0c3b64abd0e92623b913ae9db73479fc` and exposes only
+  allowlisted aggregate voucher-rejection reasons to GitHub logs;
+* pull request `#24` is the documentation-only continuity record for this
+  checkpoint; verify its final CI and merge state directly;
+* the newest workflow by creation is run `#55`, database ID `32676573902`,
+  attempt `1`, event `push`; importer validation passed `16/16` and the full
+  TradeDoubler step succeeded, while the overall run concluded `failure`
+  because the pre-v131 CJ maintenance path overloaded D1;
+* the final recovery cycle is run `#53`, database ID `32666073700`, attempt
+  `8`, production job `97295719976`, completed successfully from 01:36:08 to
+  01:39:06 UTC with no HTTP 503 or orchestrator failure;
+* run `#55` is also the latest full TradeDoubler snapshot. Its full import
+  step ran successfully from 00:24:49 to 00:41:51 UTC;
+* GitHub Actions remains the only automatic scheduler.
+
+Current Sites deployment:
+
+* Sites version `131`;
+* source commit `58f4f79b450b6b630424d796da9ca1c09f0e965f`;
+* version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_912572e2753081919d42a89733a2b49c`;
+* deployment `appgdep_6a8b987f78088191b6b87986b9435d01`;
+* deployment status `succeeded`, directly rechecked after publication;
+* provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
+* Sites reports version `131`, an active public project and
+  `https://beta.perfumetr.pl` as the live URL;
+* `perfumetr.pl` and `beta.perfumetr.pl` have active domain, provider and SSL
+  state with no recorded error;
+* production build passed, the full suite passed `49/49`, artifact validation
+  passed, and lint has zero errors with three existing warnings;
+* an independent read-only review found no data-safety or deployment blocker.
+
+The production work spanned Sites v129 through v131:
+
+1. v129 repaired the TradeDoubler voucher destination classification, added
+   exact-source review recovery and simplified the beta catalog interaction;
+2. v129 added three optional homepage rotation cutouts for Paco Rabanne
+   1 Million EDT 100 ml, Lattafa Khamrah EDP 100 ml and Carolina Herrera Good
+   Girl Blush EDP 50 ml. Their price, merchant, offer count, delivery and
+   coupon effects remain dynamic D1 data;
+3. v130 added a one-time voucher-import revision marker so the fixed rules
+   bypassed the old fresh gate exactly once without adding a general force
+   switch;
+4. v131 made the retired seed cleanup read-only for the already-current marker,
+   rewrote two quadratic CJ listing invalidations as source-driven indexed
+   joins and added the
+   `catalog_source_products_maintenance_idx` D1 index.
+
+No provider JSON, screenshot price, token, private payload or manual offer was
+inserted. Hard mapping conflicts remain excluded from automatic retry. Missing
+GTIN may only reuse one exact unique semantic catalog variant and cannot expand
+the catalog.
+
+Verified production result:
+
+| Source | Live offers | Review | Automatic | Pending fresh |
+| --- | ---: | ---: | ---: | ---: |
+| Aelia.pl | 1,234 | bounded TradeDoubler proof | not applicable | not applicable |
+| Cocolita | 843 | bounded TradeDoubler proof | not applicable | not applicable |
+| Drogeria.pl | 841 | bounded TradeDoubler proof | not applicable | not applicable |
+| Notino | 5,344 | 146 | 0 | 0 |
+| Brasty | 6,043 | 151 | 0 | 0 |
+
+The verified total is `14,305` live offers. The true manual CJ review queue is
+`297` rows, down from `429` in the v128 checkpoint. Both automatic queues and
+both pending-fresh queues are zero. The remaining rows are not represented as
+safe automatic matches.
+
+Final CJ counters from run #53 attempt 8:
+
+* Notino: state `completed`, 7,005 received, 3,945 imported, 2,869 excluded,
+  9,153 stored, 5,344 live, 146 review, 0 automatic and 0 pending fresh;
+* Brasty: state `completed`, 13,598 received, 12,799 imported, 323 excluded,
+  6,582 stored, 6,043 live, 151 review, 0 automatic and 0 pending fresh.
+
+D1 directly confirms both current CJ generations as `completed` and contains
+no remaining `sync_locks`. Flaconi remains externally blocked by
+`orchestrator_feed_not_found` and must not be described as active.
+
+The latest full TradeDoubler snapshot in run #55 confirmed:
+
+* Aelia: 8,508 provider/scanned products, 1,827 perfumes, 86 chunks and 1,234
+  live offers;
+* Cocolita: 27,815 provider/scanned products, 1,001 perfumes, 279 chunks and
+  843 live offers;
+* Drogeria.pl: 32,411 provider/scanned products, 1,244 perfumes, 325 chunks
+  and 841 live offers.
+
+Voucher production state is 4 received, 1 imported, 3 excluded and 1 active.
+The three exclusions have the safe aggregate reason
+`tracking_url_not_approved`. The active coupon is not silently applied to
+prices; structured owner confirmation is still required before automatic
+price use.
+
+A direct production check after attempt 8 returned five consecutive HTTP 200
+responses from `perfumetr.pl`; `beta.perfumetr.pl` also returned HTTP 200. The
+ordinary five-day rotation is active and shows Yves Saint Laurent Libre
+Flowers & Flames EDP 50 ml, Notino, 3 stores, 359.40 PLN total and 258.50 PLN
+saving. The expired Stronger With You spotlight did not remain pinned and the
+hero is neither empty nor stale. All three new cutout assets returned HTTP 200.
+
+The v129 catalog direction and the three new cutouts are deployed but have not
+yet received explicit visual acceptance from the user. Do not start another
+broad catalog redesign without fresh user feedback.
+
+No email report was sent. Report `#006` remains the latest confirmed delivered
+report. The user said they will request the report after the work; wait for that
+explicit request, verify Sent and reproduce report `#003` exactly. If `#006`
+is still the last delivered number, the next report is `#007`.
+
+There is no code edit, import, deployment or email delivery in progress after
+the continuity pull request is merged. The exact next task is either the user's
+visual feedback, an explicit report request, or safe manual/provider-assisted
+resolution of the remaining 297 review rows. Do not weaken matching rules to
+reduce that number.
+
+## Earlier Sites v128 production checkpoint retained for history
 
 Verified at 2026-08-22 17:20 UTC. This checkpoint supersedes the lower dated
 v123 evidence, which is retained only for history.
@@ -358,16 +487,14 @@ proactively alter unrelated interface areas.
 
 1. AWIN Flaconi cannot import until the external feed is approved and exposed to
    the server importer.
-2. Brasty's latest bounded generation paused incomplete in run 41 and should be
-   allowed to continue in later scheduled cycles.
-3. Full TradeDoubler snapshots are parsed in memory after download.
-4. GitHub scheduled workflows can be disabled on inactive public repositories;
+2. Full TradeDoubler snapshots are parsed in memory after download.
+3. GitHub scheduled workflows can be disabled on inactive public repositories;
    a missing-success alert is still recommended.
-5. A future provider schema change may require a new bounded adapter or source
+4. A future provider schema change may require a new bounded adapter or source
    profile.
-6. Sites reports `beta.perfumetr.pl` as the current live URL even though both
+5. Sites reports `beta.perfumetr.pl` as the current live URL even though both
    custom domains are active.
-7. Beta tester feedback is expected but has not yet been triaged.
+6. Beta tester feedback is expected but has not yet been triaged.
 
 ## Chat continuity
 
