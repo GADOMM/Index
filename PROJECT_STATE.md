@@ -1,22 +1,22 @@
 # Perfumetr project state
 
-Updated: 2026-08-24 10:31 UTC
+Updated: 2026-08-24 11:29 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
 
-Verified at 2026-08-24 10:31 UTC for the focused Sites v133 mobile catalog
-entrance and matte-glass deployment. Repository and importer counters retain
-their directly verified 09:35 UTC baseline because v133 changed no importer,
-schema, schedule, offer or source configuration.
+Verified at 2026-08-24 11:29 UTC for the Sites v134 integration-panel cleanup,
+Sites v135 scoped Flaconi workflow trust and the first authorized post-approval
+Flaconi feed check. Importer counters retain their directly verified 09:35 UTC
+baseline because the Flaconi check produced no records or offers.
 
 Repository and automation:
 
 * repository: `GADOMM/Index`;
-* verified `master` before the v133 continuity pull request:
-  `4b1f3a6238c28cd6012f676a4cdce34d14d0510a`;
+* verified `master` before this continuity pull request:
+  `12bc37c2c2e8fbe2a0788a55923342eb4fc39242`;
 * pull request `#24` is merged as
   `deedfdb60d0129cfefb51d89631ab897f434d980` and records Sites v131;
 * pull request `#25` is merged as
@@ -24,11 +24,23 @@ Repository and automation:
 * pull request `#26` is merged as
   `4b1f3a6238c28cd6012f676a4cdce34d14d0510a` and records Sites v132 and
   delivered report `#008`;
-* Actions run `#62`, database ID `32714838161`, attempt `1`, event
-  `pull_request`, completed successfully from 10:03:49 to 10:03:58 UTC and is
-  the newest workflow before the v133 continuity pull request. It validated
-  documentation and did not run a production import;
-* the newest production workflow remains run `#58`, database ID
+* pull request `#27` is merged as
+  `3092cd09d80080acb4fc450fe5461b3f932d3673` and records Sites v133;
+* pull request `#28` is merged as
+  `12bc37c2c2e8fbe2a0788a55923342eb4fc39242` and adds one source-limited,
+  unscheduled Flaconi workflow supporting push and manual dispatch;
+* `Perfumetr Flaconi feed` run `#1`, database ID `32719672617`, attempt `1`,
+  pull request, completed successfully. Importer validation passed `16/16` and
+  the production job was correctly skipped;
+* `Perfumetr Flaconi feed` run `#2`, database ID `32719777955`, attempt `2`,
+  completed successfully from 11:20:17 to 11:20:35 UTC. The isolated Flaconi
+  job was `97413228339`;
+* attempt `1` of run `#2` did not test AWIN. Sites rejected the new workflow
+  identity with `orchestrator_404` before the importer reached AWIN;
+* attempt `2` passed the scoped OIDC boundary, reached AWIN and returned the
+  handled external blocker `orchestrator_feed_not_found` before scanning any
+  records;
+* the newest scheduled partner workflow remains run `#58`, database ID
   `32711816055`, attempt `1`, event `schedule`, successful from 09:29:21
   to 09:34:29 UTC; importer validation passed `16/16`, full TradeDoubler was
   correctly skipped and the bounded partner orchestrator succeeded;
@@ -41,42 +53,36 @@ Repository and automation:
 
 Current Sites deployment:
 
-* Sites version `133`;
-* source commit `790a78251e7890d464887aa520d694bc7522b906`;
+* Sites version `135`;
+* source commit `00edc6921a2b1f2fd5c77a04d5f10adcb0ac3407`;
 * version
-  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e28533ee25348191bb8fdf41119ddfff`;
-* deployment `appgdep_6a8c1ca67bf88191b39bf0c0736ba40b`;
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_20250ea793b08191bbdac344721ba79c`;
 * deployment type `publish`, status `succeeded` and no failure message,
-  directly rechecked by the main agent at 10:28 UTC;
+  directly rechecked by the main agent after deployment;
 * provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
-* Sites reports version `133`, an active public project and
+* Sites reports version `135`, an active public project and
   `https://beta.perfumetr.pl` as the live URL;
 * `perfumetr.pl` and `beta.perfumetr.pl` both report active domain,
   provider and SSL state with no recorded error;
 * production build and artifact validation passed, the full suite passed
-  `49/49`, and lint has zero errors with three existing warnings;
-* an independent read-only review found no mobile cascade, Safari fallback,
-  reduced-motion or deployment blocker. Its performance and contrast concerns
-  were addressed before deployment;
-* no browser QA was run for v133. Verification is the direct Sites deployment
-  result, active live URL, domain state, build, tests and focused code review.
+  `50/50`, and lint has zero errors with three existing warnings;
+* no browser QA was run for v134 or v135. Verification is the direct Sites
+  deployment result, active live URL, domain state, build, tests and focused
+  behavioral coverage.
 
-Sites v133 changed only the beta catalog presentation:
+Sites v134 and v135 changed only integration presentation and workflow trust:
 
-1. the native catalog dialog, Escape handling, focus restoration, scroll
-   containment and existing responsive product grid remain unchanged;
-2. desktop uses a restrained 440 ms entrance from the right. Mobile uses a
-   separate 480 ms full-width entrance from the right so the transition is
-   clearly visible instead of collapsing to the earlier 12 px vertical move;
-3. the sand canvas uses about 68 percent opacity on desktop and 72 percent on
-   mobile, 22 to 24 px backdrop blur, subdued saturation and a light refractive
-   edge to create a matte-glass connection to the beta background;
-4. nested sticky surfaces use lighter translucency. Redundant filter-panel
-   blur was removed to limit iPhone GPU work, while secondary text was darkened
-   for contrast;
-5. `prefers-reduced-motion` disables the new animation and transitions;
-6. no catalog data, importer behavior, API contract, offer price, product image
-   or source mapping changed.
+1. TradeDoubler, AWIN and CJ now use the same read-only card model:
+   Connection, Programs, Catalogs and Promotions, with the same refresh action;
+2. AWIN server rendering uses the persisted programme registry, so the
+   confirmed `1 of 5` state survives a page reload;
+3. promotions and coupons are provider-neutral and appear once at the top
+   level instead of being presented as a TradeDoubler-only capability;
+4. ordinary integration-panel refreshes still do not start imports;
+5. v135 trusts the exact `flaconi.yml` workflow only for the catalog
+   orchestrator and only for `push` or `workflow_dispatch` events;
+6. the Flaconi workflow cannot access the TradeDoubler runtime bridge. Existing
+   TradeDoubler trust remains unchanged.
 
 Product-rating audit:
 
@@ -90,7 +96,7 @@ Product-rating audit:
   freshness, and come from an official store API, official feed or licensed
   source before the UI can show it.
 
-Importer and offer state is unchanged by v133:
+Importer and offer state is unchanged by Sites v133 through v135:
 
 | Source | Live offers | Review | Automatic | Pending fresh |
 | --- | ---: | ---: | ---: | ---: |
@@ -108,16 +114,21 @@ pending-fresh work. Do not weaken mapping rules to reduce a counter.
 
 Voucher state remains 4 received, 1 imported, 3 excluded and 1 active. The
 active coupon is not silently applied to price without structured owner
-confirmation. On 2026-08-24 the user reported receiving a Flaconi programme
-acceptance email, but explicitly postponed all technical work. The email was
-not inspected and feed availability was not rechecked. The latest verified
-runtime state therefore remains `orchestrator_feed_not_found`; do not describe
-Flaconi as an active offer source until a later authorized technical check and
-successful feed import confirm it.
+confirmation. D1 persistently records Flaconi advertiser `18563` as `approved`,
+with the decision recorded at 10:19:17 UTC and the latest check at 11:20:30 UTC.
+Reloading the panel does not remove that approval;
+the previous `0 of 5` display was a presentation bug. Run #2 attempt 2 reached
+the official AWIN Enhanced endpoint after the documented propagation window,
+but AWIN returned feed-not-found before scanning. The source remains paused at
+generation 1 with zero received, accepted, review or rejected rows, and no
+Flaconi merchant or offer exists. A separate AWIN Data Feed API key was not
+configured at the final check; it is required to discover the official feed
+format, feed ID and locale through Product Feed List. Never store the key or a
+keyed feed URL in this repository.
 
 The earlier directly verified homepage state remains the ordinary five-day
 rotation with YSL Libre Flowers & Flames EDP 50 ml, Notino, 3 stores, 359.40
-PLN total and 258.50 PLN saving. Sites v133 did not modify the homepage,
+PLN total and 258.50 PLN saving. Sites v133 through v135 did not modify the homepage,
 rotation, cutouts or dynamic offer calculation.
 
 Report `#008`, dated 2026-08-24, was sent to
@@ -125,13 +136,14 @@ Report `#008`, dated 2026-08-24, was sent to
 visual template and inline Perfumetr logo from delivered report `#003`.
 Report `#008` is the latest confirmed delivered report.
 
-There is no code edit, import, deployment or email delivery in progress after
-the v133 continuity pull request is merged. The automatic schedule will
-continue the paused run #58 CJ generations. The next user-driven task is visual
-evaluation of the v133 right-side entrance and matte glass, especially on a
-phone. Do not redesign further until the user responds. Flaconi technical work
-comes afterwards only when the user authorizes it. Product ratings remain
-blocked until an authoritative structured source is available.
+There is no Sites code edit, importer run, deployment or email delivery in
+progress after this continuity pull request is merged. The next user-driven
+task is to save the separate AWIN Data Feed API key in the protected integration
+field, never in chat or the repository. Then read Product Feed List, select only
+advertiser 18563 using its real format and locale, and continue the bounded
+official-feed import. Flaconi remains hidden from store rails and comparisons
+until verified fresh offers exist. Product ratings remain blocked until an
+authoritative structured source is available.
 
 ## Earlier Sites v128 production checkpoint retained for history
 
@@ -426,10 +438,11 @@ or reverse those areas.
 
 ## Integrations panel
 
-The panel reads persisted source status and refreshes lightweight status views.
-It does not start normal imports during page interaction. AWIN reports the
-external feed-activation blocker, while CJ reports the latest persisted importer
-state.
+The panel now uses one read-only status model for TradeDoubler, AWIN and CJ:
+Connection, Programs, Catalogs and Promotions, with the same refresh action.
+AWIN server rendering uses the persisted programme registry, so the confirmed
+`1 of 5` state survives a page reload. Promotions and coupons are
+provider-neutral at the top level. Normal panel refreshes do not start imports.
 
 Emergency authenticated import routes remain available for controlled recovery,
 but the panel is not a second scheduler. Manual coupon confirmation remains a
@@ -485,8 +498,10 @@ proactively alter unrelated interface areas.
 
 ## Known risks and blockers
 
-1. AWIN Flaconi cannot import until the external feed is approved and exposed to
-   the server importer.
+1. Flaconi programme approval is confirmed and persisted, but the expected
+   Enhanced endpoint still returns `feed_not_found`. Official feed format, ID
+   and locale discovery is blocked until the separate AWIN Data Feed API key is
+   saved in the protected integration field.
 2. Full TradeDoubler snapshots are parsed in memory after download.
 3. GitHub scheduled workflows can be disabled on inactive public repositories;
    a missing-success alert is still recommended.
@@ -511,8 +526,11 @@ production before that verification.
 
 ## Do not claim
 
-Do not advertise a saving below 5 PLN or 2% in the homepage hero. Do not claim that AWIN Flaconi is active while its state remains
-`orchestrator_feed_not_found`. Do not describe Brasty run 41 as a completed
-refresh. Do not describe run 41 as a full TradeDoubler import. Do not claim that
+Do not advertise a saving below 5 PLN or 2% in the homepage hero. Do not claim
+that AWIN Flaconi is active while its state remains
+`orchestrator_feed_not_found`, and do not describe it as waiting for programme
+approval because approval is already confirmed. Do not treat run #2 attempt 1
+as an AWIN feed test; it stopped at the OIDC boundary. Do not describe Brasty
+run 41 as a completed refresh or a full TradeDoubler import. Do not claim that
 the screenshot price is fixed on the homepage. Do not claim that any deployment
 report after confirmed report `#008` was sent.
