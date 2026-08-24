@@ -1,36 +1,42 @@
 # Perfumetr project state
 
-Updated: 2026-08-24 01:43 UTC
+Updated: 2026-08-24 09:28 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
 
-Verified at 2026-08-24 01:43 UTC. This checkpoint supersedes the dated v128
-checkpoint below.
+Verified at 2026-08-24 09:28 UTC. The Sites v131 deployment remains the
+directly verified production baseline from 01:43 UTC. Repository, automation,
+partner counters and report delivery were rechecked for this update. This
+checkpoint supersedes the dated v128 checkpoint below.
 
 Repository and automation:
 
 * repository: `GADOMM/Index`;
-* verified `master` before continuity pull request `#24`:
-  `9d6e73bd0c3b64abd0e92623b913ae9db73479fc`;
+* verified `master` before report-delivery pull request `#25`:
+  `deedfdb60d0129cfefb51d89631ab897f434d980`;
 * pull request `#22` is merged as
   `67e35944c9a66706cedb6c942a5dc4df25354769`;
 * pull request `#23` is merged as
   `9d6e73bd0c3b64abd0e92623b913ae9db73479fc` and exposes only
   allowlisted aggregate voucher-rejection reasons to GitHub logs;
-* pull request `#24` is the documentation-only continuity record for this
-  checkpoint; verify its final CI and merge state directly;
-* the newest workflow by creation is run `#55`, database ID `32676573902`,
-  attempt `1`, event `push`; importer validation passed `16/16` and the full
-  TradeDoubler step succeeded, while the overall run concluded `failure`
-  because the pre-v131 CJ maintenance path overloaded D1;
+* pull request `#24` is merged as
+  `deedfdb60d0129cfefb51d89631ab897f434d980` and records the Sites v131
+  production checkpoint;
+* pull request `#25` is the documentation-only record of report `#007`;
+  verify its final CI and merge state directly;
+* the newest production workflow is run `#57`, database ID `32687178753`,
+  attempt `1`, event `schedule`, completed successfully from 03:38:54 to
+  03:39:24 UTC; importer validation passed `16/16`, the full TradeDoubler step
+  was correctly skipped, and the bounded partner orchestrator succeeded;
 * the final recovery cycle is run `#53`, database ID `32666073700`, attempt
   `8`, production job `97295719976`, completed successfully from 01:36:08 to
   01:39:06 UTC with no HTTP 503 or orchestrator failure;
 * run `#55` is also the latest full TradeDoubler snapshot. Its full import
-  step ran successfully from 00:24:49 to 00:41:51 UTC;
+  step ran successfully from 00:24:49 to 00:41:51 UTC, although the overall
+  run failed on the retired pre-v131 CJ maintenance path;
 * GitHub Actions remains the only automatic scheduler.
 
 Current Sites deployment:
@@ -123,16 +129,15 @@ The v129 catalog direction and the three new cutouts are deployed but have not
 yet received explicit visual acceptance from the user. Do not start another
 broad catalog redesign without fresh user feedback.
 
-No email report was sent. Report `#006` remains the latest confirmed delivered
-report. The user said they will request the report after the work; wait for that
-explicit request, verify Sent and reproduce report `#003` exactly. If `#006`
-is still the last delivered number, the next report is `#007`.
+Report `#007`, dated 2026-08-24, was sent to `support@perfumetr.pl` at
+09:24 UTC and confirmed in Sent. It uses the permanent visual template and
+inline Perfumetr logo from delivered report `#003`. Report `#007` is now the
+latest confirmed delivered report.
 
 There is no code edit, import, deployment or email delivery in progress after
-the continuity pull request is merged. The exact next task is either the user's
-visual feedback, an explicit report request, or safe manual/provider-assisted
-resolution of the remaining 297 review rows. Do not weaken matching rules to
-reduce that number.
+the report-delivery pull request is merged. The exact next task is either the
+user's visual feedback or safe manual/provider-assisted resolution of the
+remaining 297 review rows. Do not weaken matching rules to reduce that number.
 
 ## Earlier Sites v128 production checkpoint retained for history
 
@@ -438,12 +443,13 @@ separate guarded operation.
 
 ## Deployment reports
 
-Report `#006`, dated 2026-08-22, remains the latest confirmed delivered message
-to `support@perfumetr.pl`. It uses the exact visual template, wordmark, layout,
-typography, inline Perfumetr logo and footer from delivered report `#003`.
+Report `#007`, dated 2026-08-24, is the latest confirmed delivered message to
+`support@perfumetr.pl`. Delivery was confirmed in Sent. It uses the exact visual
+template, wordmark, layout, typography, inline Perfumetr logo and footer from
+delivered report `#003`.
 
-No report was sent for v122 or v123. The user instructed that visual deployments should
-be consolidated and reported only after an explicit end-of-day request.
+No separate report was sent for v122 or v123. The later work was consolidated
+in report `#007`, following the user's end-of-day reporting instruction.
 
 Current reporting instruction:
 
@@ -453,7 +459,7 @@ Current reporting instruction:
    its exact visual template, wordmark, layout, typography and footer;
 4. recheck the latest delivered report number immediately before assigning the
    next sequential number;
-5. after confirmed report `#006`, the next number is `#007` only if the
+5. after confirmed report `#007`, the next number is `#008` only if the
    mailbox check still confirms that sequence.
 
 Required footer:
@@ -515,4 +521,4 @@ Do not advertise a saving below 5 PLN or 2% in the homepage hero. Do not claim t
 `orchestrator_feed_not_found`. Do not describe Brasty run 41 as a completed
 refresh. Do not describe run 41 as a full TradeDoubler import. Do not claim that
 the screenshot price is fixed on the homepage. Do not claim that any deployment
-report after confirmed report `#006` was sent.
+report after confirmed report `#007` was sent.
