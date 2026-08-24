@@ -12,6 +12,22 @@ const EXPECTED_BLOCKERS = new Set([
   "orchestrator_feed_access_denied",
   "orchestrator_not_configured",
 ]);
+const VOUCHER_REJECTION_REASONS = new Set([
+  "program_not_allowed",
+  "technical_program",
+  "program_not_verified",
+  "invalid_date",
+  "inactive_window",
+  "missing_tracking_url",
+  "missing_title",
+  "missing_voucher_code",
+  "missing_discount",
+  "voucher_not_publishable",
+  "tracking_url_not_approved",
+  "tracking_program_mismatch",
+  "landing_domain_mismatch",
+  "tracking_destination_mismatch",
+]);
 const requested = process.argv.slice(2).length ? process.argv.slice(2) : [...ALLOWED_SOURCE_IDS];
 const sources = [...new Set(requested.map((value) => value.trim()))];
 if (!sources.length || sources.some((source) => !ALLOWED_SOURCE_IDS.has(source))) {
@@ -102,6 +118,26 @@ const responseCounters = (payload) => {
   }
   return counters;
 };
+const responseVoucherRejectionReasons = (source, payload) => {
+  if (source !== "tradedoubler:vouchers" || payload?.overview?.rejectionReasons === undefined) {
+    return null;
+  }
+  const reasons = payload.overview.rejectionReasons;
+  if (!reasons || typeof reasons !== "object" || Array.isArray(reasons)) {
+    throw new Error("orchestrator_invalid_response");
+  }
+  const safeReasons = {};
+  for (const [reason, count] of Object.entries(reasons)) {
+    if (!VOUCHER_REJECTION_REASONS.has(reason)
+      || typeof count !== "number"
+      || !Number.isSafeInteger(count)
+      || count < 0) {
+      throw new Error("orchestrator_invalid_response");
+    }
+    safeReasons[reason] = count;
+  }
+  return safeReasons;
+};
 const cjMaintenanceCounters = (source, counters) => {
   if (!source.startsWith("cj:")) return null;
   const required = ["automaticReviewCount", "pendingFreshOfferCount", "maintenanceProcessedCount"];
@@ -124,6 +160,7 @@ const runSource = async (source) => {
   let skipped = responseSkipped(initial);
   let busy = responseBusy(initial);
   let counters = responseCounters(initial);
+  let rejectionReasons = responseVoucherRejectionReasons(source, initial);
   let inCjMaintenance = state === "completed"
     && hasMaintenanceBacklog(cjMaintenanceCounters(source, counters));
   while (!skipped && !busy && steps < configuredSteps) {
@@ -132,8 +169,10 @@ const runSource = async (source) => {
     skipped = responseSkipped(latest);
     busy = responseBusy(latest);
     const stepCounters = responseCounters(latest);
+    const stepRejectionReasons = responseVoucherRejectionReasons(source, latest);
     const maintenance = cjMaintenanceCounters(source, stepCounters);
     counters = { ...counters, ...stepCounters };
+    if (stepRejectionReasons !== null) rejectionReasons = stepRejectionReasons;
     steps += 1;
     if (skipped || busy || state === "failed") break;
     if (state !== "completed") {
@@ -153,6 +192,7 @@ const runSource = async (source) => {
     skipped,
     busy,
     counters,
+    ...(rejectionReasons === null ? {} : { rejectionReasons }),
   };
 };
 

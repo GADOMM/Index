@@ -81,7 +81,14 @@ test("one partner failure does not prevent CJ and TradeDoubler vouchers from adv
     if (body.source === "tradedoubler:vouchers") {
       return Response.json({
         ok: true,
-        overview: { state: "completed", activeCoupons: 7 },
+        overview: {
+          state: "completed",
+          activeCoupons: 7,
+          rejectionReasons: {
+            tracking_url_not_approved: 4,
+            missing_discount: 0,
+          },
+        },
         skipped: "fresh",
       });
     }
@@ -149,6 +156,10 @@ test("one partner failure does not prevent CJ and TradeDoubler vouchers from adv
     assert.equal(report.sources[2].skipped, "fresh");
     assert.equal(report.sources[2].completed, true);
     assert.deepEqual(report.sources[2].counters, { activeCoupons: 7 });
+    assert.deepEqual(report.sources[2].rejectionReasons, {
+      tracking_url_not_approved: 4,
+      missing_discount: 0,
+    });
     assert.equal(report.sources[3].source, "cj:brasty");
     assert.equal(report.sources[3].busy, true);
     assert.equal(report.sources[3].completed, false);
@@ -161,6 +172,79 @@ test("one partner failure does not prevent CJ and TradeDoubler vouchers from adv
     process.exitCode = originalExitCode;
     delete process.env.PERFUMETR_ORIGIN;
     delete process.env.PERFUMETR_ORCHESTRATOR_STEPS;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("rejects non-allowlisted or non-integer voucher rejection summaries without forwarding them", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const requestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const invalidSummaries = [
+    { unexpected_provider_payload: 1 },
+    { tracking_url_not_approved: -1 },
+    { tracking_url_not_approved: 1.5 },
+    { tracking_url_not_approved: "1" },
+  ];
+
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = requestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/catalog-orchestrator.mjs", "tradedoubler:vouchers"];
+
+  try {
+    for (const [index, rejectionReasons] of invalidSummaries.entries()) {
+      let stdout = "";
+      let stderr = "";
+      process.exitCode = originalExitCode;
+      process.stdout.write = ((value, ...args) => {
+        if (typeof value === "string" && value.startsWith("{")) {
+          stdout += value;
+          return true;
+        }
+        return originalStdout.call(process.stdout, value, ...args);
+      });
+      process.stderr.write = ((value) => { stderr += String(value); return true; });
+      globalThis.fetch = async (input) => {
+        const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+        if (url.hostname === "pipelines.actions.githubusercontent.com") {
+          return Response.json({ value: oidcToken });
+        }
+        return Response.json({
+          ok: true,
+          overview: { state: "completed", rejectionReasons },
+          skipped: "fresh",
+        });
+      };
+
+      await import(`../scripts/catalog-orchestrator.mjs?voucher-rejection-validation=${Date.now()}-${index}`);
+      assert.equal(stdout, "");
+      assert.equal(process.exitCode, 1);
+      const report = JSON.parse(stderr.replace(/^catalog_orchestrator_result=/, ""));
+      assert.deepEqual(report.sources, [{
+        ok: false,
+        source: "tradedoubler:vouchers",
+        error: "orchestrator_invalid_response",
+      }]);
+      assert.doesNotMatch(stderr, /unexpected_provider_payload/);
+      assert.doesNotMatch(stderr, new RegExp(requestToken));
+    }
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_ORIGIN;
     delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
     delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
   }
