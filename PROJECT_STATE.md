@@ -1,83 +1,88 @@
 # Perfumetr project state
 
-Updated: 2026-08-24 09:35 UTC
+Updated: 2026-08-24 10:01 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
 
-Verified at 2026-08-24 09:35 UTC. The Sites v131 deployment remains the
-directly verified production baseline from 01:43 UTC. Repository, automation,
-partner counters and report delivery were rechecked for this update. This
-checkpoint supersedes the dated v128 checkpoint below.
+Verified at 2026-08-24 10:01 UTC for the focused Sites v132 catalog transition
+deployment and report #008. Repository and importer counters retain their
+directly verified 09:35 UTC baseline because v132 changed no importer, schema,
+schedule, offer or source configuration.
 
 Repository and automation:
 
 * repository: `GADOMM/Index`;
-* verified `master` before report-delivery pull request `#25`:
-  `deedfdb60d0129cfefb51d89631ab897f434d980`;
-* pull request `#22` is merged as
-  `67e35944c9a66706cedb6c942a5dc4df25354769`;
-* pull request `#23` is merged as
-  `9d6e73bd0c3b64abd0e92623b913ae9db73479fc` and exposes only
-  allowlisted aggregate voucher-rejection reasons to GitHub logs;
+* verified `master` before continuity pull request `#26`:
+  `fb3396ee134ea7bba317b32fdebae4a0aad73789`;
 * pull request `#24` is merged as
-  `deedfdb60d0129cfefb51d89631ab897f434d980` and records the Sites v131
-  production checkpoint;
-* pull request `#25` is the documentation-only record of report `#007`;
-  verify its final CI and merge state directly;
-* the newest production workflow is run `#58`, database ID `32711816055`,
-  attempt `1`, event `schedule`, completed successfully from 09:29:21 to
-  09:34:29 UTC; importer validation passed `16/16`, the full TradeDoubler step
-  was correctly skipped, and the bounded partner orchestrator succeeded;
-* the final recovery cycle is run `#53`, database ID `32666073700`, attempt
-  `8`, production job `97295719976`, completed successfully from 01:36:08 to
-  01:39:06 UTC with no HTTP 503 or orchestrator failure;
-* run `#55` is also the latest full TradeDoubler snapshot. Its full import
-  step ran successfully from 00:24:49 to 00:41:51 UTC, although the overall
-  run failed on the retired pre-v131 CJ maintenance path;
+  `deedfdb60d0129cfefb51d89631ab897f434d980` and records Sites v131;
+* pull request `#25` is merged as
+  `fb3396ee134ea7bba317b32fdebae4a0aad73789` and records report `#007`;
+* pull request `#26` is the documentation-only Sites v132 and report `#008`
+  continuity record; verify its final CI and merge state directly;
+* the newest production workflow remains run `#58`, database ID
+  `32711816055`, attempt `1`, event `schedule`, successful from 09:29:21
+  to 09:34:29 UTC; importer validation passed `16/16`, full TradeDoubler was
+  correctly skipped and the bounded partner orchestrator succeeded;
+* run `#53`, database ID `32666073700`, attempt `8`, remains the final
+  completed CJ recovery generation;
+* run `#55` remains the latest full TradeDoubler snapshot. Its full import
+  step succeeded from 00:24:49 to 00:41:51 UTC, although the overall run failed
+  on the retired pre-v131 CJ maintenance path;
 * GitHub Actions remains the only automatic scheduler.
 
 Current Sites deployment:
 
-* Sites version `131`;
-* source commit `58f4f79b450b6b630424d796da9ca1c09f0e965f`;
+* Sites version `132`;
+* source commit `843e1f8d7dc542bf5a40b6507ba53d67e0fa815c`;
 * version
-  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_912572e2753081919d42a89733a2b49c`;
-* deployment `appgdep_6a8b987f78088191b6b87986b9435d01`;
-* deployment status `succeeded`, directly rechecked after publication;
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_10e6ac8f132481918c4d811807773972`;
+* deployment `appgdep_6a8c154fe2e481919fb8c616f25171b7`;
+* deployment type `publish`, status `succeeded` and no failure message,
+  directly rechecked by the main agent at 09:56 UTC;
 * provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
-* Sites reports version `131`, an active public project and
+* Sites reports version `132`, an active public project and
   `https://beta.perfumetr.pl` as the live URL;
-* `perfumetr.pl` and `beta.perfumetr.pl` have active domain, provider and SSL
-  state with no recorded error;
-* production build passed, the full suite passed `49/49`, artifact validation
-  passed, and lint has zero errors with three existing warnings;
-* an independent read-only review found no data-safety or deployment blocker.
+* `perfumetr.pl` and `beta.perfumetr.pl` both report active domain,
+  provider and SSL state with no recorded error;
+* production build and artifact validation passed, the full suite passed
+  `49/49`, and lint has zero errors with three existing warnings;
+* an independent read-only review found no catalog-motion, mobile,
+  reduced-motion or deployment blocker;
+* no browser QA was run for v132. Verification is the direct Sites deployment
+  result, active live URL, domain state, build, tests and focused code review.
 
-The production work spanned Sites v129 through v131:
+Sites v132 changed only the beta catalog presentation:
 
-1. v129 repaired the TradeDoubler voucher destination classification, added
-   exact-source review recovery and simplified the beta catalog interaction;
-2. v129 added three optional homepage rotation cutouts for Paco Rabanne
-   1 Million EDT 100 ml, Lattafa Khamrah EDP 100 ml and Carolina Herrera Good
-   Girl Blush EDP 50 ml. Their price, merchant, offer count, delivery and
-   coupon effects remain dynamic D1 data;
-3. v130 added a one-time voucher-import revision marker so the fixed rules
-   bypassed the old fresh gate exactly once without adding a general force
-   switch;
-4. v131 made the retired seed cleanup read-only for the already-current marker,
-   rewrote two quadratic CJ listing invalidations as source-driven indexed
-   joins and added the
-   `catalog_source_products_maintenance_idx` D1 index.
+1. the native catalog dialog, Escape handling, focus restoration, scroll
+   containment and existing responsive product grid remain unchanged;
+2. opening and closing now use a 280 ms restrained fade, 12 px vertical motion
+   and very small scale transition;
+3. the page behind the dialog fades and blurs gradually instead of switching
+   instantly;
+4. the sand canvas, sticky header, category toolbar and filters are
+   translucent. Mobile uses stronger opacity and limited blur for contrast and
+   performance;
+5. `prefers-reduced-motion` disables the new animation and transitions;
+6. no catalog data, importer behavior, API contract, offer price, product image
+   or source mapping changed.
 
-No provider JSON, screenshot price, token, private payload or manual offer was
-inserted. Hard mapping conflicts remain excluded from automatic retry. Missing
-GTIN may only reuse one exact unique semantic catalog variant and cannot expand
-the catalog.
+Product-rating audit:
 
-Current live offers and the newest partial CJ-generation counters:
+* CJ Notino, TradeDoubler, AWIN, the current API models and production D1 do
+  not provide a customer product rating plus review count;
+* `feedback.rating` is a beta-tester score and
+  `catalog_import_sources.review_count` is an importer review-queue counter.
+  Neither may be displayed as product reviews;
+* v132 deliberately publishes no fabricated stars or manually copied counts;
+* a future rating must be stored per merchant listing, include its source and
+  freshness, and come from an official store API, official feed or licensed
+  source before the UI can show it.
+
+Importer and offer state is unchanged by v132:
 
 | Source | Live offers | Review | Automatic | Pending fresh |
 | --- | ---: | ---: | ---: | ---: |
@@ -89,69 +94,30 @@ Current live offers and the newest partial CJ-generation counters:
 
 The verified total remains `14,305` live offers. Run #58 started new CJ
 generations and stopped both safely at the 48-step cycle limit. Their partial
-review and automatic counters are not final and must not be compared directly
-with a completed generation. The preceding completed generation ended with
-`297` true manual rows, down from `429` in the v128 checkpoint, and zero
-automatic or pending-fresh work.
+review and automatic counters are not final. The preceding completed
+generation ended with `297` true manual rows, zero automatic work and zero
+pending-fresh work. Do not weaken mapping rules to reduce a counter.
 
-Current partial CJ counters from run #58:
+Voucher state remains 4 received, 1 imported, 3 excluded and 1 active. The
+active coupon is not silently applied to price without structured owner
+confirmation. Flaconi remains externally blocked by
+`orchestrator_feed_not_found` and must not be described as active.
 
-* Notino: state `paused`, 48 steps, 4,662 received, 2,544 imported, 2,027
-  excluded, 9,153 stored, 5,344 live, 54 review, 54 automatic and 0 pending
-  fresh;
-* Brasty: state `paused`, 48 steps, 4,800 received, 4,585 imported, 61
-  excluded, 6,582 stored, 6,043 live, 154 review, 66 automatic and 0 pending
-  fresh.
+The earlier directly verified homepage state remains the ordinary five-day
+rotation with YSL Libre Flowers & Flames EDP 50 ml, Notino, 3 stores, 359.40
+PLN total and 258.50 PLN saving. Sites v132 did not modify the homepage,
+rotation, cutouts or dynamic offer calculation.
 
-Final CJ counters from the preceding completed generation in run #53 attempt 8:
+Report `#008`, dated 2026-08-24, was sent to
+`support@perfumetr.pl` at 09:59 UTC and confirmed in Sent. It uses the exact
+visual template and inline Perfumetr logo from delivered report `#003`.
+Report `#008` is the latest confirmed delivered report.
 
-* Notino: state `completed`, 7,005 received, 3,945 imported, 2,869 excluded,
-  9,153 stored, 5,344 live, 146 review, 0 automatic and 0 pending fresh;
-* Brasty: state `completed`, 13,598 received, 12,799 imported, 323 excluded,
-  6,582 stored, 6,043 live, 151 review, 0 automatic and 0 pending fresh.
-
-At 01:43 UTC D1 directly confirmed the preceding generations as `completed`
-with no remaining `sync_locks`. Run #58 later returned both new generations as
-`paused` and `busy: false`; scheduled cycles can continue them. Flaconi remains
-externally blocked by `orchestrator_feed_not_found` and must not be described
-as active.
-
-The latest full TradeDoubler snapshot in run #55 confirmed:
-
-* Aelia: 8,508 provider/scanned products, 1,827 perfumes, 86 chunks and 1,234
-  live offers;
-* Cocolita: 27,815 provider/scanned products, 1,001 perfumes, 279 chunks and
-  843 live offers;
-* Drogeria.pl: 32,411 provider/scanned products, 1,244 perfumes, 325 chunks
-  and 841 live offers.
-
-Voucher production state is 4 received, 1 imported, 3 excluded and 1 active.
-The three exclusions have the safe aggregate reason
-`tracking_url_not_approved`. The active coupon is not silently applied to
-prices; structured owner confirmation is still required before automatic
-price use.
-
-A direct production check after attempt 8 returned five consecutive HTTP 200
-responses from `perfumetr.pl`; `beta.perfumetr.pl` also returned HTTP 200. The
-ordinary five-day rotation is active and shows Yves Saint Laurent Libre
-Flowers & Flames EDP 50 ml, Notino, 3 stores, 359.40 PLN total and 258.50 PLN
-saving. The expired Stronger With You spotlight did not remain pinned and the
-hero is neither empty nor stale. All three new cutout assets returned HTTP 200.
-
-The v129 catalog direction and the three new cutouts are deployed but have not
-yet received explicit visual acceptance from the user. Do not start another
-broad catalog redesign without fresh user feedback.
-
-Report `#007`, dated 2026-08-24, was sent to `support@perfumetr.pl` at
-09:24 UTC and confirmed in Sent. It uses the permanent visual template and
-inline Perfumetr logo from delivered report `#003`. Report `#007` is now the
-latest confirmed delivered report.
-
-There is no manual code edit, import, deployment or email delivery in progress
-after the report-delivery pull request is merged. The automatic schedule will
-continue the paused run #58 CJ generations. The next user-driven task is visual
-feedback or safe manual/provider-assisted resolution after the new generations
-finish. Do not weaken matching rules to reduce any review counter.
+There is no code edit, import, deployment or email delivery in progress after
+continuity pull request #26 is merged. The automatic schedule will continue the
+paused run #58 CJ generations. The next user-driven task is visual evaluation
+of the v132 transition and transparency. Product ratings remain blocked until
+an authoritative structured source is available.
 
 ## Earlier Sites v128 production checkpoint retained for history
 
@@ -457,13 +423,13 @@ separate guarded operation.
 
 ## Deployment reports
 
-Report `#007`, dated 2026-08-24, is the latest confirmed delivered message to
+Report `#008`, dated 2026-08-24, is the latest confirmed delivered message to
 `support@perfumetr.pl`. Delivery was confirmed in Sent. It uses the exact visual
 template, wordmark, layout, typography, inline Perfumetr logo and footer from
 delivered report `#003`.
 
-No separate report was sent for v122 or v123. The later work was consolidated
-in report `#007`, following the user's end-of-day reporting instruction.
+Report `#008` covers the focused Sites v132 catalog transition and the
+authoritative-source blocker for product ratings.
 
 Current reporting instruction:
 
@@ -473,7 +439,7 @@ Current reporting instruction:
    its exact visual template, wordmark, layout, typography and footer;
 4. recheck the latest delivered report number immediately before assigning the
    next sequential number;
-5. after confirmed report `#007`, the next number is `#008` only if the
+5. after confirmed report `#008`, the next number is `#009` only if the
    mailbox check still confirms that sequence.
 
 Required footer:
@@ -535,4 +501,4 @@ Do not advertise a saving below 5 PLN or 2% in the homepage hero. Do not claim t
 `orchestrator_feed_not_found`. Do not describe Brasty run 41 as a completed
 refresh. Do not describe run 41 as a full TradeDoubler import. Do not claim that
 the screenshot price is fixed on the homepage. Do not claim that any deployment
-report after confirmed report `#007` was sent.
+report after confirmed report `#008` was sent.
