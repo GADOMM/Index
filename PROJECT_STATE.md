@@ -1,22 +1,22 @@
 # Perfumetr project state
 
-Updated: 2026-08-24 11:29 UTC
+Updated: 2026-08-24 11:57 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
 
-Verified at 2026-08-24 11:29 UTC for the Sites v134 integration-panel cleanup,
-Sites v135 scoped Flaconi workflow trust and the first authorized post-approval
-Flaconi feed check. Importer counters retain their directly verified 09:35 UTC
-baseline because the Flaconi check produced no records or offers.
+Verified at 2026-08-24 11:57 UTC for Sites v136 and the focused cleanup of the
+`Produkty i ceny` integration section. Importer counters retain their directly
+verified 09:35 UTC baseline because v136 changed only read-only status controls
+and did not change import, source, schema, schedule or offer data.
 
 Repository and automation:
 
 * repository: `GADOMM/Index`;
 * verified `master` before this continuity pull request:
-  `12bc37c2c2e8fbe2a0788a55923342eb4fc39242`;
+  `fb272af362f30263d004ef3ca888e29fe8f71135`;
 * pull request `#24` is merged as
   `deedfdb60d0129cfefb51d89631ab897f434d980` and records Sites v131;
 * pull request `#25` is merged as
@@ -29,6 +29,9 @@ Repository and automation:
 * pull request `#28` is merged as
   `12bc37c2c2e8fbe2a0788a55923342eb4fc39242` and adds one source-limited,
   unscheduled Flaconi workflow supporting push and manual dispatch;
+* pull request `#29` is merged as
+  `fb272af362f30263d004ef3ca888e29fe8f71135` and records Sites v134, v135
+  and the authorized Flaconi feed check;
 * `Perfumetr Flaconi feed` run `#1`, database ID `32719672617`, attempt `1`,
   pull request, completed successfully. Importer validation passed `16/16` and
   the production job was correctly skipped;
@@ -53,22 +56,25 @@ Repository and automation:
 
 Current Sites deployment:
 
-* Sites version `135`;
-* source commit `00edc6921a2b1f2fd5c77a04d5f10adcb0ac3407`;
+* Sites version `136`;
+* source commit `d7bbc115a5717a1394a4e95fef7108b0ec62c087`;
 * version
-  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_20250ea793b08191bbdac344721ba79c`;
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_bd470fdd6bc4819191ef4bdbbd872673`;
+* deployment `appgdep_6a8c311d41588191a434e2bb64d0d70e`;
 * deployment type `publish`, status `succeeded` and no failure message,
   directly rechecked by the main agent after deployment;
 * provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
-* Sites reports version `135`, an active public project and
+* Sites reports version `136`; the pre-deployment project check confirmed an
+  active public project and
   `https://beta.perfumetr.pl` as the live URL;
-* `perfumetr.pl` and `beta.perfumetr.pl` both report active domain,
-  provider and SSL state with no recorded error;
+* the previous 11:29 UTC check of `perfumetr.pl` and `beta.perfumetr.pl`
+  recorded active domain, provider and SSL state with no error; v136 did not
+  alter domain configuration;
 * production build and artifact validation passed, the full suite passed
   `50/50`, and lint has zero errors with three existing warnings;
-* no browser QA was run for v134 or v135. Verification is the direct Sites
-  deployment result, active live URL, domain state, build, tests and focused
-  behavioral coverage.
+* no browser QA was run for v136. Verification is the direct Sites deployment
+  result, build, tests, rendered six-card coverage and an independent read-only
+  code review.
 
 Sites v134 and v135 changed only integration presentation and workflow trust:
 
@@ -84,6 +90,24 @@ Sites v134 and v135 changed only integration presentation and workflow trust:
 6. the Flaconi workflow cannot access the TradeDoubler runtime bridge. Existing
    TradeDoubler trust remains unchanged.
 
+Sites v136 makes `Produkty i ceny` internally consistent without turning
+the panel into a second scheduler:
+
+1. Cocolita, Drogeria.pl, Aelia.pl, Notino, Brasty and Flaconi each expose one
+   identically placed `Odśwież status` action;
+2. every action uses only its existing safe GET status endpoint. The six client
+   cards contain no POST request and cannot start or advance an import;
+3. all six cards poll every 30 seconds and share consistent loading, success
+   and error feedback, `aria-busy` state and live announcements;
+4. every card uses the same collapsible import-details structure;
+5. the Notino access diagnostic now starts in `idle`, fixing the state in which
+   `Sprawdź dostęp` could remain disabled as `Sprawdzam…`;
+6. a read-only TradeDoubler refresh is no longer blocked by an importer busy
+   flag, and a temporary panel read failure does not falsely turn an active
+   offer-status badge red;
+7. disconnecting an integration during a manual status read cannot leave the
+   button stuck in its loading state after reconnection.
+
 Product-rating audit:
 
 * CJ Notino, TradeDoubler, AWIN, the current API models and production D1 do
@@ -96,7 +120,7 @@ Product-rating audit:
   freshness, and come from an official store API, official feed or licensed
   source before the UI can show it.
 
-Importer and offer state is unchanged by Sites v133 through v135:
+Importer and offer state is unchanged by Sites v133 through v136:
 
 | Source | Live offers | Review | Automatic | Pending fresh |
 | --- | ---: | ---: | ---: | ---: |
@@ -128,7 +152,7 @@ keyed feed URL in this repository.
 
 The earlier directly verified homepage state remains the ordinary five-day
 rotation with YSL Libre Flowers & Flames EDP 50 ml, Notino, 3 stores, 359.40
-PLN total and 258.50 PLN saving. Sites v133 through v135 did not modify the homepage,
+PLN total and 258.50 PLN saving. Sites v133 through v136 did not modify the homepage,
 rotation, cutouts or dynamic offer calculation.
 
 Report `#008`, dated 2026-08-24, was sent to
@@ -137,13 +161,14 @@ visual template and inline Perfumetr logo from delivered report `#003`.
 Report `#008` is the latest confirmed delivered report.
 
 There is no Sites code edit, importer run, deployment or email delivery in
-progress after this continuity pull request is merged. The next user-driven
-task is to save the separate AWIN Data Feed API key in the protected integration
-field, never in chat or the repository. Then read Product Feed List, select only
-advertiser 18563 using its real format and locale, and continue the bounded
-official-feed import. Flaconi remains hidden from store rails and comparisons
-until verified fresh offers exist. Product ratings remain blocked until an
-authoritative structured source is available.
+progress after this continuity pull request is merged. No report was requested
+or sent for v136. The next user-driven data task remains saving the separate
+AWIN Data Feed API key in the protected integration field, never in chat or the
+repository. Then read Product Feed List, select only advertiser 18563 using its
+real format and locale, and continue the bounded official-feed import. Flaconi
+remains hidden from store rails and comparisons until verified fresh offers
+exist. Product ratings remain blocked until an authoritative structured source
+is available.
 
 ## Earlier Sites v128 production checkpoint retained for history
 
