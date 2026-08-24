@@ -61,77 +61,88 @@ change:
 
 ## Latest continuity checkpoint
 
-Verified at 2026-08-24 10:01 UTC for Sites v132, the focused catalog
-transition, the product-rating source audit and delivery of report #008.
+Verified at 2026-08-24 10:31 UTC for Sites v133, the focused mobile catalog
+entrance and matte-glass deployment. Report #008 remains the latest confirmed
+delivered report.
 
-1. verified `master` before continuity PR #26:
-   `fb3396ee134ea7bba317b32fdebae4a0aad73789`;
+1. verified `master` before the v133 continuity pull request:
+   `4b1f3a6238c28cd6012f676a4cdce34d14d0510a`;
 2. PR #24 is merged as `deedfdb60d0129cfefb51d89631ab897f434d980`;
    PR #25 is merged as `fb3396ee134ea7bba317b32fdebae4a0aad73789`;
-   PR #26 is the documentation-only Sites v132 and report #008 record and its
-   final CI and merge state must be checked directly;
-3. the newest production workflow remains run #58, ID `32711816055`,
+   PR #26 is merged as `4b1f3a6238c28cd6012f676a4cdce34d14d0510a`;
+3. Actions run #62, ID `32714838161`, attempt 1, pull request, succeeded from
+   10:03:49 to 10:03:58 UTC and is the newest workflow before the v133
+   continuity pull request. It was documentation validation only;
+4. the newest production workflow remains run #58, ID `32711816055`,
    attempt 1, schedule, success from 09:29:21 to 09:34:29 UTC; validation
    passed 16/16, full TradeDoubler was correctly skipped and the bounded
    partner orchestrator succeeded;
-4. run #53, ID `32666073700`, attempt 8 remains the final completed CJ
+5. run #53, ID `32666073700`, attempt 8 remains the final completed CJ
    recovery generation;
-5. run #55 remains the latest full TradeDoubler snapshot. Its full import step
+6. run #55 remains the latest full TradeDoubler snapshot. Its full import step
    succeeded from 00:24:49 to 00:41:51 UTC, although the overall run failed on
    the retired pre-v131 CJ maintenance path;
-6. Sites v132 source commit is
-   `843e1f8d7dc542bf5a40b6507ba53d67e0fa815c`;
-7. v132 version ID is
-   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_10e6ac8f132481918c4d811807773972`;
-8. deployment `appgdep_6a8c154fe2e481919fb8c616f25171b7` is
+7. Sites v133 source commit is
+   `790a78251e7890d464887aa520d694bc7522b906`;
+8. v133 version ID is
+   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e28533ee25348191bb8fdf41119ddfff`;
+9. deployment `appgdep_6a8c1ca67bf88191b39bf0c0736ba40b` is
    `succeeded` with no failure message, directly rechecked by the main agent;
-9. Sites reports version 132, an active public project and
+10. Sites reports version 133, an active public project and
    `https://beta.perfumetr.pl` as the live URL. Both custom domains report
    active domain, provider and SSL state with no recorded error;
-10. build and artifact validation pass, the full Sites suite passes 49/49,
+11. build and artifact validation pass, the full Sites suite passes 49/49,
     lint has zero errors and three existing warnings, and an independent review
-    found no motion, mobile or reduced-motion blocker. No browser QA was run
-    for v132;
-11. v129 fixed voucher destination handling, simplified the catalog and added
+    found no mobile cascade, Safari fallback or reduced-motion blocker. No
+    browser QA was run for v133;
+12. v129 fixed voucher destination handling, simplified the catalog and added
     three dynamic homepage cutouts; v130 forced one safe voucher refresh; v131
-    removed the D1 quadratic maintenance path; v132 changes only catalog motion
-    and translucency;
-12. live counts remain Aelia 1,234, Cocolita 843, Drogeria.pl 841,
+    removed the D1 quadratic maintenance path; v132 introduced catalog motion
+    and translucency; v133 makes the mobile entrance visible from the right and
+    turns the canvas into stronger matte glass;
+13. v133 uses a 440 ms right-side entrance on desktop and a separate 480 ms
+    full-width right-side entrance on mobile. The panel uses sand opacity around
+    68 to 72 percent, 22 to 24 px root blur and a subtle refractive edge;
+14. redundant nested filter blur was removed for mobile performance, secondary
+    text was darkened for contrast, and reduced-motion behavior remains intact;
+15. live counts remain Aelia 1,234, Cocolita 843, Drogeria.pl 841,
     Notino 5,344 and Brasty 6,043, total 14,305;
-13. run #58 paused a new Notino generation safely after 48 steps with 5,344
+16. run #58 paused a new Notino generation safely after 48 steps with 5,344
     live, 54 review, 54 automatic and 0 pending fresh;
-14. run #58 paused a new Brasty generation safely after 48 steps with 6,043
+17. run #58 paused a new Brasty generation safely after 48 steps with 6,043
     live, 154 review, 66 automatic and 0 pending fresh;
-15. those partial counters are not final. The preceding completed generation
+18. those partial counters are not final. The preceding completed generation
     ended with 297 true manual rows and zero automatic or pending-fresh work;
-16. the automatic schedule can continue both paused, non-busy generations. Do
+19. the automatic schedule can continue both paused, non-busy generations. Do
     not weaken matching rules or compare partial and completed counters as if
     they were equivalent;
-17. vouchers remain 4 received, 1 imported, 3 excluded and 1 active. The three
+20. vouchers remain 4 received, 1 imported, 3 excluded and 1 active. The three
     exclusions have aggregate reason `tracking_url_not_approved`;
-18. the active coupon is not silently applied to price without structured
+21. the active coupon is not silently applied to price without structured
     owner confirmation;
-19. Flaconi remains externally blocked by
-    `orchestrator_feed_not_found`;
-20. the earlier directly verified ordinary homepage rotation remains YSL Libre
+22. the user reported a Flaconi programme acceptance email but explicitly
+    postponed all technical work. The email was not inspected and the feed was
+    not rechecked, so the latest verified runtime state remains
+    `orchestrator_feed_not_found`. Do not describe Flaconi as active until a
+    later authorized check and successful import confirm it;
+23. the earlier directly verified ordinary homepage rotation remains YSL Libre
     Flowers & Flames EDP 50 ml, Notino, 3 stores, 359.40 PLN total and 258.50
-    PLN saving. v132 did not modify the homepage;
-21. the expired Stronger With You spotlight is gone; earlier production checks
+    PLN saving. v133 did not modify the homepage;
+24. the expired Stronger With You spotlight is gone; earlier production checks
     found no empty or stale hero;
-22. v132 adds a 280 ms restrained dialog transition, gradual backdrop fade and
-    translucent sand layers while preserving Escape, focus, scrolling, mobile
-    columns and reduced-motion behavior;
-23. product ratings were not published. CJ, TradeDoubler, AWIN, the API models
+25. product ratings were not published. CJ, TradeDoubler, AWIN, the API models
     and D1 do not currently provide authoritative customer rating and review
     counts. Beta feedback and importer-review counters must never be reused as
     product reviews;
-24. report #008, dated 2026-08-24, was sent to
+26. report #008, dated 2026-08-24, was sent to
     `support@perfumetr.pl` at 09:59 UTC and confirmed in Sent. It reproduces
     the permanent report #003 visual template and inline Perfumetr logo;
-25. after PR #26 merges there is no code edit, import, deployment or email in
-    progress. The next user-driven task is visual evaluation of the v132
-    transition and transparency. Ratings remain blocked until an official store
-    API, official feed or licensed source is available.
+27. after the v133 continuity pull request merges there is no code edit, import,
+    deployment or email in progress. The next task is the user's phone-based
+    visual evaluation of the v133 right-side entrance and matte glass. Do not
+    redesign further before that feedback. Flaconi comes afterwards only when
+    the user authorizes technical work. Ratings remain blocked until an
+    official store API, official feed or licensed source is available.
 
 Treat this as dated evidence and recheck all unstable values before a new
 change.
@@ -205,14 +216,17 @@ użytkownikowi. Nie zmieniaj kodu, importera, konfiguracji ani produkcji przed
 zakończeniem kontroli.
 
 CZAS WERYFIKACJI
-24 sierpnia 2026, 10:01 UTC.
+24 sierpnia 2026, 10:31 UTC.
 
 GITHUB
-Master przed PR #26:
-fb3396ee134ea7bba317b32fdebae4a0aad73789
+Master przed dokumentacyjnym PR v133:
+4b1f3a6238c28cd6012f676a4cdce34d14d0510a
 PR #24 jest scalony jako deedfdb60d0129cfefb51d89631ab897f434d980.
 PR #25 jest scalony jako fb3396ee134ea7bba317b32fdebae4a0aad73789.
-PR #26 zapisuje Sites v132 i raport #008. Sprawdź jego końcowy CI i merge.
+PR #26 jest scalony jako 4b1f3a6238c28cd6012f676a4cdce34d14d0510a.
+Run #62, ID 32714838161, attempt 1, pull_request, success,
+10:03:49–10:03:58 UTC, jest najnowszym workflow przed PR v133. Była to
+walidacja dokumentacji bez importu produkcyjnego.
 Najnowszy produkcyjny workflow pozostaje run #58, ID 32711816055, attempt 1,
 schedule, success, 09:29:21–09:34:29 UTC. Walidacja 16/16 przeszła, pełny
 TradeDoubler został poprawnie pominięty, a partner orchestrator zakończył się
@@ -223,27 +237,30 @@ sukcesem, choć cały run miał failure przez wycofaną ścieżkę CJ sprzed v13
 GitHub Actions jest jedynym automatycznym harmonogramem.
 
 SITES
-Wersja v132.
-Commit: 843e1f8d7dc542bf5a40b6507ba53d67e0fa815c
+Wersja v133.
+Commit: 790a78251e7890d464887aa520d694bc7522b906
 Version ID:
-appgprj_6a8236775b808191b6b4979c4d86d889~appgver_10e6ac8f132481918c4d811807773972
-Deployment: appgdep_6a8c154fe2e481919fb8c616f25171b7
+appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e28533ee25348191bb8fdf41119ddfff
+Deployment: appgdep_6a8c1ca67bf88191b39bf0c0736ba40b
 Status: succeeded, brak failure message.
 Provider URL: https://perfumetr.borodzicz85.chatgpt.site
 Live URL: https://beta.perfumetr.pl
 Projekt jest aktywny i publiczny. perfumetr.pl i beta.perfumetr.pl mają aktywną
 domenę, provider i SSL bez błędu. Build i artefakt działają, testy 49/49, lint
 ma 0 błędów i 3 wcześniejsze ostrzeżenia. Niezależny przegląd nie znalazł
-blokera. Nie wykonano przeglądarkowego QA v132.
+blokera kaskady mobilnej, Safari ani reduced motion. Nie wykonano
+przeglądarkowego QA v133.
 
 WYKONANE
-v132 dotyka wyłącznie katalogu po kliknięciu „Przeglądaj perfumy”. Otwieranie i
-zamykanie używa spokojnego przejścia 280 ms, delikatnego przesunięcia i małej
-zmiany skali. Tło pod katalogiem wygasza się i rozmywa płynnie. Piaskowy panel,
-nagłówek, kategorie i filtry są półprzezroczyste. Telefon używa mocniejszej
-nieprzezroczystości i mniejszego rozmycia dla czytelności. Escape, fokus,
-przewijanie, układ produktów i preferencja ograniczenia ruchu pozostają
-zachowane. Nie zmieniono danych, API, importera, ofert ani strony głównej.
+v133 dotyka wyłącznie katalogu po kliknięciu „Przeglądaj perfumy”. Komputer ma
+spokojne wejście z prawej przez 440 ms. Telefon ma osobną, wyraźną animację
+480 ms wsuwającą pełny panel z prawej strony. Piaskowa warstwa ma około 68 do
+72 procent krycia, 22 do 24 px rozmycia, ograniczone nasycenie i delikatną
+świetlną krawędź, co daje efekt matowego szkła połączony z motywem bety.
+Usunięto zbędne nakładanie rozmycia na panelu filtrów dla płynności i
+przyciemniono drobne teksty. Escape, fokus, przewijanie, układ produktów i
+preferencja ograniczenia ruchu pozostają zachowane. Nie zmieniono danych, API,
+importera, ofert ani strony głównej. Wygląd v133 czeka na ocenę użytkownika.
 
 OPINIE PRODUKTÓW
 Nie opublikowano gwiazdek ani liczby opinii. Oficjalne źródła CJ dla Notino,
@@ -273,10 +290,13 @@ KUPONY I BLOKADY
 Kupony TradeDoubler: 4 odebrane, 1 zaimportowany, 3 wykluczone, 1 aktywny.
 Aktywny kupon nie jest po cichu uwzględniany w cenie bez strukturalnego
 potwierdzenia właściciela. Flaconi pozostaje zewnętrznie zablokowane przez
-orchestrator_feed_not_found.
+orchestrator_feed_not_found według ostatniego sprawdzenia technicznego.
+Użytkownik poinformował o mailu akceptacyjnym Flaconi, ale polecił na razie nic
+z tym nie robić. Maila i feedu nie sprawdzono. Nie przedstawiaj Flaconi jako
+aktywnego źródła przed późniejszą autoryzowaną kontrolą i udanym importem.
 
 STRONA GŁÓWNA
-v132 nie zmieniło strony głównej. Ostatni bezpośrednio potwierdzony stan zwykłej
+v133 nie zmieniło strony głównej. Ostatni bezpośrednio potwierdzony stan zwykłej
 rotacji to YSL Libre Flowers & Flames EDP 50 ml, Notino, 3 sklepy, 359,40 zł
 razem i 258,50 zł oszczędności. Wygasły spotlight Stronger With You nie jest
 przypięty, a hero nie było puste ani stare.
@@ -288,14 +308,16 @@ szablonu wizualnego #003 oraz jego logo. Przed następnym raportem sprawdź
 Wysłane. Jeżeli #008 nadal jest ostatni, następny numer to #009.
 
 PRACA W TOKU
-Po scaleniu dokumentacyjnego PR #26 brak. Nie trwa edycja, import, wdrożenie ani
-wysyłka e-maila. Automatyczny harmonogram może kontynuować run #58.
+Po scaleniu dokumentacyjnego PR v133 brak. Nie trwa edycja, import, wdrożenie
+ani wysyłka e-maila. Automatyczny harmonogram może kontynuować run #58.
 
 NASTĘPNE ZADANIE
-Poczekaj na ocenę użytkownika dotyczącą płynności przejścia i poziomu
-przezroczystości v132. Nie rozpoczynaj szerokiego redesignu katalogu. Oceny
-produktów wdrażaj dopiero po potwierdzeniu autorytatywnego, ustrukturyzowanego
-źródła danych.
+Poczekaj na ocenę użytkownika na telefonie dotyczącą wejścia z prawej i efektu
+matowego szkła v133. Nie rozpoczynaj szerokiego redesignu katalogu. Gdy
+użytkownik zakończy poprawki wizualne i wyraźnie zleci pracę z Flaconi, najpierw
+wykonaj odczytową kontrolę akceptacji i dostępności oficjalnego feedu. Oceny
+produktów wdrażaj dopiero po potwierdzeniu autorytatywnego,
+ustrukturyzowanego źródła danych.
 ```
 
 ## Earlier Sites v128 paste-ready handoff baseline retained for history
