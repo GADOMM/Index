@@ -61,8 +61,8 @@ change:
 
 ## Latest continuity checkpoint
 
-Verified at 2026-08-24 09:28 UTC for Sites v131, voucher recovery, the
-completed automatic CJ queue drain and delivery of report #007. The Sites
+Verified at 2026-08-24 09:35 UTC for Sites v131, voucher recovery, the
+latest scheduled CJ refresh and delivery of report #007. The Sites
 deployment details remain the directly verified 01:43 UTC baseline.
 
 1. verified `master` before report-delivery PR #25:
@@ -72,8 +72,8 @@ deployment details remain the directly verified 01:43 UTC baseline.
    PR #24 is merged as `deedfdb60d0129cfefb51d89631ab897f434d980`;
    PR #25 is the documentation-only report-delivery record and its final state
    must be checked directly;
-3. the newest production workflow is run #57, ID `32687178753`, attempt 1,
-   schedule, success from 03:38:54 to 03:39:24 UTC; validation passed 16/16,
+3. the newest production workflow is run #58, ID `32711816055`, attempt 1,
+   schedule, success from 09:29:21 to 09:34:29 UTC; validation passed 16/16,
    full TradeDoubler was correctly skipped and the partner orchestrator
    succeeded;
 4. the final repair cycle is run #53, ID `32666073700`, attempt 8, production
@@ -96,12 +96,19 @@ deployment details remain the directly verified 01:43 UTC baseline.
     v131 removed the D1 quadratic maintenance path;
 12. final live counts are Aelia 1,234, Cocolita 843, Drogeria.pl 841,
     Notino 5,344 and Brasty 6,043, total 14,305;
-13. Notino is completed with 146 review, 0 automatic and 0 pending fresh;
-14. Brasty is completed with 151 review, 0 automatic and 0 pending fresh;
-15. the remaining 297 review rows are true manual cases. Do not weaken mapping
-    rules or describe them as safe automatic matches;
-16. D1 directly confirms both CJ generations completed and no remaining
-    `sync_locks`;
+13. run #58 started a new Notino generation and paused it safely at 48 steps:
+    4,662 received, 2,544 imported, 2,027 excluded, 9,153 stored, 5,344 live,
+    54 review, 54 automatic and 0 pending fresh;
+14. run #58 started a new Brasty generation and paused it safely at 48 steps:
+    4,800 received, 4,585 imported, 61 excluded, 6,582 stored, 6,043 live,
+    154 review, 66 automatic and 0 pending fresh;
+15. the new partial review and automatic counters are not final. The preceding
+    completed generation ended with 297 true manual rows and zero automatic or
+    pending-fresh work. Do not weaken mapping rules or compare partial and
+    completed-generation counters as if they were equivalent;
+16. at 01:43 UTC D1 confirmed the preceding generations completed and no
+    `sync_locks`; run #58 later returned both new generations as `paused` and
+    `busy: false`, so scheduled cycles can continue them;
 17. vouchers are 4 received, 1 imported, 3 excluded and 1 active; the three
     exclusions have aggregate reason `tracking_url_not_approved`;
 18. an active coupon is not silently applied to prices without structured
@@ -119,9 +126,10 @@ deployment details remain the directly verified 01:43 UTC baseline.
 24. report #007, dated 2026-08-24, was sent to `support@perfumetr.pl` at
     09:24 UTC and confirmed in Sent. It reproduces the permanent report #003
     visual template and inline Perfumetr logo;
-25. after PR #25 merges there is no code edit, import, deployment or email in
-    progress. The next task is user feedback or safe manual/provider-assisted
-    handling of the remaining 297 rows.
+25. after PR #25 merges there is no manual code edit, import, deployment or
+    email in progress. The automatic schedule will continue the paused run #58
+    generations. The next user-driven task is visual feedback or safe manual
+    handling after those generations complete.
 
 Treat this as dated evidence and recheck all unstable values before a new
 change.
@@ -195,7 +203,7 @@ użytkownikowi. Nie zmieniaj kodu, importera, konfiguracji ani produkcji przed
 zakończeniem kontroli.
 
 CZAS WERYFIKACJI
-24 sierpnia 2026, 09:28 UTC. Dane wdrożenia Sites pozostają bezpośrednim
+24 sierpnia 2026, 09:35 UTC. Dane wdrożenia Sites pozostają bezpośrednim
 odczytem z 01:43 UTC; GitHub, partnerzy i raport zostały sprawdzone ponownie.
 
 GITHUB
@@ -206,8 +214,8 @@ PR #23 jest scalony jako 9d6e73bd0c3b64abd0e92623b913ae9db73479fc.
 PR #24 jest scalony jako deedfdb60d0129cfefb51d89631ab897f434d980.
 PR #25 zapisuje dostarczenie raportu #007 i trzeba sprawdzić jego końcowy CI
 oraz merge.
-Najnowszy produkcyjny workflow to run #57, ID 32687178753, attempt 1,
-schedule, success, 03:38:54–03:39:24 UTC. Walidacja 16/16 przeszła, pełny
+Najnowszy produkcyjny workflow to run #58, ID 32711816055, attempt 1,
+schedule, success, 09:29:21–09:34:29 UTC. Walidacja 16/16 przeszła, pełny
 TradeDoubler został poprawnie pominięty, a partner orchestrator zakończył się
 sukcesem.
 Końcowy cykl naprawczy to run #53, ID 32666073700, attempt 8, job
@@ -240,12 +248,18 @@ WYNIK
 Aelia: 1234 aktywne oferty.
 Cocolita: 843.
 Drogeria.pl: 841.
-Notino: 5344, review 146, automatic 0, pending fresh 0.
-Brasty: 6043, review 151, automatic 0, pending fresh 0.
+Notino: 5344 aktywne oferty. Nowa generacja jest paused po 48 krokach:
+4662 odebrane, 2544 zaimportowane, 2027 wykluczone, review 54, automatic 54,
+pending fresh 0.
+Brasty: 6043 aktywne oferty. Nowa generacja jest paused po 48 krokach:
+4800 odebrane, 4585 zaimportowane, 61 wykluczonych, review 154, automatic 66,
+pending fresh 0.
 Łącznie: 14305.
-Obie generacje CJ są completed, a D1 nie ma pozostawionej blokady.
-Pozostałe 297 review to prawdziwe przypadki ręczne. Nie wolno zgadywać ich
-dopasowania tylko po to, aby obniżyć licznik.
+To są częściowe liczniki nowych generacji i nie są wynikiem końcowym.
+Poprzednia zakończona generacja miała 297 prawdziwych przypadków ręcznych oraz
+0 automatic i 0 pending fresh. O 01:43 UTC D1 nie miało pozostawionej blokady;
+run #58 później zwrócił busy false dla obu nowych generacji. Harmonogram będzie
+je kontynuował. Nie wolno zgadywać dopasowań tylko po to, aby obniżyć licznik.
 
 KUPONY I BLOKADY
 Kupony TradeDoubler: 4 odebrane, 1 zaimportowany, 3 wykluczone, 1 aktywny.
@@ -268,12 +282,15 @@ szablonu wizualnego #003 i jego logo. Przed następnym raportem ponownie sprawd�
 Wysłane. Jeśli #007 nadal jest ostatni, następny numer to #008.
 
 PRACA W TOKU
-Po scaleniu dokumentacyjnego PR #25 brak. Nie ma aktywnej edycji, importu,
-wdrożenia ani e-maila.
+Po scaleniu dokumentacyjnego PR #25 nie ma ręcznej edycji, importu, wdrożenia
+ani e-maila. Automatyczny harmonogram będzie kontynuował dwie nowe, wstrzymane
+bezpiecznie generacje CJ z run #58.
 
 NASTĘPNE ZADANIE
-Poczekaj na ocenę wyglądu albo bezpieczny sposób ręcznej lub providerskiej
-obsługi 297 pozostałych kontroli. Nie osłabiaj reguł dopasowania.
+Poczekaj na kolejne automatyczne cykle. Po zakończeniu nowych generacji oceń
+ich końcowe review. Następne zadanie użytkownika to ocena wyglądu albo
+bezpieczna ręczna lub providerska obsługa pozostałych kontroli. Nie osłabiaj
+reguł dopasowania.
 ```
 
 ## Earlier Sites v128 paste-ready handoff baseline retained for history
