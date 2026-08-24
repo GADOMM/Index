@@ -1,13 +1,13 @@
 # Perfumetr project state
 
-Updated: 2026-08-24 09:28 UTC
+Updated: 2026-08-24 09:35 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
 
-Verified at 2026-08-24 09:28 UTC. The Sites v131 deployment remains the
+Verified at 2026-08-24 09:35 UTC. The Sites v131 deployment remains the
 directly verified production baseline from 01:43 UTC. Repository, automation,
 partner counters and report delivery were rechecked for this update. This
 checkpoint supersedes the dated v128 checkpoint below.
@@ -27,9 +27,9 @@ Repository and automation:
   production checkpoint;
 * pull request `#25` is the documentation-only record of report `#007`;
   verify its final CI and merge state directly;
-* the newest production workflow is run `#57`, database ID `32687178753`,
-  attempt `1`, event `schedule`, completed successfully from 03:38:54 to
-  03:39:24 UTC; importer validation passed `16/16`, the full TradeDoubler step
+* the newest production workflow is run `#58`, database ID `32711816055`,
+  attempt `1`, event `schedule`, completed successfully from 09:29:21 to
+  09:34:29 UTC; importer validation passed `16/16`, the full TradeDoubler step
   was correctly skipped, and the bounded partner orchestrator succeeded;
 * the final recovery cycle is run `#53`, database ID `32666073700`, attempt
   `8`, production job `97295719976`, completed successfully from 01:36:08 to
@@ -77,31 +77,44 @@ inserted. Hard mapping conflicts remain excluded from automatic retry. Missing
 GTIN may only reuse one exact unique semantic catalog variant and cannot expand
 the catalog.
 
-Verified production result:
+Current live offers and the newest partial CJ-generation counters:
 
 | Source | Live offers | Review | Automatic | Pending fresh |
 | --- | ---: | ---: | ---: | ---: |
 | Aelia.pl | 1,234 | bounded TradeDoubler proof | not applicable | not applicable |
 | Cocolita | 843 | bounded TradeDoubler proof | not applicable | not applicable |
 | Drogeria.pl | 841 | bounded TradeDoubler proof | not applicable | not applicable |
-| Notino | 5,344 | 146 | 0 | 0 |
-| Brasty | 6,043 | 151 | 0 | 0 |
+| Notino | 5,344 | 54 partial | 54 | 0 |
+| Brasty | 6,043 | 154 partial | 66 | 0 |
 
-The verified total is `14,305` live offers. The true manual CJ review queue is
-`297` rows, down from `429` in the v128 checkpoint. Both automatic queues and
-both pending-fresh queues are zero. The remaining rows are not represented as
-safe automatic matches.
+The verified total remains `14,305` live offers. Run #58 started new CJ
+generations and stopped both safely at the 48-step cycle limit. Their partial
+review and automatic counters are not final and must not be compared directly
+with a completed generation. The preceding completed generation ended with
+`297` true manual rows, down from `429` in the v128 checkpoint, and zero
+automatic or pending-fresh work.
 
-Final CJ counters from run #53 attempt 8:
+Current partial CJ counters from run #58:
+
+* Notino: state `paused`, 48 steps, 4,662 received, 2,544 imported, 2,027
+  excluded, 9,153 stored, 5,344 live, 54 review, 54 automatic and 0 pending
+  fresh;
+* Brasty: state `paused`, 48 steps, 4,800 received, 4,585 imported, 61
+  excluded, 6,582 stored, 6,043 live, 154 review, 66 automatic and 0 pending
+  fresh.
+
+Final CJ counters from the preceding completed generation in run #53 attempt 8:
 
 * Notino: state `completed`, 7,005 received, 3,945 imported, 2,869 excluded,
   9,153 stored, 5,344 live, 146 review, 0 automatic and 0 pending fresh;
 * Brasty: state `completed`, 13,598 received, 12,799 imported, 323 excluded,
   6,582 stored, 6,043 live, 151 review, 0 automatic and 0 pending fresh.
 
-D1 directly confirms both current CJ generations as `completed` and contains
-no remaining `sync_locks`. Flaconi remains externally blocked by
-`orchestrator_feed_not_found` and must not be described as active.
+At 01:43 UTC D1 directly confirmed the preceding generations as `completed`
+with no remaining `sync_locks`. Run #58 later returned both new generations as
+`paused` and `busy: false`; scheduled cycles can continue them. Flaconi remains
+externally blocked by `orchestrator_feed_not_found` and must not be described
+as active.
 
 The latest full TradeDoubler snapshot in run #55 confirmed:
 
@@ -134,10 +147,11 @@ Report `#007`, dated 2026-08-24, was sent to `support@perfumetr.pl` at
 inline Perfumetr logo from delivered report `#003`. Report `#007` is now the
 latest confirmed delivered report.
 
-There is no code edit, import, deployment or email delivery in progress after
-the report-delivery pull request is merged. The exact next task is either the
-user's visual feedback or safe manual/provider-assisted resolution of the
-remaining 297 review rows. Do not weaken matching rules to reduce that number.
+There is no manual code edit, import, deployment or email delivery in progress
+after the report-delivery pull request is merged. The automatic schedule will
+continue the paused run #58 CJ generations. The next user-driven task is visual
+feedback or safe manual/provider-assisted resolution after the new generations
+finish. Do not weaken matching rules to reduce any review counter.
 
 ## Earlier Sites v128 production checkpoint retained for history
 
