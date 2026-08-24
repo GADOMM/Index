@@ -61,22 +61,26 @@ change:
 
 ## Latest continuity checkpoint
 
-Verified at 2026-08-24 01:43 UTC for Sites v131, voucher recovery and the
-completed automatic CJ queue drain.
+Verified at 2026-08-24 09:28 UTC for Sites v131, voucher recovery, the
+completed automatic CJ queue drain and delivery of report #007. The Sites
+deployment details remain the directly verified 01:43 UTC baseline.
 
-1. verified `master` before continuity PR #24:
-   `9d6e73bd0c3b64abd0e92623b913ae9db73479fc`;
+1. verified `master` before report-delivery PR #25:
+   `deedfdb60d0129cfefb51d89631ab897f434d980`;
 2. PR #22 is merged as `67e35944c9a66706cedb6c942a5dc4df25354769`;
    PR #23 is merged as `9d6e73bd0c3b64abd0e92623b913ae9db73479fc`;
-   PR #24 is the documentation-only continuity record and its final state must
-   be checked directly;
-3. the newest workflow by creation is run #55, ID `32676573902`, attempt 1;
-   validation passed 16/16 and the full TradeDoubler step succeeded, but the
-   overall run failed on the pre-v131 CJ/D1 path;
+   PR #24 is merged as `deedfdb60d0129cfefb51d89631ab897f434d980`;
+   PR #25 is the documentation-only report-delivery record and its final state
+   must be checked directly;
+3. the newest production workflow is run #57, ID `32687178753`, attempt 1,
+   schedule, success from 03:38:54 to 03:39:24 UTC; validation passed 16/16,
+   full TradeDoubler was correctly skipped and the partner orchestrator
+   succeeded;
 4. the final repair cycle is run #53, ID `32666073700`, attempt 8, production
    job `97295719976`, success from 01:36:08 to 01:39:06 UTC with no 503;
 5. run #55 is the latest full TradeDoubler snapshot and its full import step
-   succeeded from 00:24:49 to 00:41:51 UTC;
+   succeeded from 00:24:49 to 00:41:51 UTC, although the overall run failed on
+   the retired pre-v131 CJ maintenance path;
 6. Sites v131 source commit is
    `58f4f79b450b6b630424d796da9ca1c09f0e965f`;
 7. v131 version ID is
@@ -112,11 +116,12 @@ completed automatic CJ queue drain.
     hero;
 23. the catalog direction and new cutouts are deployed but do not yet have
     explicit visual acceptance from the user;
-24. report #006 remains the latest confirmed delivered report. No new email
-    was sent; wait for the user's explicit report request;
-25. after PR #24 merges there is no code edit, import, deployment or email in
-    progress. The next task is user feedback, the explicit report request or
-    safe manual/provider-assisted handling of the remaining 297 rows.
+24. report #007, dated 2026-08-24, was sent to `support@perfumetr.pl` at
+    09:24 UTC and confirmed in Sent. It reproduces the permanent report #003
+    visual template and inline Perfumetr logo;
+25. after PR #25 merges there is no code edit, import, deployment or email in
+    progress. The next task is user feedback or safe manual/provider-assisted
+    handling of the remaining 297 rows.
 
 Treat this as dated evidence and recheck all unstable values before a new
 change.
@@ -190,21 +195,26 @@ użytkownikowi. Nie zmieniaj kodu, importera, konfiguracji ani produkcji przed
 zakończeniem kontroli.
 
 CZAS WERYFIKACJI
-24 sierpnia 2026, 01:43 UTC.
+24 sierpnia 2026, 09:28 UTC. Dane wdrożenia Sites pozostają bezpośrednim
+odczytem z 01:43 UTC; GitHub, partnerzy i raport zostały sprawdzone ponownie.
 
 GITHUB
-Master przed PR #24:
-9d6e73bd0c3b64abd0e92623b913ae9db73479fc
+Master przed PR #25:
+deedfdb60d0129cfefb51d89631ab897f434d980
 PR #22 jest scalony jako 67e35944c9a66706cedb6c942a5dc4df25354769.
 PR #23 jest scalony jako 9d6e73bd0c3b64abd0e92623b913ae9db73479fc.
-PR #24 zapisuje ten stan i trzeba sprawdzić jego końcowy CI oraz merge.
-Najnowszy workflow według utworzenia to run #55, ID 32676573902, attempt 1.
-Walidacja 16/16 i pełny TradeDoubler przeszły, ale całość miała failure przez
-stary, później naprawiony problem CJ/D1.
+PR #24 jest scalony jako deedfdb60d0129cfefb51d89631ab897f434d980.
+PR #25 zapisuje dostarczenie raportu #007 i trzeba sprawdzić jego końcowy CI
+oraz merge.
+Najnowszy produkcyjny workflow to run #57, ID 32687178753, attempt 1,
+schedule, success, 03:38:54–03:39:24 UTC. Walidacja 16/16 przeszła, pełny
+TradeDoubler został poprawnie pominięty, a partner orchestrator zakończył się
+sukcesem.
 Końcowy cykl naprawczy to run #53, ID 32666073700, attempt 8, job
 97295719976, success, 01:36:08–01:39:06 UTC, bez 503.
 Run #55 jest ostatnim pełnym TradeDoublerem; jego pełny krok zakończył się
-sukcesem.
+sukcesem, choć cały run miał failure przez wycofaną ścieżkę utrzymaniową CJ
+sprzed v131.
 GitHub Actions jest jedynym automatycznym harmonogramem.
 
 SITES
@@ -252,19 +262,18 @@ Nowy wygląd katalogu i nowe flakony są wdrożone, ale użytkownik nie ocenił 
 jeszcze jednoznacznie. Nie zaczynaj kolejnego szerokiego redesignu bez opinii.
 
 RAPORT
-Raport #006 pozostaje ostatnim potwierdzonym. Nie wysłano nowego raportu.
-Użytkownik powiedział, że poprosi o raport po pracy, więc czekaj na jego
-wyraźne polecenie. Przed wysyłką sprawdź Wysłane i skopiuj dokładnie szablon
-#003. Jeśli #006 nadal jest ostatni, następny numer to #007.
+Raport #007 z 24 sierpnia 2026 został wysłany o 09:24 UTC na
+support@perfumetr.pl i potwierdzony w folderze Wysłane. Używa dokładnego
+szablonu wizualnego #003 i jego logo. Przed następnym raportem ponownie sprawdź
+Wysłane. Jeśli #007 nadal jest ostatni, następny numer to #008.
 
 PRACA W TOKU
-Po scaleniu dokumentacyjnego PR #24 brak. Nie ma aktywnej edycji, importu,
+Po scaleniu dokumentacyjnego PR #25 brak. Nie ma aktywnej edycji, importu,
 wdrożenia ani e-maila.
 
 NASTĘPNE ZADANIE
-Poczekaj na ocenę wyglądu, wyraźne polecenie raportu albo bezpieczny sposób
-ręcznej lub providerskiej obsługi 297 pozostałych kontroli. Nie osłabiaj reguł
-dopasowania.
+Poczekaj na ocenę wyglądu albo bezpieczny sposób ręcznej lub providerskiej
+obsługi 297 pozostałych kontroli. Nie osłabiaj reguł dopasowania.
 ```
 
 ## Earlier Sites v128 paste-ready handoff baseline retained for history
@@ -560,9 +569,9 @@ per-deployment-email rule.
    recipient.
 6. Record `sent` only after delivery is confirmed. Otherwise use `deferred`,
    `pending` or `not required`.
-7. Report `#006`, dated 2026-08-22, is the latest confirmed delivered report at
+7. Report `#007`, dated 2026-08-24, is the latest confirmed delivered report at
    this checkpoint. If the sequence remains unchanged when rechecked, the next
-   report number is `#007`.
+   report number is `#008`.
 8. Never put credentials, provider payloads or private mailbox content into the
    repository.
 
