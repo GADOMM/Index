@@ -1,28 +1,33 @@
 # Perfumetr project state
 
-Updated: 2026-08-24 10:01 UTC
+Updated: 2026-08-24 10:31 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
 
-Verified at 2026-08-24 10:01 UTC for the focused Sites v132 catalog transition
-deployment and report #008. Repository and importer counters retain their
-directly verified 09:35 UTC baseline because v132 changed no importer, schema,
-schedule, offer or source configuration.
+Verified at 2026-08-24 10:31 UTC for the focused Sites v133 mobile catalog
+entrance and matte-glass deployment. Repository and importer counters retain
+their directly verified 09:35 UTC baseline because v133 changed no importer,
+schema, schedule, offer or source configuration.
 
 Repository and automation:
 
 * repository: `GADOMM/Index`;
-* verified `master` before continuity pull request `#26`:
-  `fb3396ee134ea7bba317b32fdebae4a0aad73789`;
+* verified `master` before the v133 continuity pull request:
+  `4b1f3a6238c28cd6012f676a4cdce34d14d0510a`;
 * pull request `#24` is merged as
   `deedfdb60d0129cfefb51d89631ab897f434d980` and records Sites v131;
 * pull request `#25` is merged as
   `fb3396ee134ea7bba317b32fdebae4a0aad73789` and records report `#007`;
-* pull request `#26` is the documentation-only Sites v132 and report `#008`
-  continuity record; verify its final CI and merge state directly;
+* pull request `#26` is merged as
+  `4b1f3a6238c28cd6012f676a4cdce34d14d0510a` and records Sites v132 and
+  delivered report `#008`;
+* Actions run `#62`, database ID `32714838161`, attempt `1`, event
+  `pull_request`, completed successfully from 10:03:49 to 10:03:58 UTC and is
+  the newest workflow before the v133 continuity pull request. It validated
+  documentation and did not run a production import;
 * the newest production workflow remains run `#58`, database ID
   `32711816055`, attempt `1`, event `schedule`, successful from 09:29:21
   to 09:34:29 UTC; importer validation passed `16/16`, full TradeDoubler was
@@ -36,36 +41,39 @@ Repository and automation:
 
 Current Sites deployment:
 
-* Sites version `132`;
-* source commit `843e1f8d7dc542bf5a40b6507ba53d67e0fa815c`;
+* Sites version `133`;
+* source commit `790a78251e7890d464887aa520d694bc7522b906`;
 * version
-  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_10e6ac8f132481918c4d811807773972`;
-* deployment `appgdep_6a8c154fe2e481919fb8c616f25171b7`;
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e28533ee25348191bb8fdf41119ddfff`;
+* deployment `appgdep_6a8c1ca67bf88191b39bf0c0736ba40b`;
 * deployment type `publish`, status `succeeded` and no failure message,
-  directly rechecked by the main agent at 09:56 UTC;
+  directly rechecked by the main agent at 10:28 UTC;
 * provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
-* Sites reports version `132`, an active public project and
+* Sites reports version `133`, an active public project and
   `https://beta.perfumetr.pl` as the live URL;
 * `perfumetr.pl` and `beta.perfumetr.pl` both report active domain,
   provider and SSL state with no recorded error;
 * production build and artifact validation passed, the full suite passed
   `49/49`, and lint has zero errors with three existing warnings;
-* an independent read-only review found no catalog-motion, mobile,
-  reduced-motion or deployment blocker;
-* no browser QA was run for v132. Verification is the direct Sites deployment
+* an independent read-only review found no mobile cascade, Safari fallback,
+  reduced-motion or deployment blocker. Its performance and contrast concerns
+  were addressed before deployment;
+* no browser QA was run for v133. Verification is the direct Sites deployment
   result, active live URL, domain state, build, tests and focused code review.
 
-Sites v132 changed only the beta catalog presentation:
+Sites v133 changed only the beta catalog presentation:
 
 1. the native catalog dialog, Escape handling, focus restoration, scroll
    containment and existing responsive product grid remain unchanged;
-2. opening and closing now use a 280 ms restrained fade, 12 px vertical motion
-   and very small scale transition;
-3. the page behind the dialog fades and blurs gradually instead of switching
-   instantly;
-4. the sand canvas, sticky header, category toolbar and filters are
-   translucent. Mobile uses stronger opacity and limited blur for contrast and
-   performance;
+2. desktop uses a restrained 440 ms entrance from the right. Mobile uses a
+   separate 480 ms full-width entrance from the right so the transition is
+   clearly visible instead of collapsing to the earlier 12 px vertical move;
+3. the sand canvas uses about 68 percent opacity on desktop and 72 percent on
+   mobile, 22 to 24 px backdrop blur, subdued saturation and a light refractive
+   edge to create a matte-glass connection to the beta background;
+4. nested sticky surfaces use lighter translucency. Redundant filter-panel
+   blur was removed to limit iPhone GPU work, while secondary text was darkened
+   for contrast;
 5. `prefers-reduced-motion` disables the new animation and transitions;
 6. no catalog data, importer behavior, API contract, offer price, product image
    or source mapping changed.
@@ -82,7 +90,7 @@ Product-rating audit:
   freshness, and come from an official store API, official feed or licensed
   source before the UI can show it.
 
-Importer and offer state is unchanged by v132:
+Importer and offer state is unchanged by v133:
 
 | Source | Live offers | Review | Automatic | Pending fresh |
 | --- | ---: | ---: | ---: | ---: |
@@ -100,12 +108,16 @@ pending-fresh work. Do not weaken mapping rules to reduce a counter.
 
 Voucher state remains 4 received, 1 imported, 3 excluded and 1 active. The
 active coupon is not silently applied to price without structured owner
-confirmation. Flaconi remains externally blocked by
-`orchestrator_feed_not_found` and must not be described as active.
+confirmation. On 2026-08-24 the user reported receiving a Flaconi programme
+acceptance email, but explicitly postponed all technical work. The email was
+not inspected and feed availability was not rechecked. The latest verified
+runtime state therefore remains `orchestrator_feed_not_found`; do not describe
+Flaconi as an active offer source until a later authorized technical check and
+successful feed import confirm it.
 
 The earlier directly verified homepage state remains the ordinary five-day
 rotation with YSL Libre Flowers & Flames EDP 50 ml, Notino, 3 stores, 359.40
-PLN total and 258.50 PLN saving. Sites v132 did not modify the homepage,
+PLN total and 258.50 PLN saving. Sites v133 did not modify the homepage,
 rotation, cutouts or dynamic offer calculation.
 
 Report `#008`, dated 2026-08-24, was sent to
@@ -114,10 +126,12 @@ visual template and inline Perfumetr logo from delivered report `#003`.
 Report `#008` is the latest confirmed delivered report.
 
 There is no code edit, import, deployment or email delivery in progress after
-continuity pull request #26 is merged. The automatic schedule will continue the
-paused run #58 CJ generations. The next user-driven task is visual evaluation
-of the v132 transition and transparency. Product ratings remain blocked until
-an authoritative structured source is available.
+the v133 continuity pull request is merged. The automatic schedule will
+continue the paused run #58 CJ generations. The next user-driven task is visual
+evaluation of the v133 right-side entrance and matte glass, especially on a
+phone. Do not redesign further until the user responds. Flaconi technical work
+comes afterwards only when the user authorizes it. Product ratings remain
+blocked until an authoritative structured source is available.
 
 ## Earlier Sites v128 production checkpoint retained for history
 
