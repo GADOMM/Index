@@ -1,11 +1,84 @@
 # Perfumetr project state
 
-Updated: 2026-08-25 03:50 UTC
+Updated: 2026-08-25 21:38 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
+
+Verified through 2026-08-25 21:38 UTC for the latest tester feedback,
+Sites v156 and direct production verification. No credential, private screenshot
+or provider payload is recorded here.
+
+Repository and automation:
+
+* repository: `GADOMM/Index`;
+* verified `master` before this continuity pull request:
+  `d14d218b578157d7235b0fbf0082d75bf0d0a7e0`;
+* the latest completed workflow is `Perfumetr catalog feeds` run `#77`,
+  ID `32898882767`, attempt `1`, scheduled, successful from 21:03:22 to
+  21:17:50 UTC. Importer validation and the bounded partner orchestrator
+  succeeded; the full TradeDoubler snapshot was correctly skipped;
+* run `#72`, ID `32800552146`, remains the latest full production
+  TradeDoubler snapshot;
+* GitHub Actions remains the only automatic scheduler;
+* no importer, feed, catalog data, D1 schema, schedule or partner configuration
+  was changed or started for this UI correction.
+
+Current Sites deployment:
+
+* Sites version `156`;
+* source commit `98eee0c3815049f8c04e9a5a00a13b62b398f9c0`;
+* version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_56ba63caa25c81919615ae4c0e83f2eb`;
+* deployment `appgdep_6a8e0a3699c48191b2264c499d021193`;
+* deployment type `publish`, status `succeeded` and no failure message;
+* provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
+* the Sites project is active and public, and its current live URL remains
+  `https://beta.perfumetr.pl`;
+* `perfumetr.pl` and `beta.perfumetr.pl` have active domain, provider and
+  SSL status with no recorded error. `www.perfumetr.pl` is newly pending
+  provider validation and was not changed in this task;
+* the targeted regression passed `1/1`; build and artifact validation passed;
+  the full Sites suite passed `58/58`; lint has zero errors and the same three
+  existing warnings.
+
+Latest feedback and correction:
+
+* the newest entry reports hard-to-read desktop typography in catalog filters
+  and in the price-sort menu at viewport `2560×1305`;
+* the entry includes a protected screenshot. It was not copied from private R2
+  or opened outside the authenticated owner endpoint;
+* source inspection and agent-preview reproduction confirmed an objective
+  readability defect: filter choices rendered at `9px`, group headings at
+  `10px`, and the sort select and its native options at `11px`;
+* v156 changes only desktop catalog typography at `721px` and wider:
+  sort and toolbar actions are `14px`, group headings `12px`, filter
+  choices and brand suggestions `13px`, and the brand input `14px`;
+* filter state, sort logic, colors, control heights and the mobile native
+  `16px` select remain unchanged. Agent preview at `1363×936` confirmed
+  the new computed sizes, no clipped filter labels and a working
+  `price-asc` selection;
+* direct production checks returned HTTP 200 for the provider URL,
+  `beta.perfumetr.pl` and `perfumetr.pl`. Beta serves the v156 stylesheet
+  `/assets/index-CpZ4uGDw.css` with all four corrected desktop rules;
+* the directly rendered production rail currently shows Aelia `1,397`,
+  Cocolita `874`, Drogeria.pl `845`, Notino `4,214` and Brasty
+  `6,181`, total `13,511` fresh active offers. Flaconi is absent from the
+  fresh rail; this was recorded only as current production evidence and no
+  feed or importer change was made;
+* the feedback row remains `new` because the current owner panel has no
+  supported status-transition action or API. No opinion was deleted.
+
+Report `#009` remains the latest confirmed delivered report in repository
+continuity. The user did not request an email for v156, so none was sent. After
+this continuity pull request merges, no code edit, deployment, import or email
+remains in progress. The exact next task is to inspect the next new or
+unresolved panel entry, reproduce any claimed defect on current production and
+change only a confirmed UI problem.
+
+## Earlier Sites v146 production checkpoint
 
 Verified through 2026-08-25 03:50 UTC for the catalog review reduction,
 Sites v146 and the final isolated Flaconi maintenance pass. No credential,
