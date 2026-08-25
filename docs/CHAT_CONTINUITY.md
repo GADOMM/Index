@@ -61,8 +61,61 @@ change:
 
 ## Latest continuity checkpoint
 
+Verified from 2026-08-24 23:30 UTC through 2026-08-25 00:02 UTC for Sites v138,
+the first complete official AWIN Flaconi generation and the follow-up pacing
+fix. Report #009 is the latest confirmed delivered report.
+
+1. verified `master` before the pacing continuity pull request:
+   `d97eac6d122610e01e84acf42cf092fc04c349d1`;
+2. Sites v138 source commit is
+   `5ebfb1893e57a5d9cbd348967298417e61d945d1`;
+3. v138 version ID is
+   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_f56fc148ad548191a077e53116caa1a6`;
+4. deployment `appgdep_6a8c469952d081919a75258f19cae3ed` is
+   `succeeded` with no failure message;
+5. v138 contains the official AWIN Flaconi CSV-gzip adapter, strict field
+   mapping and bounded resumable import for advertiser 18563 and feed 37697;
+6. the protected AWIN key is valid and encrypted in Sites. Never copy the key,
+   ciphertext or keyed feed URL to GitHub, documentation or chat;
+7. isolated workflow `Perfumetr Flaconi feed` run #2, ID `32719777955`,
+   attempt 26, final job `97633299587`, completed successfully;
+8. only `awin:flaconi` was advanced. No other store or TradeDoubler source was
+   touched by this production import;
+9. generation 2 is completed: 34,597 received, 933 imported, 4,092 review,
+   29,572 excluded, 5,128 stored products and 933 live offers;
+10. Flaconi is active and verified, its AWIN programme is approved and product
+    status is ready;
+11. Stronger With You EDT 50 ml, GTIN 3605522040281, is mapped to the existing
+    variant with a fresh active Flaconi offer at 214.76 PLN and zero shipping;
+12. the comparison is dynamic. No screenshot price or manual product JSON was
+    inserted;
+13. unchanged existing live counts are Aelia 1,234, Cocolita 843,
+    Drogeria.pl 841, Notino 5,344 and Brasty 6,043. Together with Flaconi 933,
+    the resulting total is 15,238;
+14. public visual QA of the offer was not performed because the beta gate was
+    active. Production D1 directly verified the offer, variant, affiliate URL,
+    freshness, price and shipping;
+15. the first full generation required isolated resumptions because Sites
+    enforces 12 seconds between chunks and the GitHub client previously sent
+    them immediately;
+16. the follow-up client fix waits 12.5 seconds before consecutive Flaconi
+    chunks, never retries HTTP 429 and does not change pacing for other sources;
+17. syntax checks and the full importer suite pass 17/17, including a
+    synthetic two-chunk Flaconi pacing test;
+18. report #009 was sent to `support@perfumetr.pl` and confirmed in Sent. It
+    covered the protected key handoff, v138 preparation and planned import;
+19. no second report was requested or sent after completion;
+20. after the continuity pull request merges, no import, Sites deployment or
+    email remains in progress. Observe the next scheduled partner cycle once
+    to prove the paced Flaconi refresh completes in one job.
+
+Treat this as dated evidence and recheck all unstable values before a new
+change.
+
+## Earlier Sites v136 continuity checkpoint
+
 Verified at 2026-08-24 11:57 UTC for Sites v136 and the focused cleanup of the
-`Produkty i ceny` integration section. Report #008 remains the latest
+`Produkty i ceny` integration section. Report #008 was then the latest
 confirmed delivered report.
 
 1. verified `master` before this continuity pull request:

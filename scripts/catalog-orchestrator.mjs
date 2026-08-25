@@ -12,6 +12,7 @@ const EXPECTED_BLOCKERS = new Set([
   "orchestrator_feed_access_denied",
   "orchestrator_not_configured",
 ]);
+const FLACONI_STEP_INTERVAL_MS = 12_500;
 const VOUCHER_REJECTION_REASONS = new Set([
   "program_not_allowed",
   "technical_program",
@@ -41,6 +42,7 @@ if (!Number.isSafeInteger(configuredSteps) || configuredSteps < 1 || configuredS
 
 const getOidcToken = createOidcTokenProvider({ audience: OIDC_AUDIENCE });
 const endpoint = new URL("/api/internal/catalog-orchestrator", validatedSiteOrigin()).toString();
+const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 const safeError = (payload, status) => {
   const code = typeof payload?.error === "string" && /^[a-z0-9_]{1,80}$/i.test(payload.error)
@@ -164,6 +166,9 @@ const runSource = async (source) => {
   let inCjMaintenance = state === "completed"
     && hasMaintenanceBacklog(cjMaintenanceCounters(source, counters));
   while (!skipped && !busy && steps < configuredSteps) {
+    if (source === "awin:flaconi" && steps > 0) {
+      await wait(FLACONI_STEP_INTERVAL_MS);
+    }
     latest = await post({ action: "advance_source", source });
     state = responseState(latest);
     skipped = responseSkipped(latest);

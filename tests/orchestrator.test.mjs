@@ -424,3 +424,92 @@ test("AWIN feed pending provider approval is reported as blocked without failing
     delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
   }
 });
+
+test("paces consecutive Flaconi feed chunks above the Sites safety interval", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalSetTimeout = globalThis.setTimeout;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const requestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const calls = [];
+  const delays = [];
+  let stdout = "";
+  let stderr = "";
+
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.PERFUMETR_ORCHESTRATOR_STEPS = "3";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = requestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/catalog-orchestrator.mjs", "awin:flaconi"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  process.stderr.write = ((value) => { stderr += String(value); return true; });
+  globalThis.setTimeout = ((callback, milliseconds, ...args) => {
+    delays.push(milliseconds);
+    callback(...args);
+    return 0;
+  });
+
+  let advances = 0;
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    const body = JSON.parse(init.body);
+    calls.push([body.source, body.action]);
+    if (body.action === "status") {
+      return Response.json({ ok: true, overview: { state: "paused", receivedCount: 0 } });
+    }
+    advances += 1;
+    return Response.json({
+      ok: true,
+      overview: {
+        state: advances === 1 ? "paused" : "completed",
+        receivedCount: advances * 1_500,
+        importedCount: advances * 40,
+        liveOffers: advances * 40,
+      },
+    });
+  };
+
+  try {
+    await import(`../scripts/catalog-orchestrator.mjs?flaconi-pacing-test=${Date.now()}`);
+    assert.equal(stderr, "");
+    assert.notEqual(process.exitCode, 1);
+    assert.deepEqual(calls, [
+      ["awin:flaconi", "status"],
+      ["awin:flaconi", "advance_source"],
+      ["awin:flaconi", "advance_source"],
+    ]);
+    assert.deepEqual(delays, [12_500]);
+    const report = JSON.parse(stdout);
+    assert.equal(report.ok, true);
+    assert.equal(report.sources[0].steps, 2);
+    assert.equal(report.sources[0].completed, true);
+    assert.equal(report.sources[0].counters.liveOffers, 80);
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    globalThis.setTimeout = originalSetTimeout;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.PERFUMETR_ORCHESTRATOR_STEPS;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
