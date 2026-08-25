@@ -6,11 +6,15 @@ on:
       - master
     paths:
       - .github/workflows/flaconi.yml
+      - scripts/catalog-orchestrator.mjs
+      - tests/orchestrator.test.mjs
   push:
     branches:
       - master
     paths:
       - .github/workflows/flaconi.yml
+      - scripts/catalog-orchestrator.mjs
+      - tests/orchestrator.test.mjs
   workflow_dispatch:
 
 permissions:

@@ -140,15 +140,19 @@ const responseVoucherRejectionReasons = (source, payload) => {
   }
   return safeReasons;
 };
-const cjMaintenanceCounters = (source, counters) => {
-  if (!source.startsWith("cj:")) return null;
-  const required = ["automaticReviewCount", "pendingFreshOfferCount", "maintenanceProcessedCount"];
+const maintenanceCounters = (source, state, counters) => {
+  const isCj = source.startsWith("cj:");
+  const isCompletedFlaconi = source === "awin:flaconi" && state === "completed";
+  if (!isCj && !isCompletedFlaconi) return null;
+  const required = isCj
+    ? ["automaticReviewCount", "pendingFreshOfferCount", "maintenanceProcessedCount"]
+    : ["automaticReviewCount", "maintenanceProcessedCount"];
   if (required.some((key) => counters[key] === undefined)) {
     throw new Error("orchestrator_invalid_response");
   }
   return {
     automaticReviewCount: counters.automaticReviewCount,
-    pendingFreshOfferCount: counters.pendingFreshOfferCount,
+    pendingFreshOfferCount: isCj ? counters.pendingFreshOfferCount : 0,
     maintenanceProcessedCount: counters.maintenanceProcessedCount,
   };
 };
@@ -163,10 +167,10 @@ const runSource = async (source) => {
   let busy = responseBusy(initial);
   let counters = responseCounters(initial);
   let rejectionReasons = responseVoucherRejectionReasons(source, initial);
-  let inCjMaintenance = state === "completed"
-    && hasMaintenanceBacklog(cjMaintenanceCounters(source, counters));
+  let inMaintenance = state === "completed"
+    && hasMaintenanceBacklog(maintenanceCounters(source, state, counters));
   while (!skipped && !busy && steps < configuredSteps) {
-    if (source === "awin:flaconi" && steps > 0) {
+    if (source === "awin:flaconi" && steps > 0 && !inMaintenance) {
       await wait(FLACONI_STEP_INTERVAL_MS);
     }
     latest = await post({ action: "advance_source", source });
@@ -175,18 +179,18 @@ const runSource = async (source) => {
     busy = responseBusy(latest);
     const stepCounters = responseCounters(latest);
     const stepRejectionReasons = responseVoucherRejectionReasons(source, latest);
-    const maintenance = cjMaintenanceCounters(source, stepCounters);
+    const maintenance = maintenanceCounters(source, state, stepCounters);
     counters = { ...counters, ...stepCounters };
     if (stepRejectionReasons !== null) rejectionReasons = stepRejectionReasons;
     steps += 1;
     if (skipped || busy || state === "failed") break;
     if (state !== "completed") {
-      inCjMaintenance = false;
+      inMaintenance = false;
       continue;
     }
     if (!maintenance || !hasMaintenanceBacklog(maintenance)) break;
-    if (inCjMaintenance && maintenance.maintenanceProcessedCount === 0) break;
-    inCjMaintenance = true;
+    if (inMaintenance && maintenance.maintenanceProcessedCount === 0) break;
+    inMaintenance = true;
   }
   return {
     ok: state !== "failed",
