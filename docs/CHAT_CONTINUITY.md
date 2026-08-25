@@ -61,6 +61,64 @@ change:
 
 ## Latest continuity checkpoint
 
+Verified through 2026-08-25 21:38 UTC for the latest tester feedback and
+Sites v156. Report #009 remains the latest confirmed delivered report.
+
+1. verified `master` before this continuity pull request:
+   `d14d218b578157d7235b0fbf0082d75bf0d0a7e0`;
+2. the latest completed workflow is catalog run #77, ID `32898882767`,
+   attempt 1, schedule, success from 21:03:22 to 21:17:50 UTC. Importer
+   validation and the bounded partner orchestrator succeeded while the full
+   TradeDoubler snapshot was correctly skipped;
+3. run #72, ID `32800552146`, remains the latest full production
+   TradeDoubler snapshot. GitHub Actions remains the only automatic scheduler;
+4. Sites v156 source commit is
+   `98eee0c3815049f8c04e9a5a00a13b62b398f9c0`;
+5. v156 version ID is
+   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_56ba63caa25c81919615ae4c0e83f2eb`;
+6. deployment `appgdep_6a8e0a3699c48191b2264c499d021193` is
+   `succeeded` with no failure message. Provider URL:
+   `https://perfumetr.borodzicz85.chatgpt.site`;
+7. the project is active and public, with current live URL
+   `https://beta.perfumetr.pl`. `perfumetr.pl` and
+   `beta.perfumetr.pl` have active provider and SSL status. The separate
+   `www.perfumetr.pl` domain is newly pending provider validation and was not
+   changed in this task;
+8. the latest panel entry reports unreadable desktop catalog filter and
+   price-sort text at `2560×1305`. It has one protected screenshot that was
+   not copied from private R2 or opened outside the authenticated owner route;
+9. the defect is confirmed from source and agent preview: filter choices were
+   `9px`, headings `10px`, and the sort select plus native options
+   `11px`. Contrast was adequate, so undersized typography was the exact
+   cause;
+10. v156 changes only desktop catalog text at `721px` and wider: sort and
+    toolbar actions are `14px`, group headings `12px`, filter choices and
+    brand suggestions `13px`, and the brand input `14px`;
+11. no JSX, state, sorting logic, color, control height or mobile picker changed.
+    Preview at `1363×936` confirmed the new computed values, no clipped
+    filter labels and a working `price-asc` selection;
+12. the targeted regression passes 1/1. Build and artifact validation pass, the
+    full Sites suite passes 58/58, and lint has zero errors with the same three
+    existing warnings;
+13. direct production checks returned HTTP 200 for the provider URL and both
+    production domains. Beta loads `/assets/index-CpZ4uGDw.css` and that
+    stylesheet contains every corrected desktop rule;
+14. the fresh production rail currently shows Aelia 1,397, Cocolita 874,
+    Drogeria.pl 845, Notino 4,214 and Brasty 6,181, total 13,511. Flaconi is
+    absent from the fresh rail; no feed, importer, D1, schedule or partner
+    configuration change was authorized or made;
+15. the feedback row remains `new` because the current owner panel exposes no
+    supported status-transition action or API. No feedback was deleted;
+16. no report was requested or sent for v156. After this documentation pull
+    request merges, no work remains in progress. The exact next task is to read
+    the next new or unresolved panel entry, reproduce any claimed defect on
+    current production, and modify only a confirmed UI problem.
+
+Treat this as dated evidence and recheck all unstable values before a new
+change.
+
+## Earlier Sites v146 continuity checkpoint
+
 Verified through 2026-08-25 03:50 UTC for the catalog review reduction and
 Sites v146. Report #009 remains the latest confirmed delivered report.
 
