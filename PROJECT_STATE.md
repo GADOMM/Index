@@ -1,11 +1,85 @@
 # Perfumetr project state
 
-Updated: 2026-08-24 11:57 UTC
+Updated: 2026-08-25 00:02 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
+
+Verified from 2026-08-24 23:30 UTC through 2026-08-25 00:02 UTC for the first
+complete official AWIN Flaconi import and the follow-up orchestrator pacing
+fix. No credential, keyed URL or private provider payload is recorded here.
+
+Repository and automation:
+
+* repository: `GADOMM/Index`;
+* verified `master` before the pacing continuity pull request:
+  `d97eac6d122610e01e84acf42cf092fc04c349d1`;
+* isolated `Perfumetr Flaconi feed` run `#2`, database ID `32719777955`,
+  completed successfully on attempt `26`; final import job `97633299587`;
+* only source `awin:flaconi` was advanced. Aelia, Cocolita, Drogeria.pl,
+  Notino, Brasty, TradeDoubler products and vouchers were not advanced by this
+  run;
+* the import exposed a 12-second Sites safety interval between completed
+  chunks. The cursor persisted correctly, but the existing GitHub client sent
+  the next chunk too early and required isolated job resumptions;
+* the follow-up fix waits 12.5 seconds before every second and later Flaconi
+  chunk. It does not retry HTTP 429 and does not change pacing for other
+  sources;
+* syntax checks and the full importer suite pass `17/17`, including a new
+  synthetic test proving the exact Flaconi pacing behavior;
+* GitHub Actions remains the only automatic scheduler.
+
+Current Sites deployment:
+
+* Sites version `138`;
+* source commit `5ebfb1893e57a5d9cbd348967298417e61d945d1`;
+* version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_f56fc148ad548191a077e53116caa1a6`;
+* deployment `appgdep_6a8c469952d081919a75258f19cae3ed`;
+* deployment type `publish`, status `succeeded` and no failure message;
+* provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
+* v138 adds the official AWIN Flaconi CSV-gzip adapter, strict field mapping,
+  bounded resumable chunks and official feed selection for advertiser `18563`
+  and feed `37697`;
+* the AWIN API credential is present only in encrypted Sites storage. It is
+  valid and must never be moved into this repository, documentation or logs.
+
+First complete Flaconi generation:
+
+* generation `2` is `completed`, with no error;
+* `34,597` received, `933` imported, `4,092` routed to review and `29,572`
+  excluded;
+* `5,128` catalog products are stored for the source and `933` Flaconi offers
+  are live;
+* Flaconi merchant status is active and verified, the AWIN programme is
+  approved and its product status is ready;
+* the official Stronger With You EDT 50 ml row with GTIN `3605522040281` is
+  mapped to the existing catalog variant. Its live Flaconi offer is `214.76`
+  PLN with zero shipping, active affiliate routing and fresh validity;
+* this is lower than the previous Brasty homepage price of `239.74` PLN. The
+  comparison remains dynamic; no screenshot price was inserted manually;
+* prior directly verified live counts were Aelia `1,234`, Cocolita `843`,
+  Drogeria.pl `841`, Notino `5,344` and Brasty `6,043`. Because the isolated
+  run changed only Flaconi, the resulting total is `15,238` live offers,
+  including Flaconi `933`;
+* no public browser screenshot was used as proof because the beta access gate
+  was active. The offer, mapping, price, shipping, freshness and affiliate
+  route were verified directly in production D1.
+
+Report `#009` was sent to `support@perfumetr.pl` and confirmed in Sent before
+the owner saved the protected key. It covered the key handoff, v138 preparation
+and planned import. No second report was requested or sent after the completed
+generation.
+
+After this continuity pull request is merged, no import, Sites deployment or
+email is in progress. The next scheduled partner cycle should be observed once
+to confirm that the new Flaconi pacing completes in one job without a rate-limit
+resumption. Product review rows remain review rows; do not weaken strict mapping
+or classification rules merely to reduce their count.
+
+## Earlier Sites v136 production checkpoint
 
 Verified at 2026-08-24 11:57 UTC for Sites v136 and the focused cleanup of the
 `Produkty i ceny` integration section. Importer counters retain their directly
