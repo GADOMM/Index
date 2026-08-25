@@ -61,6 +61,58 @@ change:
 
 ## Latest continuity checkpoint
 
+Verified at 2026-08-25 00:47 UTC for Sites v140 and the global offer-price
+integrity correction. Report #009 remains the latest confirmed delivered
+report.
+
+1. verified `master` before this continuity pull request:
+   `786844704f861fca0a9c0baa02cb17966a2d03a0`;
+2. PR #32 is merged as that commit and records Sites v139;
+3. the newest completed Actions run is `Perfumetr catalog feeds` run #69,
+   ID `32793165028`, attempt 1, pull request, success. Importer validation
+   succeeded and the production import job was skipped;
+4. isolated Flaconi run #2, ID `32719777955`, attempt 26, job `97633299587`,
+   remains the latest completed Flaconi generation. Run #55 remains the latest
+   full TradeDoubler snapshot;
+5. Sites v140 source commit is
+   `b39cef8a5afdf11c0b12424d53250daace512ffc`;
+6. v140 version ID is
+   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_217c05ee1f8c8191a229531cdcbfb981`;
+7. deployment `appgdep_6a8ce58741a88191b93d5a2f47f35a9a` is
+   `succeeded` with no failure message. Provider URL:
+   `https://perfumetr.borodzicz85.chatgpt.site`;
+8. build and artifact validation pass, the full Sites suite passes 52/52 and
+   lint has zero errors with three existing warnings;
+9. the defect was global: offers with known delivery were always ranked before
+   offers with unknown delivery, even if their visible amount was much higher;
+10. SQL, the API builder, beta comparison, catalog detail and homepage now
+    order by the lowest visible amount. A known final total wins only an exact
+    visible-price tie;
+11. when delivery is not verified, the UI shows `od`, names the amount as the
+    product price and does not call it a final total or recommendation;
+12. D1 now contains active, source-backed delivery rules for Cocolita and
+    Drogeria.pl: DPD Pickup costs 7.99 PLN and is free from 159.00 PLN. The
+    rules require re-verification after 30 days;
+13. no ambiguous Aelia free-delivery threshold was guessed. Its unknown
+    delivery remains explicit and cannot masquerade as a final total;
+14. direct production HTML at 00:46 UTC returned HTTP 200 and showed Lattafa
+    Khamrah EDP 100 ml, Drogeria.pl, three stores and 108.98 PLN together with
+    delivery. The incorrect Brasty 162.38 PLN result disappeared;
+15. current directly rendered counts remain Aelia 1,234, Cocolita 842,
+    Drogeria.pl 841, Notino 5,363, Brasty 6,120 and Flaconi 933, total 15,333;
+16. no import, source, mapping rule, scheduler or report was changed or started
+    for v140;
+17. report #009 remains the latest confirmed delivered report. No report was
+    requested or sent for v140;
+18. after the documentation pull request merges, no work remains in progress.
+    Reverify the expiring delivery rules from official store sources and never
+    turn an unknown delivery amount into a claimed checkout total.
+
+Treat this as dated evidence and recheck all unstable values before a new
+change.
+
+## Earlier Sites v139 continuity checkpoint
+
 Verified at 2026-08-25 00:18 UTC for Sites v139 and the new 24-hour homepage
 cutout rotation. Report #009 remains the latest confirmed delivered report.
 
