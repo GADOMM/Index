@@ -1,11 +1,110 @@
 # Perfumetr project state
 
-Updated: 2026-08-25 00:47 UTC
+Updated: 2026-08-25 03:50 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
+
+Verified through 2026-08-25 03:50 UTC for the catalog review reduction,
+Sites v146 and the final isolated Flaconi maintenance pass. No credential,
+private feed URL or provider payload is recorded here.
+
+Repository and automation:
+
+* repository: `GADOMM/Index`;
+* verified `master` before this continuity pull request:
+  `13b8ec7c89c03626d4c71c61e83511965f41e9e5`;
+* pull request `#34`, `fix: automate safe Flaconi review backlog`, is merged as
+  that commit. Importer validation passes `18/18`;
+* `Perfumetr catalog feeds` run `#72`, ID `32800552146`, attempt `1`, push,
+  completed successfully. It is the latest full TradeDoubler production
+  snapshot and also advanced the bounded partner orchestrator;
+* scheduled catalog run `#67`, ID `32777576698`, attempt `3`, completed
+  successfully. The full TradeDoubler steps were correctly skipped; Notino and
+  Brasty completed with no pending fresh offers;
+* isolated `Perfumetr Flaconi feed` run `#4`, ID `32800552050`, attempt `2`,
+  final job `97677660697`, completed successfully at 03:48:35 UTC with no
+  source error;
+* GitHub Actions remains the only automatic scheduler.
+
+Current Sites deployment:
+
+* Sites version `146`;
+* source commit `f3031eeb6b124d8e568fa7bd804209ae6a0010d4`;
+* version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_eb1cd01923b481919c5a0701734ff163`;
+* deployment `appgdep_6a8d106a83848191ac8d0841b3ac7388`;
+* deployment type `publish`, status `succeeded` and no failure message;
+* provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
+* both `perfumetr.pl` and `beta.perfumetr.pl` remain active with active
+  provider status, active SSL and no recorded domain error;
+* production build and artifact validation passed, the full Sites suite passed
+  `53/53`, and lint has zero errors with the same three existing warnings;
+* an independent review of the final Flaconi rule found no blocker.
+
+Catalog recovery and safety:
+
+* the directly rendered production rail now shows Aelia `1,381`, Cocolita
+  `855`, Drogeria.pl `845`, Notino `5,431`, Brasty `6,180` and Flaconi `3,668`,
+  total `18,360` fresh live offers;
+* the verified baseline before this work was `15,333`, so the net catalog gain
+  is `3,027` fresh offers without manually prepared product JSON;
+* the full TradeDoubler snapshot scanned Cocolita `27,811`, Drogeria.pl
+  `32,414` and Aelia `8,545` provider products. Its final store results before
+  later integrity quarantine were respectively `857`, `847` and `1,382` live
+  offers. The explicit proof diagnostic reduced the shared review-candidate
+  count from about `10,001` to `972`;
+* Notino completed with `5,431` live offers, `144` review rows, zero automatic
+  review rows and zero pending fresh offers. Brasty completed with `6,180`
+  live offers, `125` review rows, zero automatic review rows and zero pending
+  fresh offers;
+* the first bounded Flaconi maintenance rule recovered `2,660` prior
+  `gtin_not_found` rows and retained `93` semantic conflicts for human-quality
+  evidence instead of forcing them live;
+* the v146 pass attempted all `386` remaining eligible Flaconi review rows.
+  `75` passed every identity, visibility and GTIN gate and became live. Of the
+  remainder, `61` were stopped by stricter GTIN gates and `250` received
+  terminal unresolved reasons, so the automation cannot loop forever;
+* final Flaconi counters are `34,597` received, `3,668` imported, `1,357`
+  review, `29,572` excluded, `5,128` stored and `3,668` live offers. Automatic
+  review count is zero;
+* a full post-run scan covered all `5,128` rows with `5,128` unique external
+  IDs and no duplicate. The remaining review reasons are exactly `1,002`
+  `gtin_identity_conflict`, `105` `semantic_gtin_conflict`, `249`
+  `missing_audience_unresolved` and one `missing_line_unresolved`. There are
+  zero legacy nonterminal `gtin_not_found`, `missing_audience` or
+  `missing_line` rows, zero `catalog_hidden` rows and no other review reason;
+* the 136 audited recovery candidates split into `75` live rows and `61` rows
+  correctly held by GTIN conflict gates. The latter added `49` exact-identity
+  and `12` semantic conflicts instead of blindly attaching an offer;
+* v146 recognizes only nine audited audience signals local to Flaconi. Sibling
+  inheritance requires the same official feed and generation, a terminal
+  AWIN family suffix, identical raw brand, concentration and product type, an
+  identical normalized title stem, one unanimous visible audience and no
+  repeated GTIN. Mixed evidence always stays in review;
+* the ordinary hidden-catalog, exact-GTIN, semantic-conflict and duplicate
+  checks still run after that inference. Shipping absent from a stored review
+  row remains unknown rather than being invented as zero;
+* two independently confirmed historical identity mismatches remain hidden by
+  the one-time catalog quarantine. Their listings and offers are unavailable;
+* the coupon refresh remains completed with one active approved coupon and
+  three rejected rows whose tracking URLs were not approved.
+
+Direct production verification at 03:49 UTC returned HTTP 200. The homepage
+showed Lattafa Khamrah EDP 100 ml, Drogeria.pl, four stores and `108.98` PLN,
+and the six-store rail exposed the exact live counts above. There was no empty
+hero or missing store rail.
+
+Report `#009` remains the latest confirmed delivered report. The user did not
+request an email for this catalog task, so none was sent. After this continuity
+pull request merges, no code edit, import, deployment or email remains in
+progress. The next data-quality task is to investigate the remaining conflict
+rows only with stronger official identity evidence; do not weaken the current
+gates merely to reduce the visible review counter.
+
+## Earlier Sites v140 production checkpoint
 
 Verified at 2026-08-25 00:47 UTC for Sites v140 and the global offer-price
 integrity correction.
