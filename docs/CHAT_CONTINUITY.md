@@ -61,6 +61,84 @@ change:
 
 ## Latest continuity checkpoint
 
+Verified through 2026-08-25 03:50 UTC for the catalog review reduction and
+Sites v146. Report #009 remains the latest confirmed delivered report.
+
+1. verified `master` before this continuity pull request:
+   `13b8ec7c89c03626d4c71c61e83511965f41e9e5`;
+2. PR #34 is merged as that commit and adds bounded automatic review handling
+   for the official Flaconi feed. Importer validation passes 18/18;
+3. catalog run #72, ID `32800552146`, attempt 1, push, completed successfully.
+   It is the latest full TradeDoubler production snapshot;
+4. scheduled run #67, ID `32777576698`, attempt 3, completed successfully.
+   TradeDoubler was correctly skipped while Notino and Brasty finished with
+   zero pending fresh offers;
+5. isolated Flaconi run #4, ID `32800552050`, attempt 2, job `97677660697`,
+   completed successfully at 03:48:35 UTC with no source error;
+6. Sites v146 source commit is
+   `f3031eeb6b124d8e568fa7bd804209ae6a0010d4`;
+7. v146 version ID is
+   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_eb1cd01923b481919c5a0701734ff163`;
+8. deployment `appgdep_6a8d106a83848191ac8d0841b3ac7388` is
+   `succeeded` with no failure message. Provider URL:
+   `https://perfumetr.borodzicz85.chatgpt.site`;
+9. both production domains have active provider and SSL status with no last
+   error. The Sites project is active, public and owned by the current user;
+10. build and artifact validation pass, the full Sites suite passes 53/53,
+    lint has zero errors with three existing warnings, and the independent
+    final code review found no blocker;
+11. directly rendered live counts are Aelia 1,381, Cocolita 855, Drogeria.pl
+    845, Notino 5,431, Brasty 6,180 and Flaconi 3,668, total 18,360;
+12. this is a net gain of 3,027 fresh offers from the verified 15,333 baseline;
+13. the full TradeDoubler snapshot scanned 27,811 Cocolita, 32,414
+    Drogeria.pl and 8,545 Aelia provider products. The shared explicit proof
+    diagnostic ended at 972 review candidates, down from about 10,001;
+14. Notino now has 5,431 live offers and 144 review rows. Brasty has 6,180
+    live offers and 125 review rows. Both have zero automatic review rows and
+    zero pending fresh offers;
+15. the first safe Flaconi maintenance pass recovered 2,660 historical
+    `gtin_not_found` rows and left 93 semantic conflicts in review;
+16. v146 attempted the remaining 386 eligible Flaconi rows. Seventy-five
+    passed every identity and visibility gate and became live; 61 were stopped
+    by stricter GTIN gates and 250 received terminal unresolved reasons, so
+    none can cause an automatic loop;
+17. final Flaconi state is completed: 34,597 received, 3,668 imported, 1,357
+    review, 29,572 excluded, 5,128 stored, 3,668 live and zero automatic review
+    rows;
+18. a full post-run scan covered 5,128/5,128 rows, all with unique external
+    IDs. Review reasons are exactly 1,002 `gtin_identity_conflict`, 105
+    `semantic_gtin_conflict`, 249 `missing_audience_unresolved` and one
+    `missing_line_unresolved`; every legacy nonterminal reason, `catalog_hidden`
+    and every other review reason is zero;
+19. all 136 audited recovery candidates were resolved: 75 became live and 61
+    were correctly held by the GTIN gates, adding 49 identity and 12 semantic
+    conflicts instead of blindly attaching an offer;
+20. local Flaconi audience inference is restricted to nine audited word-bound
+    signals. Sibling evidence requires the same official feed and generation,
+    terminal AWIN family, exact raw brand, concentration and product type,
+    identical normalized title stem, one unanimous visible audience and no
+    repeated GTIN. Mixed evidence remains in review;
+21. hidden variants, exact GTIN identity conflicts, semantic conflicts and
+    duplicate evidence still block publication. Unknown stored shipping is
+    preserved as unknown, never changed to zero;
+22. two confirmed historical cross-product mappings remain quarantined with
+    unavailable listings and invalid offers;
+23. coupon refresh is completed with one active approved coupon and three
+    rejected unapproved tracking URLs;
+24. direct production HTML at 03:49 UTC returned HTTP 200 and showed Lattafa
+    Khamrah EDP 100 ml, Drogeria.pl, four stores, 108.98 PLN and the complete
+    six-store rail. There was no empty hero;
+25. report #009 remains the latest confirmed delivered report. No report was
+    requested or sent for this catalog task;
+26. after the documentation pull request merges, no work remains in progress.
+    Investigate remaining conflicts only with stronger official identity
+    evidence and do not relax the production gates to chase a lower counter.
+
+Treat this as dated evidence and recheck all unstable values before a new
+change.
+
+## Earlier Sites v140 continuity checkpoint
+
 Verified at 2026-08-25 00:47 UTC for Sites v140 and the global offer-price
 integrity correction. Report #009 remains the latest confirmed delivered
 report.
