@@ -61,6 +61,60 @@ change:
 
 ## Latest continuity checkpoint
 
+Verified at 2026-08-25 00:18 UTC for Sites v139 and the new 24-hour homepage
+cutout rotation. Report #009 remains the latest confirmed delivered report.
+
+1. verified `master` before this continuity pull request:
+   `79aa195b82c4f6229c34e00ef53dbb2e5e67cd3f`;
+2. PR #31 is merged as that commit and safely paces consecutive Flaconi chunks
+   by 12.5 seconds without changing other sources;
+3. `Perfumetr catalog feeds` run #68, ID `32792155232`, pull request, completed
+   successfully with importer tests 17/17 and its production job skipped;
+4. the merge intentionally used the supported CI skip marker, so it did not
+   run unrelated store imports;
+5. isolated Flaconi run #2, ID `32719777955`, attempt 26, job `97633299587`,
+   remains the latest completed Flaconi generation. Run #55 remains the latest
+   full TradeDoubler snapshot;
+6. Sites v139 source commit is
+   `28c956a0d3f9f8f16ae2657142445b86d5cc782d`;
+7. v139 version ID is
+   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e9671c30cc2c819194eace4ac4f2c061`;
+8. deployment `appgdep_6a8cdeea96f88191ad385304c762d118` is
+   `succeeded` with no failure message. Provider URL:
+   `https://perfumetr.borodzicz85.chatgpt.site`;
+9. build and artifact validation pass, the full Sites suite passes 50/50 and
+   lint has zero errors with three existing warnings;
+10. no browser QA was requested or run. A direct production HTML read of
+    `perfumetr.pl` verified the changed elements;
+11. the six locally reviewed transparent cutouts now share one 24-hour cycle,
+    giving each bottle a four-hour slot;
+12. the cycle starts with Lattafa Khamrah at 2026-08-25 00:00 UTC and repeats
+    daily. The next cutout is selected directly from time and the reviewed
+    manifest, without writing homepage rotation state to D1;
+13. a temporarily unavailable scheduled product falls forward to the next
+    reviewed cutout, preventing an empty hero or arbitrary feed photo;
+14. production at 00:17 UTC showed Lattafa Khamrah EDP 100 ml, its reviewed
+    transparent cutout, Brasty, three stores and a dynamic 162.38 PLN final
+    price;
+15. Flaconi appears in the accepted continuous store rail with 933 fresh
+    offers. The rail reports six active stores;
+16. current directly rendered counts are Aelia 1,234, Cocolita 842,
+    Drogeria.pl 841, Notino 5,363, Brasty 6,120 and Flaconi 933, total 15,333;
+17. Flaconi generation 2 remains completed with 34,597 received, 933 imported,
+    4,092 review, 29,572 excluded and 5,128 stored products;
+18. report #009 is still the latest confirmed delivered report. No report was
+    requested or sent for v139;
+19. after the documentation pull request merges, no import, Sites deployment
+    or email remains in progress;
+20. the next focused task is a read-only check after the first four-hour
+    boundary to confirm the next reviewed bottle appears without an empty hero.
+    Do not deploy if the timed transition works.
+
+Treat this as dated evidence and recheck all unstable values before a new
+change.
+
+## Earlier Sites v138 continuity checkpoint
+
 Verified from 2026-08-24 23:30 UTC through 2026-08-25 00:02 UTC for Sites v138,
 the first complete official AWIN Flaconi generation and the follow-up pacing
 fix. Report #009 is the latest confirmed delivered report.

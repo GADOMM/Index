@@ -1,11 +1,77 @@
 # Perfumetr project state
 
-Updated: 2026-08-25 00:02 UTC
+Updated: 2026-08-25 00:18 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
+
+Verified at 2026-08-25 00:18 UTC for Sites v139 and the new 24-hour homepage
+bottle rotation.
+
+Repository and automation:
+
+* repository: `GADOMM/Index`;
+* verified `master` before this continuity pull request:
+  `79aa195b82c4f6229c34e00ef53dbb2e5e67cd3f`;
+* pull request `#31` is merged as that commit and adds safe 12.5-second pacing
+  between consecutive Flaconi chunks;
+* `Perfumetr catalog feeds` run `#68`, database ID `32792155232`, pull request,
+  completed successfully. Importer validation passed `17/17` and the production
+  import job was correctly skipped;
+* the master merge used GitHub's supported CI skip marker, so it did not start
+  unrelated store imports;
+* isolated Flaconi run `#2`, ID `32719777955`, attempt `26`, final job
+  `97633299587`, remains the latest completed Flaconi production generation;
+* run `#55` remains the latest full TradeDoubler snapshot;
+* GitHub Actions remains the only automatic scheduler.
+
+Current Sites deployment:
+
+* Sites version `139`;
+* source commit `28c956a0d3f9f8f16ae2657142445b86d5cc782d`;
+* version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e9671c30cc2c819194eace4ac4f2c061`;
+* deployment `appgdep_6a8cdeea96f88191ad385304c762d118`;
+* deployment type `publish`, status `succeeded` and no failure message;
+* provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
+* the production build and artifact validation passed, the full Sites suite
+  passed `50/50`, and lint has zero errors with three existing warnings;
+* no browser QA was requested or run. Direct production HTML verification of
+  `perfumetr.pl` returned the expected dynamic product, price, store count and
+  six-store rail.
+
+Homepage rotation and store rail:
+
+* all six reviewed transparent cutouts now complete one rotation every 24
+  hours, so each normal slot lasts exactly four hours;
+* the cycle begins with Lattafa Khamrah at
+  `2026-08-25T00:00:00.000Z` and repeats every 24 hours;
+* selection is computed from time and the reviewed manifest. Homepage reads no
+  arbitrary provider image and no longer writes persistent rotation state;
+* if the scheduled bottle temporarily has no valid fresh offer, the hero falls
+  forward through the reviewed list instead of becoming empty;
+* direct production HTML at 00:17 UTC showed Lattafa Khamrah EDP 100 ml using
+  `/lattafa-khamrah-edp-100ml-cutout.png`, Brasty as the cheapest of three
+  stores and a dynamic final price of `162.38` PLN;
+* Flaconi is present in the continuous store rail with `933` fresh offers. The
+  rail and its count remain D1-driven rather than statically duplicating a
+  store;
+* the same read showed six active stores: Aelia `1,234`, Cocolita `842`,
+  Drogeria.pl `841`, Notino `5,363`, Brasty `6,120` and Flaconi `933`, total
+  `15,333` fresh live offers;
+* current Flaconi generation counters remain `34,597` received, `933` imported,
+  `4,092` review, `29,572` excluded and `5,128` stored products.
+
+Report `#009` remains the latest confirmed delivered report. The user did not
+request another report for v139, so none was sent. After this continuity pull
+request merges, no import, deployment or email remains in progress. The next
+focused check is to confirm the first four-hour boundary changes the hero to
+the next reviewed bottle without an empty state; do not redeploy if the timed
+transition works.
+
+## Earlier Sites v138 production checkpoint
 
 Verified from 2026-08-24 23:30 UTC through 2026-08-25 00:02 UTC for the first
 complete official AWIN Flaconi import and the follow-up orchestrator pacing
