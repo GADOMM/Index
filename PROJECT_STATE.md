@@ -1,11 +1,77 @@
 # Perfumetr project state
 
-Updated: 2026-08-25 00:18 UTC
+Updated: 2026-08-25 00:47 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
+
+Verified at 2026-08-25 00:47 UTC for Sites v140 and the global offer-price
+integrity correction.
+
+Repository and automation:
+
+* repository: `GADOMM/Index`;
+* verified `master` before this continuity pull request:
+  `786844704f861fca0a9c0baa02cb17966a2d03a0`;
+* pull request `#32` is merged as that commit and records Sites v139;
+* the newest completed Actions run is `Perfumetr catalog feeds` run `#69`,
+  ID `32793165028`, attempt `1`, pull request, success from 00:19:40 to
+  00:19:50 UTC. Importer validation succeeded and the production import job
+  was skipped;
+* isolated Flaconi run `#2`, ID `32719777955`, attempt `26`, final job
+  `97633299587`, remains the latest completed Flaconi production generation;
+* run `#55` remains the latest full TradeDoubler snapshot;
+* no import, feed, mapping rule or scheduler was changed or started for v140.
+
+Current Sites deployment:
+
+* Sites version `140`;
+* source commit `b39cef8a5afdf11c0b12424d53250daace512ffc`;
+* version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_217c05ee1f8c8191a229531cdcbfb981`;
+* deployment `appgdep_6a8ce58741a88191b93d5a2f47f35a9a`;
+* deployment type `publish`, status `succeeded` and no failure message;
+* provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
+* production build and artifact validation passed, the full Sites suite passed
+  `52/52`, and lint has zero errors with three existing warnings;
+* the React quality review found no blocker in the three changed components;
+* direct production HTML verification returned HTTP 200 and confirmed the
+  corrected Lattafa Khamrah result.
+
+Offer-price integrity correction:
+
+* the prior global ranking put every offer with a known delivery cost ahead of
+  every offer without one, even when the latter product price was much lower;
+* SQL, the API offer builder, the beta comparison, the catalog detail and the
+  homepage now share the same safe order by the lowest visible amount. A known
+  final total wins only an exact visible-price tie;
+* an offer without a verified delivery amount remains eligible, but is shown
+  as a product price prefixed with `od`. It is not described as a final total
+  or as a Perfumetr recommendation;
+* current official delivery evidence adds active D1 rules for Cocolita and
+  Drogeria.pl: DPD Pickup costs `7.99` PLN and becomes free from `159.00` PLN;
+* those two rules expire after 30 days unless reverified. Aelia remains
+  explicitly unknown rather than receiving an ambiguous or guessed free-
+  delivery threshold;
+* production now shows Lattafa Khamrah EDP 100 ml at Drogeria.pl, three stores
+  and `108.98` PLN together with delivery. The incorrect Brasty result of
+  `162.38` PLN is no longer presented as the cheapest offer;
+* a new regression covers the exact failure class and proves that a much more
+  expensive delivered offer cannot outrank a lower visible product price;
+* current directly rendered rail counts remain Aelia `1,234`, Cocolita `842`,
+  Drogeria.pl `841`, Notino `5,363`, Brasty `6,120` and Flaconi `933`, total
+  `15,333` fresh live offers.
+
+Report `#009` remains the latest confirmed delivered report. The user did not
+request a report for v140, so none was sent. After this continuity pull request
+merges, no code edit, import, Sites deployment or email remains in progress.
+The next data-quality task is to reverify expiring delivery rules from official
+store sources and to keep every still-unknown delivery visibly separate from a
+final checkout total.
+
+## Earlier Sites v139 production checkpoint
 
 Verified at 2026-08-25 00:18 UTC for Sites v139 and the new 24-hour homepage
 bottle rotation.
