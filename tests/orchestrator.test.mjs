@@ -1,5 +1,14 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
+
+test("exposes Douglas as a manual isolated workflow mode", async () => {
+  const workflow = await readFile(new URL("../.github/workflows/tradedoubler.yml", import.meta.url), "utf8");
+  assert.match(workflow, /options:[\s\S]*?- douglas/);
+  assert.match(workflow, /inputs\.mode == 'douglas'/);
+  assert.match(workflow, /node scripts\/catalog-orchestrator\.mjs awin:douglas/);
+  assert.doesNotMatch(workflow, /github\.event_name == 'schedule'[^\n]*inputs\.mode == 'douglas'/);
+});
 
 test("one partner failure does not prevent CJ and TradeDoubler vouchers from advancing", async () => {
   const originalArgv = process.argv;
@@ -608,6 +617,174 @@ test("paces consecutive Flaconi feed chunks above the Sites safety interval", as
     process.exitCode = originalExitCode;
     delete process.env.PERFUMETR_ORIGIN;
     delete process.env.PERFUMETR_ORCHESTRATOR_STEPS;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("paces consecutive Douglas feed chunks above the Sites safety interval", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalSetTimeout = globalThis.setTimeout;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const requestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const calls = [];
+  const delays = [];
+  let stdout = "";
+  let stderr = "";
+
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.PERFUMETR_ORCHESTRATOR_STEPS = "3";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = requestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/catalog-orchestrator.mjs", "awin:douglas"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  process.stderr.write = ((value) => { stderr += String(value); return true; });
+  globalThis.setTimeout = ((callback, milliseconds, ...args) => {
+    delays.push(milliseconds);
+    callback(...args);
+    return 0;
+  });
+
+  let advances = 0;
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    const body = JSON.parse(init.body);
+    calls.push([body.source, body.action]);
+    if (body.action === "status") {
+      return Response.json({ ok: true, overview: { state: "paused", receivedCount: 0 } });
+    }
+    advances += 1;
+    return Response.json({
+      ok: true,
+      overview: {
+        state: advances === 1 ? "paused" : "completed",
+        receivedCount: advances * 1_500,
+        importedCount: advances * 40,
+        liveOffers: advances * 40,
+        ...(advances === 1 ? {} : {
+          automaticReviewCount: 0,
+          maintenanceProcessedCount: 0,
+        }),
+      },
+    });
+  };
+
+  try {
+    await import(`../scripts/catalog-orchestrator.mjs?douglas-pacing-test=${Date.now()}`);
+    assert.equal(stderr, "");
+    assert.notEqual(process.exitCode, 1);
+    assert.deepEqual(calls, [
+      ["awin:douglas", "status"],
+      ["awin:douglas", "advance_source"],
+      ["awin:douglas", "advance_source"],
+    ]);
+    assert.deepEqual(delays, [12_500]);
+    const report = JSON.parse(stdout);
+    assert.equal(report.ok, true);
+    assert.equal(report.sources[0].steps, 2);
+    assert.equal(report.sources[0].completed, true);
+    assert.equal(report.sources[0].counters.liveOffers, 80);
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    globalThis.setTimeout = originalSetTimeout;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.PERFUMETR_ORCHESTRATOR_STEPS;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("keeps Douglas out of the default scheduled source set until explicit activation", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const requestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const calls = [];
+  let stdout = "";
+  let stderr = "";
+
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = requestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/catalog-orchestrator.mjs"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  process.stderr.write = ((value) => { stderr += String(value); return true; });
+
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    const body = JSON.parse(init.body);
+    assert.deepEqual(body, { action: "status", source: body.source });
+    calls.push(body.source);
+    const maintenance = body.source.startsWith("cj:")
+      ? { automaticReviewCount: 0, pendingFreshOfferCount: 0, maintenanceProcessedCount: 0 }
+      : body.source === "awin:flaconi"
+        ? { automaticReviewCount: 0, maintenanceProcessedCount: 0 }
+        : {};
+    return Response.json({
+      ok: true,
+      skipped: "fresh",
+      overview: { state: "completed", ...maintenance },
+    });
+  };
+
+  try {
+    await import(`../scripts/catalog-orchestrator.mjs?default-source-test=${Date.now()}`);
+    assert.equal(stderr, "");
+    assert.notEqual(process.exitCode, 1);
+    assert.deepEqual(calls, [
+      "tradedoubler:vouchers",
+      "awin:flaconi",
+      "cj:notino",
+      "cj:brasty",
+    ]);
+    assert.equal(calls.includes("awin:douglas"), false);
+    const report = JSON.parse(stdout);
+    assert.equal(report.ok, true);
+    assert.deepEqual(report.sources.map(({ source }) => source), calls);
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_ORIGIN;
     delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
     delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
   }
