@@ -35,6 +35,7 @@ on:
           - proof
           - full
           - partners
+          - douglas
           - all
   schedule:
     - cron: "47 2 * * *"
@@ -124,6 +125,13 @@ jobs:
           PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
           PERFUMETR_ORCHESTRATOR_STEPS: 48
         run: node scripts/catalog-orchestrator.mjs
+
+      - name: Advance the staged Douglas source only
+        if: always() && github.event_name == 'workflow_dispatch' && inputs.mode == 'douglas'
+        env:
+          PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
+          PERFUMETR_ORCHESTRATOR_STEPS: 48
+        run: node scripts/catalog-orchestrator.mjs awin:douglas
 
       - name: Publish the first live import result
         if: always() && github.event_name == 'push'
