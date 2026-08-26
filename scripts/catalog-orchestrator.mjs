@@ -1,18 +1,23 @@
 import { createOidcTokenProvider, validatedSiteOrigin } from "./github-oidc.mjs";
 
 const OIDC_AUDIENCE = "perfumetr-tradedoubler-bridge";
-const ALLOWED_SOURCE_IDS = new Set([
+const DEFAULT_SOURCE_IDS = [
   "tradedoubler:vouchers",
   "awin:flaconi",
   "cj:notino",
   "cj:brasty",
+];
+const ALLOWED_SOURCE_IDS = new Set([
+  ...DEFAULT_SOURCE_IDS,
+  "awin:douglas",
 ]);
 const EXPECTED_BLOCKERS = new Set([
   "orchestrator_feed_not_found",
   "orchestrator_feed_access_denied",
   "orchestrator_not_configured",
 ]);
-const FLACONI_STEP_INTERVAL_MS = 12_500;
+const AWIN_FEED_SOURCE_IDS = new Set(["awin:flaconi", "awin:douglas"]);
+const AWIN_STEP_INTERVAL_MS = 12_500;
 const VOUCHER_REJECTION_REASONS = new Set([
   "program_not_allowed",
   "technical_program",
@@ -29,7 +34,7 @@ const VOUCHER_REJECTION_REASONS = new Set([
   "landing_domain_mismatch",
   "tracking_destination_mismatch",
 ]);
-const requested = process.argv.slice(2).length ? process.argv.slice(2) : [...ALLOWED_SOURCE_IDS];
+const requested = process.argv.slice(2).length ? process.argv.slice(2) : DEFAULT_SOURCE_IDS;
 const sources = [...new Set(requested.map((value) => value.trim()))];
 if (!sources.length || sources.some((source) => !ALLOWED_SOURCE_IDS.has(source))) {
   throw new Error("invalid_catalog_source");
@@ -142,8 +147,8 @@ const responseVoucherRejectionReasons = (source, payload) => {
 };
 const maintenanceCounters = (source, state, counters) => {
   const isCj = source.startsWith("cj:");
-  const isCompletedFlaconi = source === "awin:flaconi" && state === "completed";
-  if (!isCj && !isCompletedFlaconi) return null;
+  const isCompletedAwinFeed = AWIN_FEED_SOURCE_IDS.has(source) && state === "completed";
+  if (!isCj && !isCompletedAwinFeed) return null;
   const required = isCj
     ? ["automaticReviewCount", "pendingFreshOfferCount", "maintenanceProcessedCount"]
     : ["automaticReviewCount", "maintenanceProcessedCount"];
@@ -170,8 +175,8 @@ const runSource = async (source) => {
   let inMaintenance = state === "completed"
     && hasMaintenanceBacklog(maintenanceCounters(source, state, counters));
   while (!skipped && !busy && steps < configuredSteps) {
-    if (source === "awin:flaconi" && steps > 0 && !inMaintenance) {
-      await wait(FLACONI_STEP_INTERVAL_MS);
+    if (AWIN_FEED_SOURCE_IDS.has(source) && steps > 0 && !inMaintenance) {
+      await wait(AWIN_STEP_INTERVAL_MS);
     }
     latest = await post({ action: "advance_source", source });
     state = responseState(latest);
