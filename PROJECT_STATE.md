@@ -1,11 +1,86 @@
 # Perfumetr project state
 
-Updated: 2026-08-25 21:38 UTC
+Updated: 2026-08-27 18:15 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
 ## Latest production checkpoint
+
+Verified through approximately 2026-08-27 18:15 UTC for the completed catalog
+recovery, Sites v180 and direct production verification. No credential, private
+mailbox content or provider payload is recorded here.
+
+Repository and automation:
+
+* repository: `GADOMM/Index`;
+* verified `master`: `c5f52143dcf9050e35350be31e6e51a7b5ac431d`;
+* full TradeDoubler run `#93` completed successfully. Its verified live counts
+  are Cocolita `886`, Drogeria.pl `855` and Aelia.pl `1,461`;
+* isolated Flaconi run `#6`, ID `33102239793`, completed successfully;
+* the final Notino run `#101`, ID `33102412389`, completed successfully;
+* GitHub Actions remains the only automatic scheduler. The sources were
+  advanced through bounded, source-isolated workflows rather than an
+  unbounded local import.
+
+Current Sites deployment:
+
+* Sites version `180`;
+* source commit `0312176047d0098b737e9cdaea83d0843d4af246`;
+* version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_a9b91b18c0b88191b486650065006fbd`;
+* deployment `appgdep_6a907db645688191a1d3f659622e4f45`;
+* deployment type `publish`, status `succeeded` and no failure message;
+* provider URL `https://perfumetr.borodzicz85.chatgpt.site`;
+* v180 separates persistence of the final EOF page from three idempotent
+  cleanup queries, heartbeats the lease during finalization, writes a durable
+  paused checkpoint when a bounded step must continue, and commits the final
+  `completed` source state together with registry `ready` atomically;
+* production build and artifact validation passed, the full suite passed
+  `66/66`, lint has zero errors and the same three existing warnings, and an
+  independent final review returned GO;
+* production D1 reports every import-source row as `completed` with `error`
+  null, and `sync_locks` is empty.
+
+Verified catalog state:
+
+| Source | Final verified state |
+| --- | --- |
+| TradeDoubler Cocolita | `886` live offers; full run #93 succeeded |
+| TradeDoubler Drogeria.pl | `855` live offers; full run #93 succeeded |
+| TradeDoubler Aelia.pl | `1,461` live offers; full run #93 succeeded |
+| AWIN Douglas PL | generation 3 completed; `51,996` received, `4,032` accepted and live, `1,742` review, `46,222` excluded |
+| AWIN Flaconi | run #6 completed; `35,171` received, `3,756` imported and live, `1,344` review, `30,071` excluded, `5,247` stored, automatic review `0`, maintenance processed `221` |
+| CJ Notino | run #101 completed; `5,333` live, `663` review, `2,858` excluded, `3,619` imported, `10,240` stored, pending fresh `0`, automatic review `0` |
+| CJ Brasty | completed; `5,585` live, pending fresh `0` |
+
+The exact fresh live-offer total is `21,908`. The public API reports `9,690`
+catalog entries, all `9,690` with images, across `658` brands. The Douglas logo
+and wordmark are directly verified in the public store rail.
+
+Production and remaining work:
+
+* the provider URL and `beta.perfumetr.pl` returned HTTP 200;
+* `perfumetr.pl` was intermittent during the final check, returning 502 and
+  then two consecutive 200 responses. It must not yet be described as immune
+  to a first-request or provider regression;
+* `www.perfumetr.pl` consistently returned HTTP 502 and remains unresolved;
+* Parfumdreams PL is rejected by AWIN while the persisted programme registry
+  still shows the older applied state. This is a registry mismatch, not an
+  active import;
+* the global duplicate audit across published families and manual-review rows
+  remains incomplete. Existing GTIN, identity, hidden-catalog and classifier
+  gates must not be weakened merely to publish more rows;
+* report `#010` was delivered to `support@perfumetr.pl`; Gmail records both
+  `SENT` and `INBOX` at 2026-08-27 01:08:03 UTC. No report `#011` has been
+  requested or sent.
+
+No import, deployment or email delivery remains in progress at this checkpoint.
+The next data task is the read-only global duplicate and remaining manual-review
+audit, followed only by unambiguous bounded repairs. Recheck all live counters,
+domains and external programme states before the next change.
+
+## Earlier Sites v156 production checkpoint
 
 Verified through 2026-08-25 21:38 UTC for the latest tester feedback,
 Sites v156 and direct production verification. No credential, private screenshot
@@ -841,25 +916,24 @@ or reverse those areas.
 
 ## Integrations panel
 
-The panel now uses one read-only status model for TradeDoubler, AWIN and CJ:
+The panel uses one read-only status model for TradeDoubler, AWIN and CJ:
 Connection, Programs, Catalogs and Promotions, with the same refresh action.
-AWIN server rendering uses the persisted programme registry, so the confirmed
-`1 of 5` state survives a page reload. Promotions and coupons are
+AWIN server rendering uses the persisted programme registry, so confirmed
+programme states survive a page reload. Promotions and coupons are
 provider-neutral at the top level. Normal panel refreshes do not start imports.
 
 Emergency authenticated import routes remain available for controlled recovery,
-but the panel is not a second scheduler. Manual coupon confirmation remains a
-separate guarded operation.
+but the panel is not a second scheduler. Since Sites v157, verified coupons are
+activated and expired automatically from protected structured configuration;
+the panel is only a view and the user does not manually accept coupons.
 
 ## Deployment reports
 
-Report `#008`, dated 2026-08-24, is the latest confirmed delivered message to
-`support@perfumetr.pl`. Delivery was confirmed in Sent. It uses the exact visual
-template, wordmark, layout, typography, inline Perfumetr logo and footer from
-delivered report `#003`.
-
-Report `#008` covers the focused Sites v132 catalog transition and the
-authoritative-source blocker for product ratings.
+Report `#010`, dated 2026-08-27, is the latest confirmed delivered message to
+`support@perfumetr.pl`. Gmail records `SENT` and `INBOX` at
+2026-08-27 01:08:03 UTC. It uses the established report template and covers the
+audited Douglas PL launch. Report `#009` remains the immediately previous
+delivered report, and report `#003` remains the visual template authority.
 
 Current reporting instruction:
 
@@ -869,8 +943,9 @@ Current reporting instruction:
    its exact visual template, wordmark, layout, typography and footer;
 4. recheck the latest delivered report number immediately before assigning the
    next sequential number;
-5. after confirmed report `#008`, the next number is `#009` only if the
-   mailbox check still confirms that sequence.
+5. after confirmed report `#010`, the next number is `#011` only if the
+   mailbox check still confirms that sequence and the user explicitly requests
+   another consolidated report.
 
 Required footer:
 
@@ -901,18 +976,22 @@ proactively alter unrelated interface areas.
 
 ## Known risks and blockers
 
-1. Flaconi programme approval is confirmed and persisted, but the expected
-   Enhanced endpoint still returns `feed_not_found`. Official feed format, ID
-   and locale discovery is blocked until the separate AWIN Data Feed API key is
-   saved in the protected integration field.
-2. Full TradeDoubler snapshots are parsed in memory after download.
-3. GitHub scheduled workflows can be disabled on inactive public repositories;
+1. `www.perfumetr.pl` still returns HTTP 502. The apex `perfumetr.pl` also
+   returned one 502 before two consecutive 200 responses in the final check, so
+   a first-request or provider regression is not ruled out.
+2. Parfumdreams PL is rejected by AWIN while the persisted programme registry
+   still shows the older applied state.
+3. The global duplicate audit across published families and manual-review rows
+   is not complete. Remaining Flaconi and Notino review counters must not be
+   treated as automatically safe matches.
+4. Full TradeDoubler snapshots are parsed in memory after download.
+5. GitHub scheduled workflows can be disabled on inactive public repositories;
    a missing-success alert is still recommended.
-4. A future provider schema change may require a new bounded adapter or source
+6. A future provider schema change may require a new bounded adapter or source
    profile.
-5. Sites reports `beta.perfumetr.pl` as the current live URL even though both
-   custom domains are active.
-6. Beta tester feedback is expected but has not yet been triaged.
+7. Identity maintenance and EOF finalization are deliberately bounded. A
+   durable paused checkpoint can mean that another scheduled cycle is required;
+   it is not permission to bypass the audit or extend the lease indefinitely.
 
 ## Chat continuity
 
@@ -930,10 +1009,10 @@ production before that verification.
 ## Do not claim
 
 Do not advertise a saving below 5 PLN or 2% in the homepage hero. Do not claim
-that AWIN Flaconi is active while its state remains
-`orchestrator_feed_not_found`, and do not describe it as waiting for programme
-approval because approval is already confirmed. Do not treat run #2 attempt 1
-as an AWIN feed test; it stopped at the OIDC boundary. Do not describe Brasty
-run 41 as a completed refresh or a full TradeDoubler import. Do not claim that
-the screenshot price is fixed on the homepage. Do not claim that any deployment
-report after confirmed report `#008` was sent.
+that the global duplicate or manual-review audit is complete. Do not publish
+ambiguous GTIN, reused external-ID or identity-conflict rows, and do not weaken
+`perfume-v1`, hidden-catalog or identity gates to increase the visible offer
+count. Do not describe the intermittent apex response as fully fixed, and do
+not claim that `www.perfumetr.pl` works while it returns 502. Do not present the
+Parfumdreams registry row as current partner approval. Report `#010` is the
+latest confirmed delivered report; do not claim that report `#011` was sent.
