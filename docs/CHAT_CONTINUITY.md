@@ -61,6 +61,62 @@ change:
 
 ## Latest continuity checkpoint
 
+Verified through approximately 2026-08-27 18:15 UTC for the completed catalog
+recovery and Sites v180. Report #010 is the latest confirmed delivered report.
+
+1. verified GitHub `master`:
+   `c5f52143dcf9050e35350be31e6e51a7b5ac431d`;
+2. full TradeDoubler run #93 completed successfully with Cocolita 886,
+   Drogeria.pl 855 and Aelia.pl 1,461 live offers;
+3. Douglas generation 3 is completed: 51,996 received, 4,032 accepted and
+   live, 1,742 review and 46,222 excluded. Its logo and wordmark are directly
+   verified in the public store rail;
+4. isolated Flaconi run #6, ID `33102239793`, completed successfully with
+   35,171 received, 3,756 imported and live, 1,344 review, 30,071 excluded,
+   5,247 stored, automatic review 0 and maintenance processed 221;
+5. final Notino run #101, ID `33102412389`, completed successfully with 5,333
+   live, 663 review, 2,858 excluded, 3,619 imported, 10,240 stored, pending
+   fresh 0 and automatic review 0;
+6. Brasty is completed with 5,585 live offers and pending fresh 0;
+7. the exact fresh live-offer total is 21,908. The public API reports 9,690
+   catalog entries, all 9,690 with images, across 658 brands;
+8. Sites v180 source commit is
+   `0312176047d0098b737e9cdaea83d0843d4af246`;
+9. v180 version ID is
+   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_a9b91b18c0b88191b486650065006fbd`;
+10. deployment `appgdep_6a907db645688191a1d3f659622e4f45` is
+    `succeeded` with no failure message. Provider URL:
+    `https://perfumetr.borodzicz85.chatgpt.site`;
+11. v180 persists the EOF page before cleanup, advances three idempotent
+    cleanup phases with lease heartbeats and durable paused checkpoints, and
+    atomically writes final source `completed` plus programme registry `ready`;
+12. build and artifact validation passed, the full suite passed 66/66, lint has
+    zero errors with the same three existing warnings, and an independent
+    final review returned GO;
+13. production D1 reports all import-source rows `completed` with null error;
+    `sync_locks` is empty, so no import or catalog lease remains active;
+14. the provider URL and `beta.perfumetr.pl` returned HTTP 200. The apex
+    `perfumetr.pl` returned 502 and then two consecutive 200 responses, so a
+    first-request regression is not ruled out. `www.perfumetr.pl` consistently
+    returned 502;
+15. Parfumdreams PL is rejected by AWIN while its persisted registry row still
+    shows the older applied state. Do not treat that row as current approval;
+16. the global duplicate audit across published families and manual-review
+    rows is incomplete. Preserve all GTIN, identity, hidden-catalog and
+    `perfume-v1` gates;
+17. report #010 was delivered to `support@perfumetr.pl`; Gmail records `SENT`
+    and `INBOX` at 2026-08-27 01:08:03 UTC. Report #009 remains the previous
+    delivered report, report #003 remains the visual template authority, and
+    no report #011 was requested or sent;
+18. no import, deployment or email delivery is in progress. The next data task
+    is the read-only global duplicate and remaining manual-review audit,
+    followed only by unambiguous bounded repairs.
+
+Treat these as point-in-time facts. Recheck GitHub, Sites, D1, domains and
+external programme state before another change.
+
+## Earlier Sites v156 continuity checkpoint
+
 Verified through 2026-08-25 21:38 UTC for the latest tester feedback and
 Sites v156. Report #009 remains the latest confirmed delivered report.
 
@@ -487,6 +543,103 @@ docs/ARCHITECTURE.md
 docs/CHAT_CONTINUITY.md
 
 Następnie sprawdź aktualny master, najnowszy GitHub Actions run, ostatni pełny
+TradeDoubler, bieżącą wersję i wdrożenie Sites, D1, domeny oraz produkcję.
+Jeżeli wystąpi rozbieżność, najpierw opisz ją użytkownikowi. Nie zmieniaj kodu,
+importera, konfiguracji ani produkcji przed zakończeniem kontroli.
+
+CZAS WERYFIKACJI
+Około 27 sierpnia 2026, 18:15 UTC.
+
+GITHUB I WORKFLOW
+Zweryfikowany master:
+c5f52143dcf9050e35350be31e6e51a7b5ac431d
+Pełny TradeDoubler run #93 zakończył się sukcesem: Cocolita 886,
+Drogeria.pl 855 i Aelia.pl 1461 aktywnych ofert.
+Izolowany Flaconi run #6, ID 33102239793, zakończył się sukcesem.
+Końcowy Notino run #101, ID 33102412389, zakończył się sukcesem.
+GitHub Actions pozostaje jedynym automatycznym harmonogramem.
+
+SITES
+Wersja v180.
+Commit: 0312176047d0098b737e9cdaea83d0843d4af246
+Version ID:
+appgprj_6a8236775b808191b6b4979c4d86d889~appgver_a9b91b18c0b88191b486650065006fbd
+Deployment: appgdep_6a907db645688191a1d3f659622e4f45
+Status: succeeded, brak failure message.
+Provider URL: https://perfumetr.borodzicz85.chatgpt.site
+Build i walidacja artefaktu przeszły. Pełny suite 66/66. Lint: 0 błędów i
+3 istniejące ostrzeżenia. Niezależna kontrola końcowa: GO.
+
+V180 I BEZPIECZNE DOMKNIĘCIE FEEDU
+Ostatnia strona EOF jest najpierw trwale zapisywana razem z kursorem i
+fingerprintem. Trzy idempotentne fazy cleanup działają osobno, odnawiają lease
+i pozostawiają źródło na trwałym paused checkpoint, więc przerwany cykl może
+bezpiecznie powtórzyć cleanup bez ponownego zapisu strony. Dopiero po wszystkich cleanupach jedna transakcja
+ustawia źródło completed, czyści error i przywraca registry ready.
+Nie omijaj tego mechanizmu i nie przedłużaj ręcznie lease.
+
+OFERTY
+Cocolita: 886 live.
+Drogeria.pl: 855 live.
+Aelia.pl: 1461 live.
+Douglas PL generation 3: completed, 51996 received, 4032 accepted i live,
+1742 review, 46222 excluded. Logo i wordmark Douglas są potwierdzone na
+publicznym pasku sklepów.
+Flaconi run #6: completed, 35171 received, 3756 imported i live, 1344 review,
+30071 excluded, 5247 stored, automatic review 0, maintenance processed 221.
+Notino run #101: completed, 5333 live, 663 review, 2858 excluded, 3619
+imported, 10240 stored, pending fresh 0, automatic review 0.
+Brasty: completed, 5585 live, pending fresh 0.
+Łącznie: dokładnie 21908 świeżych aktywnych ofert.
+Publiczne statystyki API: 9690 pozycji katalogu, wszystkie 9690 ze zdjęciem,
+658 marek.
+
+D1 I BLOKADY
+Wszystkie wiersze import sources mają completed i error null. sync_locks jest
+puste. Nie trwa import ani blokada katalogu.
+Parfumdreams PL zostało odrzucone przez AWIN, ale registry nadal pokazuje stary
+stan applied. To rozbieżność rejestru, nie aktywna akceptacja.
+Globalny audyt duplikatów opublikowanych rodzin i manual review nie jest
+ukończony. Nie osłabiaj GTIN, identity, hidden catalog ani perfume-v1, żeby
+zwiększyć licznik.
+
+DOMENY
+Provider i beta.perfumetr.pl odpowiadały 200.
+perfumetr.pl zwrócił 502, a potem dwa razy 200. Nie przedstawiaj problemu
+pierwszego wejścia jako całkowicie wykluczonego.
+www.perfumetr.pl stale zwraca 502 i pozostaje nierozwiązane.
+
+RAPORT
+Raport #010 został dostarczony na support@perfumetr.pl. Gmail potwierdza SENT
+i INBOX 27 sierpnia 2026 o 01:08:03 UTC. Raport #009 jest poprzednim
+dostarczonym raportem, a #003 pozostaje wzorem wizualnym. Raport #011 nie został
+zamówiony ani wysłany.
+
+PRACA W TOKU I NASTĘPNE ZADANIE
+Nie trwa import, wdrożenie ani wysyłka maila. Następne zadanie to odczytowy,
+globalny audyt potencjalnych duplikatów oraz pozostałych przypadków manual
+review. Automatycznie naprawiaj wyłącznie przypadki jednoznaczne; konflikty
+GTIN, koncentracji, odbiorcy, typu, pojemności i tożsamości pozostaw do kontroli.
+
+Najpierw potwierdź użytkownikowi rzeczywisty stan i każdą rozbieżność. Dopiero
+potem kontynuuj pracę.
+```
+
+## Earlier Sites v136 paste-ready handoff baseline
+
+```text
+KONTYNUUJEMY PROJEKT PERFUMETR
+
+Nie zakładaj, że widzisz historię poprzedniego czatu.
+
+Najpierw niczego nie zmieniaj. Użyj GitHuba i Sites wyłącznie do odczytu.
+Przeczytaj w GADOMM/Index:
+AGENTS.md
+PROJECT_STATE.md
+docs/ARCHITECTURE.md
+docs/CHAT_CONTINUITY.md
+
+Następnie sprawdź aktualny master, najnowszy GitHub Actions run, ostatni pełny
 TradeDoubler, bieżącą wersję i wdrożenie Sites, domeny perfumetr.pl i
 beta.perfumetr.pl oraz produkcję. Jeżeli wystąpi rozbieżność, najpierw opisz ją
 użytkownikowi. Nie zmieniaj kodu, importera, konfiguracji ani produkcji przed
@@ -873,9 +1026,12 @@ per-deployment-email rule.
    recipient.
 6. Record `sent` only after delivery is confirmed. Otherwise use `deferred`,
    `pending` or `not required`.
-7. Report `#008`, dated 2026-08-24, is the latest confirmed delivered report at
-   this checkpoint. If the sequence remains unchanged when rechecked, the next
-   report number is `#009`.
+7. Report `#010`, dated 2026-08-27, is the latest confirmed delivered report.
+   Gmail records `SENT` and `INBOX` at 2026-08-27 01:08:03 UTC. It covers the
+   audited Douglas PL launch. Report `#009` is the immediately previous
+   delivered report, and report `#003` remains the visual template authority.
+   If the sequence remains unchanged and the user explicitly requests another
+   report, the next number is `#011`.
 8. Never put credentials, provider payloads or private mailbox content into the
    repository.
 
