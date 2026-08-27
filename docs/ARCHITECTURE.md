@@ -74,6 +74,7 @@ source through the same control plane. It calls
 
 * `tradedoubler:vouchers`
 * `awin:flaconi`
+* `awin:douglas`
 * `cj:notino`
 * `cj:brasty`
 
@@ -116,6 +117,17 @@ including `receivedCount`, `reviewCount`, `excludedCount`, `importedCount`,
 `liveOffers`, `storedProducts`, `activeCoupons`, `automaticReviewCount`,
 `pendingFreshOfferCount` and `maintenanceProcessedCount` when present.
 
+Safety maintenance is fail closed and may require more than one bounded cycle.
+A preflight failure for an already completed generation preserves `completed`
+and its checkpoint. A stale recovered `running` row is normalized to `paused`
+after failure so it cannot retain a false active state after its lease is
+released. A failed Flaconi row with `import_failed` is also normalized to
+`paused` after a bounded maintenance pass makes verified progress; the error is
+retained until the importer actually resumes, and every following step still
+passes the fail-closed audit before any feed fetch. A stale safety error is
+cleared and the programme is restored to `ready` only after a later verified
+recovery.
+
 Exactly `orchestrator_feed_not_found`, `orchestrator_feed_access_denied` and
 `orchestrator_not_configured` are expected provider-activation blockers. They
 produce `ok: true` with `blocked: true`, so a later scheduled cycle retries them
@@ -125,6 +137,51 @@ unexplained `failed` state remains fatal.
 The workflow configures at most 48 steps per source. Every source has an
 independent try/catch boundary. Partners run at 02:47, 08:47, 14:17 and 20:47
 UTC. The full TradeDoubler snapshot runs only at 14:17 UTC.
+
+## Flaconi identity safety gate
+
+Migration `0020` adds durable Flaconi identity evidence and conflict tables,
+plus a normalized brand and product-name index used by bounded checks. The
+orchestrator must not fetch another AWIN feed page until the safety marker is
+current and the persisted audit returns `passed: true`. Bootstrap, quarantine
+and final verification are intentionally bounded; an interrupted or
+lease-limited pass remains closed and resumes during a later cycle.
+Before the marker exists, ordinary status reads return a lightweight fail-closed
+audit instead of running the full catalog scan. The full audit still runs before
+the marker can be written. Exact-GTIN checks enumerate only valid 8, 12, 13 and
+14 digit zero-padded candidates so SQLite can use the unique GTIN index without
+changing the accepted leading-zero equivalence.
+
+AWIN CSV pages are capped at 1,000 rows so one mapped page remains bounded for
+D1 even when product rows contain longer merchant URLs and identity evidence.
+The cursor and rolling prefix fingerprint are persisted together, so a later
+cycle resumes from the last committed row rather than restarting the feed.
+
+Sites v180 also makes EOF finalization resumable. Reaching the end of the feed
+first persists the final page, cursor and fingerprint without attempting every
+generation cleanup in the same request. Three cleanup queries then run as
+separate idempotent phases. Each phase heartbeats the existing lease while the
+source remains at the durable paused EOF checkpoint, so an interruption or
+execution limit safely replays cleanup without replaying the final page or
+leaving an apparent active lock. Only after all three cleanup phases succeed
+does one transaction atomically mark the generation `completed`, clear its
+error and restore the programme registry to `ready`. Repeating any completed
+phase is safe, and an incomplete phase never exposes a false completed state.
+
+GTIN comparison is canonical and treats leading-zero representations as the
+same identifier. Exact-GTIN evidence may resolve a verified naming suffix, but
+different-GTIN products still require strict agreement of canonical family,
+concentration, audience, type and volume. Only explicitly tested brand aliases
+are accepted. A reused external product ID whose identity changes remains in
+review and cannot overwrite its durable evidence. Contradictory occurrences of
+the same external product ID in one feed page are terminal
+`duplicate_source_product` cases rather than arbitrary winners.
+
+An active source row that later becomes parser-rejected is invalidated
+immediately. Persisted hidden, ambiguous or identity-conflicting rows are
+quarantined, and orphan Flaconi listings are removed from public visibility.
+These controls do not weaken `perfume-v1`, the GTIN gates or the shared hidden
+catalog rules.
 
 ## Classifier contract
 
