@@ -1,23 +1,23 @@
 # Perfumetr project state
 
-Updated: 2026-08-29 12:36 UTC
+Updated: 2026-08-29 12:49 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
-## Marketing analytics production checkpoint (Sites v182)
+## Marketing analytics production checkpoint (Sites v183)
 
-Verified through approximately 2026-08-29 12:36 UTC. This section supersedes the
+Verified through approximately 2026-08-29 12:49 UTC. This section supersedes the
 older analytics assumptions below; importer and partner-history sections remain
 historical unless explicitly refreshed here.
 
 ### Deployed scope
 
-- Sites version: `182`.
+- Sites version: `183`.
 - Sites source commit:
-  `349c91167bb84d1524963287d0d56d69a2d7f49d`.
+  `985bd96d53ed7c6f274d0188cd92a3b1cd5ac3f9`.
 - Sites deployment:
-  `appgdep_6a92d0c06e2881919143c7055e033b93`, `succeeded`.
+  `appgdep_6a92d4f7b0008191be0dab134b60d104`, `succeeded`.
 - The active deployment adds first-party, consent-gated, anonymous marketing
   analytics without changing catalog matching, feeds, affiliate URLs or the
   public visual design.
@@ -37,6 +37,10 @@ historical unless explicitly refreshed here.
   owner access gate. It exposes daily/platform/campaign funnels, transition
   percentages, most-clicked products and most-clicked stores; it does not expose
   raw event rows publicly.
+- Sites v183 makes that same protected panel available at
+  `https://perfumetr.pl/panel-opinii/marketing`. An unauthenticated production
+  request returns the owner-code gate with HTTP 200, `private, no-store`, CSP and
+  frame denial, and does not render the QA campaign data.
 
 ### Storage, privacy and safety
 

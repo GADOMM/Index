@@ -1,6 +1,6 @@
 # Perfumetr importer architecture
 
-## First-party marketing analytics (Sites v182)
+## First-party marketing analytics (Sites v183)
 
 Marketing attribution is implemented inside Sites and D1. It is deliberately
 separate from the GitHub feed worker and from catalog classification.
@@ -23,8 +23,10 @@ separate from the GitHub feed worker and from catalog classification.
    `offer_click` snapshot with `after()` or the Cloudflare execution context,
    then returns the same redirect. Logging is fail-open and does not delay or
    replace the shopping redirect.
-7. `/panel-opinii/marketing` queries aggregate data through the existing owner
-   gate. No raw-event API or public analytics endpoint is exposed.
+7. `https://perfumetr.pl/panel-opinii/marketing` queries aggregate data through
+   the existing owner gate. No raw-event API or public analytics endpoint is
+   exposed. The apex route was enabled in Sites v183; unauthenticated requests
+   stop at the gate before any aggregate query.
 
 The client is not trusted to supply offer economics. For `offer_click`, the
 server snapshots the variant identifier, brand, product name, volume,
