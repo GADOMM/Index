@@ -4,13 +4,15 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: Sites v182 marketing analytics
+## Current handoff: Sites v183 marketing analytics
 
-Verified approximately 2026-08-29 12:36 UTC.
+Verified approximately 2026-08-29 12:49 UTC.
 
-- Sites v182 is live from source commit
-  `349c91167bb84d1524963287d0d56d69a2d7f49d`; deployment
-  `appgdep_6a92d0c06e2881919143c7055e033b93` succeeded.
+- Sites v183 is live from source commit
+  `985bd96d53ed7c6f274d0188cd92a3b1cd5ac3f9`; deployment
+  `appgdep_6a92d4f7b0008191be0dab134b60d104` succeeded. It retains
+  the v182 analytics core and exposes the same protected owner panel on the
+  main domain.
 - First-party analytics is consent-gated and records `entry`,
   `search_used`, `product_view` and server-authoritative `offer_click`.
   It retains all five supported UTM fields and first-touch landing across the
@@ -21,7 +23,9 @@ Verified approximately 2026-08-29 12:36 UTC.
   `marketing_events` from migration
   `drizzle/0021_spicy_blue_blade.sql`.
 - Aggregate results are available only through the protected owner route
-  `/panel-opinii/marketing`. Raw events are not public.
+  `https://perfumetr.pl/panel-opinii/marketing`. Raw events are not public.
+  Production verification returned the code gate with HTTP 200 and no campaign
+  data before login; cache and framing protections remained active.
 - `/out/[offerId]` keeps the existing allowlisted affiliate redirect.
   Analytics is scheduled after the response, derives its price/store/product
   snapshot on the server and fails open.
