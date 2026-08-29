@@ -1,9 +1,107 @@
 # Perfumetr project state
 
-Updated: 2026-08-27 18:15 UTC
+Updated: 2026-08-29 12:36 UTC
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
+
+## Marketing analytics production checkpoint (Sites v182)
+
+Verified through approximately 2026-08-29 12:36 UTC. This section supersedes the
+older analytics assumptions below; importer and partner-history sections remain
+historical unless explicitly refreshed here.
+
+### Deployed scope
+
+- Sites version: `182`.
+- Sites source commit:
+  `349c91167bb84d1524963287d0d56d69a2d7f49d`.
+- Sites deployment:
+  `appgdep_6a92d0c06e2881919143c7055e033b93`, `succeeded`.
+- The active deployment adds first-party, consent-gated, anonymous marketing
+  analytics without changing catalog matching, feeds, affiliate URLs or the
+  public visual design.
+- The funnel events are `entry`, `search_used`, `product_view` and
+  `offer_click`. `offer_click` is the primary business conversion.
+- The five accepted attribution fields are `utm_source`, `utm_medium`,
+  `utm_campaign`, `utm_content` and `utm_term`. First-touch attribution and
+  the landing page are retained for the session across the public entry and
+  comparison hosts.
+- No GA4, Meta Pixel or TikTok Pixel identifier was present. None was invented
+  or loaded. No analytics write occurs before explicit analytics consent.
+- The application does not claim sale or commission attribution. Current
+  affiliate reporting cannot reliably join a later transaction to a marketing
+  session, so an outbound store-offer click is the authoritative funnel
+  conversion.
+- The protected aggregate view is `/panel-opinii/marketing` behind the existing
+  owner access gate. It exposes daily/platform/campaign funnels, transition
+  percentages, most-clicked products and most-clicked stores; it does not expose
+  raw event rows publicly.
+
+### Storage, privacy and safety
+
+- Migration `drizzle/0021_spicy_blue_blade.sql` adds
+  `marketing_session_limits`, `marketing_sessions` and
+  `marketing_events`.
+- Events contain a random session identifier, bounded attribution and
+  catalog/offer snapshots. They do not contain email addresses or a full IP.
+  Abuse-rate keys are HMAC-derived rather than stored as raw network data.
+- Production session cookies are `Secure`, scoped to `perfumetr.pl` and
+  shared only by its hosts. Origin checks, bounded field lengths, hourly and
+  per-session rate limits, short deduplication windows and a bounded 90-day
+  cleanup reduce abuse and accidental double counting.
+- The existing `/out/[offerId]` redirect remains the affiliate boundary. Its
+  target is resolved and allowlisted exactly as before. The analytics snapshot
+  is derived server-side from the current offer and is scheduled after the
+  redirect response; analytics failure remains fail-open for the shopper.
+- Unknown delivery or total prices remain `null`; they are never represented as
+  zero.
+
+### Verification
+
+- `npm test`: 71/71 passed.
+- Production build and artifact validation: passed.
+- `git diff --check`: passed.
+- Lint: zero errors and three pre-existing warnings.
+- Independent security review after the preview-origin hardening: GO.
+- Isolated desktop preview test with a fixture produced exactly one event for
+  every funnel step and retained complete Instagram attribution.
+- Production desktop test used
+  `utm_source=instagram&utm_medium=paid_social&utm_campaign=qa_production_20260829&utm_content=reel_prod_01&utm_term=myslf`.
+  It recorded one session and exactly these four event rows:
+  `entry`, `search_used`, `product_view` and `offer_click`.
+- The production product snapshot was Yves Saint Laurent MYSLF Eau de Parfum,
+  60 ml. The click snapshot selected Aelia.pl, stored the live offer identifier,
+  product price `38000` grosz, unknown shipping and total as `null`, and
+  retained the five UTM values and landing page.
+- The outbound browser reached `visit.aelia.pl`; no UTM parameter leaked to the
+  merchant target.
+- A separate phone-sized production browser run is still outstanding. The
+  available production browser had a fixed desktop viewport. Responsive code
+  and event handlers are shared, but do not report a real-device mobile test as
+  passed until it is repeated on a phone.
+
+### Current production and automation truth
+
+- Public SSR after deployment: 25,721 fresh offers, 11,499 catalog entries with
+  images, 717 brands and seven stores.
+- Latest scheduled GitHub Actions run is #110
+  (`33245372229`), failed: Flaconi `orchestrator_feed_changed`, Notino
+  `orchestrator_pagination_incomplete`, Brasty safely `paused`.
+- Latest successful production partner cycle and latest full TradeDoubler run
+  is #108 (`33220791325`). Latest PR validation remains #102
+  (`33103154115`), successful with 21/21 importer tests and its production job
+  skipped.
+- Production D1 `sync_locks` was empty before this deployment. The analytics
+  migration is live. No importer or feed workflow was manually started for this
+  change.
+- `perfumetr.pl` is active and the complete production funnel worked through
+  it. The `www` host remains pending with pending SSL validation and returns
+  HTTP 502. Do not describe the `www` host as repaired.
+- The single production QA session above is deliberately retained as auditable
+  test evidence and must be excluded from campaign decisions by its
+  `qa_production_20260829` campaign name.
+- No report #011 and no partner email was sent for this deployment.
 
 ## Latest production checkpoint
 
