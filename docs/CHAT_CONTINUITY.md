@@ -4,6 +4,54 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
+## Current handoff: Sites v182 marketing analytics
+
+Verified approximately 2026-08-29 12:36 UTC.
+
+- Sites v182 is live from source commit
+  `349c91167bb84d1524963287d0d56d69a2d7f49d`; deployment
+  `appgdep_6a92d0c06e2881919143c7055e033b93` succeeded.
+- First-party analytics is consent-gated and records `entry`,
+  `search_used`, `product_view` and server-authoritative `offer_click`.
+  It retains all five supported UTM fields and first-touch landing across the
+  public Perfumetr hosts.
+- There was no existing GA4, Meta Pixel or TikTok Pixel identifier. None was
+  fabricated or loaded. Do not enable any external tracker before consent.
+- D1 now contains `marketing_session_limits`, `marketing_sessions` and
+  `marketing_events` from migration
+  `drizzle/0021_spicy_blue_blade.sql`.
+- Aggregate results are available only through the protected owner route
+  `/panel-opinii/marketing`. Raw events are not public.
+- `/out/[offerId]` keeps the existing allowlisted affiliate redirect.
+  Analytics is scheduled after the response, derives its price/store/product
+  snapshot on the server and fails open.
+- Automated verification: 71/71 tests, successful build/artifact validation,
+  zero lint errors with three pre-existing warnings, and independent security
+  GO.
+- Production desktop QA campaign `qa_production_20260829` produced exactly
+  `entry`, `search_used`, `product_view`, and `offer_click`; the clicked
+  Aelia.pl offer continued to `visit.aelia.pl` without leaking UTM values.
+  Treat this campaign as QA, not marketing performance.
+- Do not claim an independent phone-sized production test yet. The available
+  production browser had a fixed desktop viewport; repeat the same UTM funnel
+  on a physical phone before marking mobile E2E passed.
+- Public SSR after deployment: 25,721 offers, 11,499 catalog entries with
+  images, 717 brands, seven stores.
+- Current source truth remains: Flaconi generation 12 failed
+  `feed_changed`, Notino generation 20 failed `pagination_incomplete`,
+  Brasty generation 15 is safely `paused`, Douglas generation 3 is
+  `completed`; `sync_locks` was empty before deployment.
+- Latest Actions: #110 is the latest scheduled failure; #108 is the latest
+  successful production partner cycle and latest full TradeDoubler; #102 is
+  still the latest PR validation. No import or feed workflow was manually
+  started for analytics.
+- `perfumetr.pl` completed the live funnel. The `www` host is still pending
+  and returns HTTP 502. Do not report it repaired.
+- No report #011 and no partner message was sent.
+- The next catalog-data task remains the read-only global duplicate/review
+  audit. Do not alter `perfume-v1`, semantic conflict gates, bounded imports or
+  affiliate integrations as part of analytics follow-up.
+
 ## Mandatory maintenance
 
 After every important deployment or major production investigation, update both
