@@ -67,7 +67,7 @@ historical unless explicitly refreshed here.
 - Isolated desktop preview test with a fixture produced exactly one event for
   every funnel step and retained complete Instagram attribution.
 - Production desktop test used
-  `utm_source=instagram&utm_medium=paid_social&utm_campaign=qa_production_20260829&utm_content=reel_prod_01&utm_term=myslf`.
+  `utm_source=instagram&utm_medium=paid_social&utm_campaign=qa_production_20260829&utm_content=reel_prod_01&utm_term=prospecting_broad`.
   It recorded one session and exactly these four event rows:
   `entry`, `search_used`, `product_view` and `offer_click`.
 - The production product snapshot was Yves Saint Laurent MYSLF Eau de Parfum,
