@@ -1,5 +1,70 @@
 # Perfumetr importer architecture
 
+## First-party marketing analytics (Sites v182)
+
+Marketing attribution is implemented inside Sites and D1. It is deliberately
+separate from the GitHub feed worker and from catalog classification.
+
+### Request and event flow
+
+1. A request carrying one or more of the five supported UTM fields reaches a
+   public Perfumetr host.
+2. The server sanitizes and preserves
+   `utm_source`, `utm_medium`, `utm_campaign`, `utm_content` and
+   `utm_term` on internal cross-host navigation.
+3. Before consent, the values may remain in the URL but no analytics session or
+   event is written.
+4. After explicit analytics consent, `POST /api/marketing/session` creates or
+   resumes a random first-touch session and records `entry`.
+5. `POST /api/marketing/event` accepts the bounded client events
+   `search_used` and `product_view`.
+6. `GET /out/[offerId]` resolves the current offer and allowlisted affiliate
+   target exactly as before. It schedules a server-authoritative
+   `offer_click` snapshot with `after()` or the Cloudflare execution context,
+   then returns the same redirect. Logging is fail-open and does not delay or
+   replace the shopping redirect.
+7. `/panel-opinii/marketing` queries aggregate data through the existing owner
+   gate. No raw-event API or public analytics endpoint is exposed.
+
+The client is not trusted to supply offer economics. For `offer_click`, the
+server snapshots the variant identifier, brand, product name, volume,
+concentration, store, offer identifier, product price, known delivery price,
+known total price, first-touch attribution, landing page and event date from
+current catalog state. Unknown costs remain null.
+
+### Consent and data boundaries
+
+No GA4, Meta Pixel or TikTok Pixel is loaded because no configured identifier
+exists. Future third-party measurement must remain behind the same explicit
+analytics consent and must not be enabled with a guessed identifier.
+
+The analytics cookie records only consent. The production session cookie is
+random, `HttpOnly`, `Secure`, `SameSite=Strict` and scoped to
+`perfumetr.pl`, allowing the entry and comparison hosts to retain one
+attribution session. The application stores no email and no full IP. Network
+rate keys are HMAC-derived.
+
+Exact origin validation, bounded lengths, rate limits, a 500-event session cap,
+short per-event deduplication and bounded 90-day cleanup constrain spam and
+accidental repeats. The local preview origin is a disjoint, exact development
+exception and cannot widen the accepted public-host origin set.
+
+### D1 schema
+
+Migration `drizzle/0021_spicy_blue_blade.sql` creates:
+
+- `marketing_session_limits`: bounded anonymous session-creation limits;
+- `marketing_sessions`: first-touch attribution, landing page, timestamps and
+  reservation counters;
+- `marketing_events`: the four funnel events and bounded product/offer
+  snapshots.
+
+The marketing panel reports entries, distinct search users, distinct product
+viewers and offer clicks by date, platform and campaign, plus step conversion,
+top products and top stores. A click is the primary conversion. Commission or
+sale attribution is not claimed until a partner exposes a safe, reliable join
+key.
+
 ## Trust boundary
 
 GitHub is the scheduler and bounded compute worker. Perfumetr Sites is the
