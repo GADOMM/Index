@@ -16,6 +16,9 @@ const EXPECTED_BLOCKERS = new Set([
   "orchestrator_feed_access_denied",
   "orchestrator_not_configured",
 ]);
+const RESTARTABLE_FEED_TRANSITIONS = new Set([
+  "orchestrator_feed_changed",
+]);
 const AWIN_FEED_SOURCE_IDS = new Set(["awin:flaconi", "awin:douglas"]);
 const AWIN_STEP_INTERVAL_MS = 12_500;
 const VOUCHER_REJECTION_REASONS = new Set([
@@ -53,6 +56,20 @@ const safeError = (payload, status) => {
   const code = typeof payload?.error === "string" && /^[a-z0-9_]{1,80}$/i.test(payload.error)
     ? payload.error : String(status);
   return new Error(`orchestrator_${code}`);
+};
+
+class SourceAdvanceError extends Error {
+  constructor(code, steps, feedChangeRestarts) {
+    super(code);
+    this.steps = steps;
+    this.feedChangeRestarts = feedChangeRestarts;
+  }
+}
+
+const sourceAdvanceError = (error, steps, feedChangeRestarts) => {
+  const code = error instanceof Error && /^[a-z0-9_]{1,120}$/i.test(error.message)
+    ? error.message : "orchestrator_failed";
+  return new SourceAdvanceError(code, steps, feedChangeRestarts);
 };
 
 const post = async (body) => {
@@ -172,13 +189,30 @@ const runSource = async (source) => {
   let busy = responseBusy(initial);
   let counters = responseCounters(initial);
   let rejectionReasons = responseVoucherRejectionReasons(source, initial);
+  let feedChangeRestarts = 0;
   let inMaintenance = state === "completed"
     && hasMaintenanceBacklog(maintenanceCounters(source, state, counters));
   while (!skipped && !busy && steps < configuredSteps) {
     if (AWIN_FEED_SOURCE_IDS.has(source) && steps > 0 && !inMaintenance) {
       await wait(AWIN_STEP_INTERVAL_MS);
     }
-    latest = await post({ action: "advance_source", source });
+    try {
+      latest = await post({ action: "advance_source", source });
+    } catch (error) {
+      const errorCode = error instanceof Error ? error.message : "";
+      const failedStep = steps + 1;
+      const hasRestartCapacity = failedStep < configuredSteps;
+      if (AWIN_FEED_SOURCE_IDS.has(source)
+        && RESTARTABLE_FEED_TRANSITIONS.has(errorCode)
+        && feedChangeRestarts === 0
+        && hasRestartCapacity) {
+        feedChangeRestarts += 1;
+        steps = failedStep;
+        inMaintenance = false;
+        continue;
+      }
+      throw sourceAdvanceError(error, failedStep, feedChangeRestarts);
+    }
     state = responseState(latest);
     skipped = responseSkipped(latest);
     busy = responseBusy(latest);
@@ -206,6 +240,7 @@ const runSource = async (source) => {
     skipped,
     busy,
     counters,
+    ...(feedChangeRestarts > 0 ? { feedChangeRestarts } : {}),
     ...(rejectionReasons === null ? {} : { rejectionReasons }),
   };
 };
@@ -234,6 +269,9 @@ for (const source of sources) {
       ok: false,
       source,
       error: errorCode,
+      ...(error instanceof SourceAdvanceError ? { steps: error.steps } : {}),
+      ...(error instanceof SourceAdvanceError && error.feedChangeRestarts > 0
+        ? { feedChangeRestarts: error.feedChangeRestarts } : {}),
     });
   }
 }
