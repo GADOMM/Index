@@ -5,12 +5,51 @@ import {
   providerPayloadErrorCode,
   providerPayloadShapeCode,
 } from "../scripts/tradedoubler-products.mjs";
+import {
+  PERFUME_CLASSIFIER_VERSION,
+  isPerfumeProduct,
+} from "../scripts/perfume-classifier.mjs";
 
 const providerProduct = (name, feedId = "118359") => ({
   name,
   description: `${name} opis`,
   offers: [{ feedId }],
 });
+
+const v194StructureNodeCount = (root) => {
+  const stack = [{ key: null, value: root, depth: 0 }];
+  let nodes = 0;
+  while (stack.length) {
+    const current = stack.pop();
+    nodes += 1;
+    if (nodes > 25_000 || current.depth > 16) return null;
+    if (typeof current.value === "string") {
+      if (current.value.length > 20_000) return null;
+      continue;
+    }
+    if (!current.value || typeof current.value !== "object") continue;
+    if (Array.isArray(current.value)) {
+      const key = current.key?.toLocaleLowerCase() ?? "";
+      const maximum = key === "products" ? 100
+        : key === "offers" ? 20
+          : key === "pricehistory" ? 50
+            : key === "fields" ? 100
+              : key === "categories" ? 50
+                : 500;
+      if (current.value.length > maximum) return null;
+      for (const value of current.value) {
+        stack.push({ key: null, value, depth: current.depth + 1 });
+      }
+      continue;
+    }
+    const entries = Object.entries(current.value);
+    if (entries.length > 100) return null;
+    for (const [key, value] of entries) {
+      stack.push({ key, value, depth: current.depth + 1 });
+    }
+  }
+  return nodes;
+};
 
 test("full snapshot extractor unwraps only exact, product-shaped collections", () => {
   const products = [providerProduct("Zapach A"), providerProduct("Zapach B")];
@@ -249,6 +288,13 @@ test("full import versions the unlimited file from official feed metadata", asyn
   const sessionId = "11111111-1111-4111-8111-111111111111";
   const issuedModes = [];
   const bridgeActions = [];
+  const rawSnapshotProducts = [
+    { name: "Testowa Eau de Parfum 50 ml", feedId: 112471 },
+    { name: "Szampon do włosów 250 ml", description: "Zapach Eau de Parfum", feedId: 112471 },
+    { name: "Tester 100 ml", description: "Zapach Eau de Parfum", feedId: 112471 },
+    { name: "Refill 100 ml", description: "Zapach Eau de Parfum", feedId: 112471 },
+    { name: "Zestaw prezentowy", description: "Zapach Eau de Parfum", feedId: 112471 },
+  ];
   let chunkAttempts = 0;
   let output = "";
 
@@ -291,10 +337,15 @@ test("full import versions the unlimited file from official feed metadata", asyn
       if (body.action === "import_unlimited_chunk") {
         assert.equal(body.sessionId, sessionId);
         assert.equal(body.chunkIndex, 0);
-        assert.equal(body.rawProductCount, 2);
-        assert.equal(body.payload.productHeader.totalHits, 2);
-        assert.equal(body.payload.products.length, 1);
-        assert.equal(body.payload.products[0].name, "Testowa Eau de Parfum 50 ml");
+        assert.equal(body.rawProductCount, rawSnapshotProducts.length);
+        assert.equal(body.payload.productHeader.totalHits, rawSnapshotProducts.length);
+        assert.equal(body.payload.classifierVersion, PERFUME_CLASSIFIER_VERSION);
+        assert.deepEqual(body.payload.rawProducts, rawSnapshotProducts);
+        assert.deepEqual(body.payload.products, [rawSnapshotProducts[0]]);
+        assert.deepEqual(
+          body.payload.products,
+          body.payload.rawProducts.filter(isPerfumeProduct),
+        );
         chunkAttempts += 1;
         if (chunkAttempts === 1) {
           return Response.json({ ok: false, error: "already_running" }, { status: 409 });
@@ -303,7 +354,7 @@ test("full import versions the unlimited file from official feed metadata", asyn
       }
       assert.equal(body.action, "complete_unlimited_snapshot");
       assert.equal(body.lastUpdated.lastModifiedTime, "2026-08-21T12:00:00Z");
-      assert.equal(body.rawProductCount, 2);
+      assert.equal(body.rawProductCount, rawSnapshotProducts.length);
       return Response.json({ ok: true, liveOffers: 1, importedCount: 1 });
     }
     if (url.hostname === "perfumetr.borodzicz85.chatgpt.site") {
@@ -321,17 +372,17 @@ test("full import versions the unlimited file from official feed metadata", asyn
       return Response.json({
         feedId: 112471,
         lastModifiedTime: "2026-08-21T12:00:00Z",
-        numberOfProducts: 2,
+        numberOfProducts: rawSnapshotProducts.length,
       });
     }
     assert.match(url.pathname, /\/productsUnlimited;fid=112471;sourceproducturl=true$/);
     return Response.json({
       data: {
         productFeed: {
-          products: {
-            "test-sku": { name: "Testowa Eau de Parfum 50 ml", feedId: 112471 },
-            "other-sku": { name: "Szampon do włosów 250 ml", feedId: 112471 },
-          },
+          products: Object.fromEntries(rawSnapshotProducts.map((product, index) => [
+            `test-sku-${index}`,
+            product,
+          ])),
         },
       },
     });
@@ -354,7 +405,7 @@ test("full import versions the unlimited file from official feed metadata", asyn
       "complete_unlimited_snapshot",
     ]);
     assert.equal(chunkAttempts, 2);
-    assert.equal(report.results[0].providerProducts, 2);
+    assert.equal(report.results[0].providerProducts, rawSnapshotProducts.length);
     assert.equal(report.results[0].perfumeProducts, 1);
     assert.equal(report.results[0].liveOffers, 1);
     assert.equal(report.results[0].importedCount, 1);
@@ -429,7 +480,12 @@ test("full import replaces a live-shaped missing Unlimited object with an exact 
         assert.equal(body.sessionId, sessionId);
         assert.match(body.snapshotHash, /^[a-f0-9]{64}$/);
         assert.equal(body.payload.productHeader.totalHits, 101);
-        assert.equal(body.payload.products.every((product) => /Eau de Parfum/.test(product.name)), true);
+        assert.equal(body.payload.classifierVersion, PERFUME_CLASSIFIER_VERSION);
+        assert.equal(body.payload.rawProducts.length, body.rawProductCount);
+        assert.deepEqual(
+          body.payload.products,
+          body.payload.rawProducts.filter(isPerfumeProduct),
+        );
         importedChunks.push({
           chunkIndex: body.chunkIndex,
           rawProductCount: body.rawProductCount,
@@ -512,6 +568,398 @@ test("full import replaces a live-shaped missing Unlimited object with an exact 
     process.argv = originalArgv;
     globalThis.fetch = originalFetch;
     process.stdout.write = originalStdout;
+    delete process.env.PERFUMETR_MODE;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("full import rejects duplicate offer identities across would-be chunks before bridge mutation", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const providerToken = "7".repeat(40);
+  const scenarios = [
+    {
+      name: "upstream-id",
+      firstOffer: { id: " duplicate-offer ", feedId: 112471 },
+      lastFlatOffer: { id: "duplicate-offer", feedId: 112471 },
+    },
+    {
+      name: "source-product-id",
+      firstOffer: { sourceProductId: " duplicate-product ", feedId: 112471 },
+      lastFlatOffer: { sourceProductId: "duplicate-product", feedId: 112471 },
+    },
+  ];
+  let stdout = "";
+  let stderr = "";
+
+  process.env.PERFUMETR_MODE = "full";
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = "github-runner-request-token";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/tradedoubler-import.mjs", "112471"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  process.stderr.write = ((value) => { stderr += String(value); return true; });
+
+  try {
+    for (const [scenarioIndex, scenario] of scenarios.entries()) {
+      stdout = "";
+      stderr = "";
+      process.exitCode = originalExitCode;
+      const sessionId = scenarioIndex === 0
+        ? "77777777-7777-4777-8777-777777777777"
+        : "66666666-6666-4666-8666-666666666666";
+      const products = Array.from({ length: 101 }, (_, index) => ({
+        name: `Podzielony Eau de Parfum ${index} 50 ml`,
+        id: `${scenario.name}-${index}`,
+        feedId: 112471,
+      }));
+      products[0] = {
+        name: "Pierwszy Eau de Parfum 50 ml",
+        offers: [scenario.firstOffer],
+      };
+      products[100] = {
+        name: "Ostatni Eau de Parfum 100 ml",
+        ...scenario.lastFlatOffer,
+      };
+      const bridgeActions = [];
+
+      globalThis.fetch = async (input, init = {}) => {
+        const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+        const method = init.method ?? (input instanceof Request ? input.method : "GET");
+        if (url.hostname === "pipelines.actions.githubusercontent.com") {
+          return Response.json({ value: oidcToken });
+        }
+        if (url.hostname === "perfumetr.borodzicz85.chatgpt.site" && method === "POST") {
+          const body = JSON.parse(init.body);
+          bridgeActions.push(body.action);
+          if (body.action === "issue_browser_ticket") {
+            return Response.json({ ok: true, ticket: `${body.mode}-112471` });
+          }
+          if (body.action === "begin_unlimited_snapshot") {
+            return Response.json({
+              ok: true,
+              required: true,
+              sessionId,
+              nextChunk: 0,
+              rawCount: 0,
+              snapshotHash: null,
+            });
+          }
+          assert.equal(body.action, "fail_unlimited_snapshot");
+          assert.equal(body.errorCode, "provider_snapshot_duplicate_offer_id");
+          return Response.json({ ok: true });
+        }
+        if (url.hostname === "perfumetr.borodzicz85.chatgpt.site") {
+          const ticket = url.searchParams.get("ticket") ?? "";
+          const path = ticket.startsWith("feed_metadata-")
+            ? "productFeeds/112471"
+            : "productsUnlimited;fid=112471;sourceproducturl=true";
+          return new Response(null, {
+            status: 302,
+            headers: { location: `https://api.tradedoubler.com/1.0/${path}?token=${providerToken}` },
+          });
+        }
+        assert.equal(url.hostname, "api.tradedoubler.com");
+        if (url.pathname.includes("/productFeeds/112471")) {
+          return Response.json({
+            feedId: 112471,
+            lastModifiedTime: `2026-08-21T15:0${scenarioIndex}:00Z`,
+            numberOfProducts: products.length,
+          });
+        }
+        return Response.json({ productHeader: { totalHits: products.length }, products });
+      };
+
+      await import(`../scripts/tradedoubler-import.mjs?duplicate-${scenario.name}-${Date.now()}`);
+      assert.equal(stdout, "");
+      assert.equal(process.exitCode, 1);
+      assert.deepEqual(bridgeActions, [
+        "issue_browser_ticket",
+        "begin_unlimited_snapshot",
+        "issue_browser_ticket",
+        "fail_unlimited_snapshot",
+      ]);
+      assert.equal(bridgeActions.includes("import_unlimited_chunk"), false);
+      assert.equal(bridgeActions.includes("complete_unlimited_snapshot"), false);
+      const report = JSON.parse(stderr.replace(/^tradedoubler_result=/, ""));
+      assert.equal(report.results[0].error, "provider_snapshot_duplicate_offer_id");
+      assert.doesNotMatch(stderr, /duplicate-offer|duplicate-product/);
+    }
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_MODE;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("full import bounds the complete dual chunk by request bytes and the v194 structure budget", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalStdout = process.stdout.write;
+  const requestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const providerToken = "9".repeat(40);
+  const sessionId = "99999999-9999-4999-8999-999999999999";
+  const detail = Object.fromEntries(Array.from({ length: 100 }, (_, index) => [`field${index}`, index]));
+  const providerProducts = [
+    ...Array.from({ length: 110 }, (_, index) => ({
+      name: `Limit Eau de Parfum ${index} 50 ml`,
+      description: "x".repeat(10_500),
+      feedId: 112471,
+    })),
+    ...Array.from({ length: 100 }, (_, index) => ({
+      name: `Szampon ${index} 250 ml`,
+      feedId: 112471,
+      detailA: detail,
+      detailB: detail,
+      detailC: detail,
+    })),
+  ];
+  const importedBodies = [];
+  let output = "";
+
+  process.env.PERFUMETR_MODE = "full";
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = requestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/tradedoubler-import.mjs", "112471"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      output += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    const method = init.method ?? (input instanceof Request ? input.method : "GET");
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    if (url.hostname === "perfumetr.borodzicz85.chatgpt.site" && method === "POST") {
+      const body = JSON.parse(init.body);
+      if (body.action === "issue_browser_ticket") {
+        return Response.json({ ok: true, ticket: `${body.mode}-112471` });
+      }
+      if (body.action === "begin_unlimited_snapshot") {
+        return Response.json({
+          ok: true,
+          required: true,
+          sessionId,
+          nextChunk: 0,
+          rawCount: 0,
+          snapshotHash: null,
+        });
+      }
+      if (body.action === "import_unlimited_chunk") {
+        assert.equal(body.payload.classifierVersion, PERFUME_CLASSIFIER_VERSION);
+        assert.equal(body.rawProductCount, body.payload.rawProducts.length);
+        assert.ok(body.rawProductCount <= 100);
+        assert.deepEqual(body.payload.products, body.payload.rawProducts.filter(isPerfumeProduct));
+        assert.ok(Buffer.byteLength(init.body) <= 2 * 1024 * 1024);
+        assert.ok(v194StructureNodeCount(body.payload) <= 25_000);
+        importedBodies.push(body);
+        return Response.json({
+          ok: true,
+          matchedCandidates: body.payload.products.length,
+          storeLiveOffers: 110,
+        });
+      }
+      assert.equal(body.action, "complete_unlimited_snapshot");
+      assert.equal(body.rawProductCount, providerProducts.length);
+      return Response.json({ ok: true, liveOffers: 110, importedCount: 110 });
+    }
+    if (url.hostname === "perfumetr.borodzicz85.chatgpt.site") {
+      const ticket = url.searchParams.get("ticket") ?? "";
+      const path = ticket.startsWith("feed_metadata-")
+        ? "productFeeds/112471"
+        : "productsUnlimited;fid=112471;sourceproducturl=true";
+      return new Response(null, {
+        status: 302,
+        headers: { location: `https://api.tradedoubler.com/1.0/${path}?token=${providerToken}` },
+      });
+    }
+    assert.equal(url.hostname, "api.tradedoubler.com");
+    if (url.pathname.includes("/productFeeds/112471")) {
+      return Response.json({
+        feedId: 112471,
+        lastModifiedTime: "2026-08-21T13:30:00Z",
+        numberOfProducts: providerProducts.length,
+      });
+    }
+    return Response.json({
+      productHeader: { totalHits: providerProducts.length },
+      products: providerProducts,
+    });
+  };
+
+  try {
+    await import(`../scripts/tradedoubler-import.mjs?dual-budget-test=${Date.now()}`);
+    const report = JSON.parse(output);
+    assert.equal(report.ok, true);
+    assert.equal(report.results[0].providerProducts, providerProducts.length);
+    assert.equal(report.results[0].perfumeProducts, 110);
+    assert.ok(importedBodies.length >= 3);
+    assert.equal(
+      importedBodies.reduce((total, body) => total + body.rawProductCount, 0),
+      providerProducts.length,
+    );
+    assert.equal(importedBodies.some((body) => body.payload.products.length === 0), true);
+
+    const expandedBoundaryRequests = importedBodies.slice(0, -1).map((body, index) => {
+      const rawProducts = [...body.payload.rawProducts, importedBodies[index + 1].payload.rawProducts[0]];
+      return {
+        ...body,
+        rawProductCount: rawProducts.length,
+        payload: {
+          productHeader: { totalHits: providerProducts.length },
+          products: rawProducts.filter(isPerfumeProduct),
+          rawProducts,
+          classifierVersion: PERFUME_CLASSIFIER_VERSION,
+        },
+      };
+    });
+    assert.equal(expandedBoundaryRequests.some(
+      (body) => Buffer.byteLength(JSON.stringify(body)) > 2 * 1024 * 1024,
+    ), true);
+    assert.equal(expandedBoundaryRequests.some(
+      (body) => v194StructureNodeCount(body.payload) === null,
+    ), true);
+    assert.doesNotMatch(output, new RegExp(`${requestToken}|${providerToken}|${sessionId}`));
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    process.stdout.write = originalStdout;
+    delete process.env.PERFUMETR_MODE;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("full import fails closed when one raw record cannot fit the bounded structure", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const providerToken = "8".repeat(40);
+  let stdout = "";
+  let stderr = "";
+  let chunkCalls = 0;
+
+  process.env.PERFUMETR_MODE = "full";
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = "github-runner-request-token";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/tradedoubler-import.mjs", "112471"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  process.stderr.write = ((value) => { stderr += String(value); return true; });
+
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    const method = init.method ?? (input instanceof Request ? input.method : "GET");
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    if (url.hostname === "perfumetr.borodzicz85.chatgpt.site" && method === "POST") {
+      const body = JSON.parse(init.body);
+      if (body.action === "issue_browser_ticket") {
+        return Response.json({ ok: true, ticket: `${body.mode}-112471` });
+      }
+      if (body.action === "begin_unlimited_snapshot") {
+        return Response.json({
+          ok: true,
+          required: true,
+          sessionId: "88888888-8888-4888-8888-888888888888",
+          nextChunk: 0,
+          rawCount: 0,
+          snapshotHash: null,
+        });
+      }
+      if (body.action === "import_unlimited_chunk") chunkCalls += 1;
+      assert.equal(body.action, "fail_unlimited_snapshot");
+      assert.equal(body.errorCode, "single_product_too_large");
+      return Response.json({ ok: true });
+    }
+    if (url.hostname === "perfumetr.borodzicz85.chatgpt.site") {
+      const ticket = url.searchParams.get("ticket") ?? "";
+      const path = ticket.startsWith("feed_metadata-")
+        ? "productFeeds/112471"
+        : "productsUnlimited;fid=112471;sourceproducturl=true";
+      return new Response(null, {
+        status: 302,
+        headers: { location: `https://api.tradedoubler.com/1.0/${path}?token=${providerToken}` },
+      });
+    }
+    if (url.pathname.includes("/productFeeds/112471")) {
+      return Response.json({
+        feedId: 112471,
+        lastModifiedTime: "2026-08-21T13:45:00Z",
+        numberOfProducts: 1,
+      });
+    }
+    return Response.json({
+      productHeader: { totalHits: 1 },
+      products: [{
+        name: "Za duży Eau de Parfum 50 ml",
+        description: "x".repeat(20_001),
+        feedId: 112471,
+      }],
+    });
+  };
+
+  try {
+    await import(`../scripts/tradedoubler-import.mjs?single-record-budget-test=${Date.now()}`);
+    assert.equal(stdout, "");
+    assert.equal(chunkCalls, 0);
+    assert.equal(process.exitCode, 1);
+    const report = JSON.parse(stderr.replace(/^tradedoubler_result=/, ""));
+    assert.equal(report.results[0].error, "single_product_too_large");
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
     delete process.env.PERFUMETR_MODE;
     delete process.env.PERFUMETR_ORIGIN;
     delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
