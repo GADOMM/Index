@@ -39,8 +39,10 @@ on:
           - all
   schedule:
     - cron: "47 2 * * *"
+    - cron: "23 5 * * *"
     - cron: "47 8 * * *"
     - cron: "17 14 * * *"
+    - cron: "23 17 * * *"
     - cron: "47 20 * * *"
 
 permissions:
@@ -120,14 +122,28 @@ jobs:
         run: node scripts/tradedoubler-import.mjs
 
       - name: Advance partner sources through the shared orchestrator
-        if: always() && (github.event_name == 'push' || github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'partners' || inputs.mode == 'all')))
+        if: >-
+          always() && (
+            github.event_name == 'push' ||
+            (github.event_name == 'schedule' &&
+              github.event.schedule != '23 5 * * *' &&
+              github.event.schedule != '23 17 * * *') ||
+            (github.event_name == 'workflow_dispatch' && (inputs.mode == 'partners' || inputs.mode == 'all'))
+          )
         env:
           PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
           PERFUMETR_ORCHESTRATOR_STEPS: 48
         run: node scripts/catalog-orchestrator.mjs
 
-      - name: Advance the staged Douglas source only
-        if: always() && github.event_name == 'workflow_dispatch' && inputs.mode == 'douglas'
+      - name: Advance the isolated Douglas source only
+        if: >-
+          always() && (
+            (github.event_name == 'workflow_dispatch' && inputs.mode == 'douglas') ||
+            (github.event_name == 'schedule' && (
+              github.event.schedule == '23 5 * * *' ||
+              github.event.schedule == '23 17 * * *'
+            ))
+          )
         env:
           PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
           PERFUMETR_ORCHESTRATOR_STEPS: 48

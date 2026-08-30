@@ -2,12 +2,25 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-test("exposes Douglas as a manual isolated workflow mode", async () => {
+test("schedules Douglas only in its isolated catalog cycle", async () => {
   const workflow = await readFile(new URL("../.github/workflows/tradedoubler.yml", import.meta.url), "utf8");
+  const partnerStep = workflow.match(
+    /- name: Advance partner sources through the shared orchestrator[\s\S]*?(?=\n      - name: Advance the isolated Douglas source only)/,
+  )?.[0] ?? "";
+  const douglasStep = workflow.match(
+    /- name: Advance the isolated Douglas source only[\s\S]*?(?=\n      - name: Publish the first live import result)/,
+  )?.[0] ?? "";
   assert.match(workflow, /options:[\s\S]*?- douglas/);
-  assert.match(workflow, /inputs\.mode == 'douglas'/);
-  assert.match(workflow, /node scripts\/catalog-orchestrator\.mjs awin:douglas/);
-  assert.doesNotMatch(workflow, /github\.event_name == 'schedule'[^\n]*inputs\.mode == 'douglas'/);
+  assert.match(workflow, /cron: "23 5 \* \* \*"/);
+  assert.match(workflow, /cron: "23 17 \* \* \*"/);
+  assert.match(partnerStep, /github\.event\.schedule != '23 5 \* \* \*'/);
+  assert.match(partnerStep, /github\.event\.schedule != '23 17 \* \* \*'/);
+  assert.doesNotMatch(partnerStep, /awin:douglas/);
+  assert.match(douglasStep, /github\.event_name == 'workflow_dispatch' && inputs\.mode == 'douglas'/);
+  assert.match(douglasStep, /github\.event_name == 'schedule' && \([\s\S]*?github\.event\.schedule == '23 5 \* \* \*'/);
+  assert.match(douglasStep, /github\.event\.schedule == '23 17 \* \* \*'/);
+  assert.match(douglasStep, /PERFUMETR_ORCHESTRATOR_STEPS: 48/);
+  assert.match(douglasStep, /node scripts\/catalog-orchestrator\.mjs awin:douglas/);
 });
 
 test("one partner failure does not prevent CJ and TradeDoubler vouchers from advancing", async () => {
