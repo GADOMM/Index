@@ -12,10 +12,13 @@ test("schedules Douglas only in its isolated catalog cycle", async () => {
   )?.[0] ?? "";
   assert.match(workflow, /options:[\s\S]*?- douglas/);
   assert.match(workflow, /cron: "23 5 \* \* \*"/);
+  assert.match(workflow, /cron: "23 17 \* \* \*"/);
   assert.match(partnerStep, /github\.event\.schedule != '23 5 \* \* \*'/);
+  assert.match(partnerStep, /github\.event\.schedule != '23 17 \* \* \*'/);
   assert.doesNotMatch(partnerStep, /awin:douglas/);
   assert.match(douglasStep, /github\.event_name == 'workflow_dispatch' && inputs\.mode == 'douglas'/);
-  assert.match(douglasStep, /github\.event_name == 'schedule' && github\.event\.schedule == '23 5 \* \* \*'/);
+  assert.match(douglasStep, /github\.event_name == 'schedule' && \([\s\S]*?github\.event\.schedule == '23 5 \* \* \*'/);
+  assert.match(douglasStep, /github\.event\.schedule == '23 17 \* \* \*'/);
   assert.match(douglasStep, /PERFUMETR_ORCHESTRATOR_STEPS: 48/);
   assert.match(douglasStep, /node scripts\/catalog-orchestrator\.mjs awin:douglas/);
 });
