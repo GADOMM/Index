@@ -728,6 +728,286 @@ test("paces consecutive Douglas feed chunks above the Sites safety interval", as
   }
 });
 
+test("restarts one changed AWIN feed inside the same bounded source cycle", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalSetTimeout = globalThis.setTimeout;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const requestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const calls = [];
+  const delays = [];
+  let stdout = "";
+  let stderr = "";
+  let advances = 0;
+
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.PERFUMETR_ORCHESTRATOR_STEPS = "2";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = requestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/catalog-orchestrator.mjs", "awin:douglas"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  process.stderr.write = ((value) => { stderr += String(value); return true; });
+  globalThis.setTimeout = ((callback, milliseconds, ...args) => {
+    delays.push(milliseconds);
+    callback(...args);
+    return 0;
+  });
+
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    const body = JSON.parse(init.body);
+    calls.push([body.source, body.action]);
+    if (body.action === "status") {
+      return Response.json({ ok: true, overview: { state: "paused", receivedCount: 1_500 } });
+    }
+    advances += 1;
+    if (advances === 1) {
+      return Response.json({ ok: false, error: "feed_changed" }, { status: 409 });
+    }
+    return Response.json({
+      ok: true,
+      overview: {
+        state: "completed",
+        receivedCount: 51_900,
+        importedCount: 4_000,
+        liveOffers: 4_000,
+        automaticReviewCount: 0,
+        maintenanceProcessedCount: 0,
+      },
+    });
+  };
+
+  try {
+    await import(`../scripts/catalog-orchestrator.mjs?douglas-feed-change-test=${Date.now()}`);
+    assert.equal(stderr, "");
+    assert.notEqual(process.exitCode, 1);
+    assert.deepEqual(calls, [
+      ["awin:douglas", "status"],
+      ["awin:douglas", "advance_source"],
+      ["awin:douglas", "advance_source"],
+    ]);
+    assert.deepEqual(delays, [12_500]);
+    const report = JSON.parse(stdout);
+    assert.equal(report.ok, true);
+    assert.equal(report.sources[0].steps, 2);
+    assert.equal(report.sources[0].completed, true);
+    assert.equal(report.sources[0].feedChangeRestarts, 1);
+    assert.equal(report.sources[0].counters.liveOffers, 4_000);
+    assert.doesNotMatch(stdout, new RegExp(requestToken));
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    globalThis.setTimeout = originalSetTimeout;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.PERFUMETR_ORCHESTRATOR_STEPS;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("does not restart a changed AWIN feed twice and still advances the next source", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalSetTimeout = globalThis.setTimeout;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const requestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const calls = [];
+  const delays = [];
+  let stdout = "";
+  let stderr = "";
+
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.PERFUMETR_ORCHESTRATOR_STEPS = "3";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = requestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [
+    process.execPath,
+    "scripts/catalog-orchestrator.mjs",
+    "awin:douglas",
+    "tradedoubler:vouchers",
+  ];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  process.stderr.write = ((value) => { stderr += String(value); return true; });
+  globalThis.setTimeout = ((callback, milliseconds, ...args) => {
+    delays.push(milliseconds);
+    callback(...args);
+    return 0;
+  });
+
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    const body = JSON.parse(init.body);
+    calls.push([body.source, body.action]);
+    if (body.action === "status") {
+      return Response.json({ ok: true, overview: {
+        state: body.source === "awin:douglas" ? "paused" : "completed",
+      } });
+    }
+    if (body.source === "awin:douglas") {
+      return Response.json({ ok: false, error: "feed_changed" }, { status: 409 });
+    }
+    return Response.json({
+      ok: true,
+      skipped: "fresh",
+      overview: { state: "completed", activeCoupons: 0 },
+    });
+  };
+
+  try {
+    await import(`../scripts/catalog-orchestrator.mjs?double-feed-change-test=${Date.now()}`);
+    assert.equal(stdout, "");
+    assert.equal(process.exitCode, 1);
+    assert.deepEqual(calls, [
+      ["awin:douglas", "status"],
+      ["awin:douglas", "advance_source"],
+      ["awin:douglas", "advance_source"],
+      ["tradedoubler:vouchers", "status"],
+      ["tradedoubler:vouchers", "advance_source"],
+    ]);
+    assert.deepEqual(delays, [12_500]);
+    const report = JSON.parse(stderr.replace(/^catalog_orchestrator_result=/, ""));
+    assert.equal(report.ok, false);
+    assert.deepEqual(report.sources[0], {
+      ok: false,
+      source: "awin:douglas",
+      error: "orchestrator_feed_changed",
+      steps: 2,
+      feedChangeRestarts: 1,
+    });
+    assert.equal(report.sources[1].ok, true);
+    assert.equal(report.sources[1].source, "tradedoubler:vouchers");
+    assert.equal(report.sources[1].skipped, "fresh");
+    assert.doesNotMatch(stderr, new RegExp(requestToken));
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    globalThis.setTimeout = originalSetTimeout;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.PERFUMETR_ORCHESTRATOR_STEPS;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("does not exceed the configured step budget to restart a changed AWIN feed", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalSetTimeout = globalThis.setTimeout;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const requestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const calls = [];
+  const delays = [];
+  let stdout = "";
+  let stderr = "";
+
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.PERFUMETR_ORCHESTRATOR_STEPS = "1";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = requestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/catalog-orchestrator.mjs", "awin:douglas"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  process.stderr.write = ((value) => { stderr += String(value); return true; });
+  globalThis.setTimeout = ((callback, milliseconds, ...args) => {
+    delays.push(milliseconds);
+    callback(...args);
+    return 0;
+  });
+
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    const body = JSON.parse(init.body);
+    calls.push([body.source, body.action]);
+    if (body.action === "status") {
+      return Response.json({ ok: true, overview: { state: "paused" } });
+    }
+    return Response.json({ ok: false, error: "feed_changed" }, { status: 409 });
+  };
+
+  try {
+    await import(`../scripts/catalog-orchestrator.mjs?feed-change-budget-test=${Date.now()}`);
+    assert.equal(stdout, "");
+    assert.equal(process.exitCode, 1);
+    assert.deepEqual(calls, [
+      ["awin:douglas", "status"],
+      ["awin:douglas", "advance_source"],
+    ]);
+    assert.deepEqual(delays, []);
+    const report = JSON.parse(stderr.replace(/^catalog_orchestrator_result=/, ""));
+    assert.deepEqual(report.sources[0], {
+      ok: false,
+      source: "awin:douglas",
+      error: "orchestrator_feed_changed",
+      steps: 1,
+    });
+    assert.doesNotMatch(stderr, new RegExp(requestToken));
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    globalThis.setTimeout = originalSetTimeout;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.PERFUMETR_ORCHESTRATOR_STEPS;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
 test("keeps Douglas out of the default scheduled source set until explicit activation", async () => {
   const originalArgv = process.argv;
   const originalFetch = globalThis.fetch;
