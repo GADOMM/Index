@@ -4,7 +4,59 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: Sites v196 search results and single best offer
+## Current handoff: Sites v201 production recovery and integration panel
+
+Verified through 2026-08-31 12:19 UTC.
+
+- Sites v201 is deployed from source commit
+  `a278ce108d13035727fdcfde616f19aadf358f29`; version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_35c2087ff8a08191b085e56f59ff7789`;
+  deployment `appgdep_6a957116f65c819182017efa0594f75a` succeeded
+  with no failure message at 12:18:43 UTC.
+- Enter or the search button returns the full bounded match surface and does
+  not choose the first suggestion. Production `Verasce` returned 39 groups
+  with HTTP 200 in 350 ms.
+- Production Versace Eros Flame EDP 100 ml returned seven offers with HTTP 200
+  in 522 ms. The best offer appears once above and the lower section contains
+  only the six remaining offers.
+- The recovered compare failure was the exact 8,000 ms application deadline.
+  Optional coupon and delivery work was included in a blocking
+  `Promise.allSettled`, and the coupon read could also run the write-capable
+  verified-promotion synchronizer.
+- v201 makes only perfume and offer rows required. Coupon and verified-delivery
+  enrichment use a 750 ms soft deadline and cannot turn ready offers into a
+  503. Public compare is now read-only; promotion synchronization remains on
+  controlled homepage and panel paths.
+- Main and beta shells render before optional catalog data. Final production
+  worker timings were 7 ms for the main root and 39 ms for the beta root. No
+  post-v201 compare 503 or optional-enrichment soft deadline was logged.
+- Verification passed build, Sites artifact validation and 85/85 tests. The
+  regression suite includes stalled optional reads returning valid offers in
+  under two seconds. Lint has zero errors and three pre-existing warnings.
+- Sites v200 from `e7d386e687740001b12274d375d5c7db8976ca3a`
+  reorganized the integration panel into summary, attention queue and compact
+  store overview, with technical sections collapsed by default.
+- Automatic panel status checks remain enabled but run at most once per source
+  every eight hours, starting after 90 seconds and serialized at least 45
+  seconds apart. Manual checks share the same lock.
+- Old already-open panel tabs can emit legacy parallel requests until reloaded
+  or closed. The v200 server rejects those requests with HTTP 429 before D1;
+  they do not run an import. TradeDoubler and Hebe status reads are read-only.
+- The protected panel interior was not bypassed for visual QA. Server-render
+  and behavior tests passed; authenticated owner review remains outstanding.
+- Final production counters were Notino 8,663; Brasty 5,370; Flaconi 3,754;
+  Cocolita 896; Drogeria.pl 862; Aelia.pl 1,471; Douglas 3,057; exact total
+  24,073 and 628 brands. Douglas changed from 2,964 observed earlier in the
+  work window. Do not attribute that to v197-v201 without reading the current
+  Actions run and source generation.
+- No manual import, duplicate workflow, D1 change, credential change, domain
+  change, e-mail, report or partner message was started for this checkpoint.
+  Report #011 remains the latest confirmed delivered report.
+- Exact next task: read-only reconciliation of the newest importer workflow
+  and source generations behind the 24,073-offer production rail, then owner
+  review of the reorganized panel. Do not start an import merely to verify it.
+
+## Previous handoff: Sites v196 search results and single best offer
 
 Verified through 2026-08-31 10:17 UTC.
 
