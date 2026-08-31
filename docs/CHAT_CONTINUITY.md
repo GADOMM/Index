@@ -4,7 +4,53 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: Sites v195 atomic TradeDoubler snapshots
+## Current handoff: Sites v196 search results and single best offer
+
+Verified through 2026-08-31 10:17 UTC.
+
+- Sites v196 is deployed from source commit
+  `a18cc7056d47563ab5559e8643650f8525e7d899`; version ID
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_0376660e67988191a0a1a0ea01314def`;
+  deployment `appgdep_6a95548b489c8191bdf63d2d2a1405c2` publish
+  succeeded with null failure message.
+- Provider URL is `https://perfumetr.borodzicz85.chatgpt.site`; Sites still
+  reports `https://beta.perfumetr.pl` as the live URL.
+- A normal Enter or search-button submission no longer chooses the first
+  suggestion. It opens a dedicated surface with matching perfume
+  line-and-concentration groups and direct volume choices. The submitted page
+  is bounded at 48 groups; type-ahead remains four results.
+- Arrow-key highlighting followed by Enter still opens the explicitly selected
+  suggestion.
+- The best offer remains in the first compact result card. The repeated lower
+  best-offer dossier was removed. The lower ledger filters by stable offer ID
+  and contains only remaining offers; its links are absent when there is no
+  alternative.
+- No importer, D1 data, schedule, partner integration, classifier, domain,
+  routing, offer ranking, coupon calculation or redirect rule changed.
+- Build and Sites artifact validation passed. The full Sites suite passed
+  81/81, the two new targeted regressions passed 2/2, lint had zero errors and
+  three pre-existing warnings, and `git diff --check` passed.
+- This is technically deployed but not yet visually or product-accepted by the
+  user. No browser or real-device visual QA was requested.
+- The latest audited production automation remains scheduled run #132, ID
+  `33375095796`, completed `failure`: validation passed; full
+  TradeDoubler and Douglas were skipped; Flaconi returned
+  `orchestrator_import_failed`; Notino paused after its bounded cycle; Brasty
+  completed. No job was running and v196 did not start an import.
+- Latest audited public counts remain Notino 8,663; Brasty 5,370; Flaconi
+  3,754; Cocolita 896; Drogeria.pl 862; Aelia.pl 1,471; Douglas 2,966; exact
+  total 23,982, with 11,110 catalog groups and 627 brands.
+- The prior recovery audit observed intermittent `catalog_unavailable` 503
+  responses from `/api/catalog` and one generic search probe. It also found
+  the separate stale OVH apex/`www` DNS risk. v196 does not claim either
+  issue is repaired.
+- Exact next task: diagnose and minimally fix the intermittent
+  `/api/catalog` 503 in the existing v196 source without starting imports or
+  changing catalog data. Keep DNS remediation separate.
+- Report #011 remains the latest confirmed delivered report. No report was
+  requested or sent for v196.
+
+## Previous handoff: Sites v195 atomic TradeDoubler snapshots
 
 Verified through approximately 2026-08-31 00:38 UTC after the Sites v195
 post-deployment and report-delivery checks.

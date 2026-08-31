@@ -1,9 +1,89 @@
 # Perfumetr project state
 
-Updated: 2026-08-31 00:38 UTC after the Sites v195 and report-delivery checks
+Updated: 2026-08-31 10:17 UTC after the Sites v196 search and offer UX deployment
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
+
+## Search and offer UX checkpoint (Sites v196)
+
+Sites v196 is deployed. This checkpoint changes only the beta search flow and
+the presentation of offers; it does not change D1 data, importers, schedules,
+partner credentials, product classification, domains or routing.
+
+### Deployment
+
+- Sites version: `196`.
+- Sites source commit:
+  `a18cc7056d47563ab5559e8643650f8525e7d899`.
+- Sites version ID:
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_0376660e67988191a0a1a0ea01314def`.
+- Sites deployment: `appgdep_6a95548b489c8191bdf63d2d2a1405c2`,
+  publish `succeeded` with null failure message at 2026-08-31 10:16:58 UTC.
+- Provider URL: `https://perfumetr.borodzicz85.chatgpt.site`.
+- Sites live URL remains `https://beta.perfumetr.pl`.
+- The deployment is technically complete but has not yet received the user's
+  visual or product acceptance.
+
+### Search behavior
+
+- Submitting a free-text query with Enter or the search button no longer
+  selects the first suggestion automatically.
+- A submitted query opens a dedicated result surface containing matching
+  perfume lines grouped by identity and concentration, with their available
+  volume choices. The bounded result page returns at most 48 groups; the live
+  type-ahead remains limited to four concise suggestions.
+- Explicit keyboard selection is preserved: Arrow Up or Arrow Down followed by
+  Enter still opens the highlighted suggestion.
+- Choosing a volume continues through the existing comparison endpoint. No
+  fallback product, offer or price is fabricated when search is unavailable.
+
+### Offer behavior
+
+- The compact best-offer card at the top of a selected perfume remains the
+  only presentation of the cheapest offer.
+- The repeated lower `price-dossier` for that same offer was removed.
+- The lower ledger is rendered only from offers whose stable offer ID differs
+  from the best offer ID. It therefore contains only remaining, worse-ranked
+  offers. Links to that ledger appear only when an alternative exists.
+- Offer ranking, delivery handling, coupon calculation and outbound redirect
+  safety were not changed.
+
+### Verification and current operational truth
+
+- Sites production build and artifact validation: passed.
+- Full Sites suite: 81/81 passed.
+- New targeted regressions: 2/2 passed.
+- Lint: zero errors and three pre-existing warnings.
+- `git diff --check`: passed; the Sites checkout was clean at the deployed
+  commit.
+- No browser or real-device visual QA was requested. Deployment status was
+  verified directly; user acceptance is still pending.
+- Latest audited GitHub `master` before this documentation change:
+  `16776b1dec76dd9616ec68e916d036f0641b9f07`.
+- Latest scheduled production cycle remains run #132, ID `33375095796`,
+  completed `failure`: validation passed, full TradeDoubler and Douglas were
+  skipped, Flaconi returned `orchestrator_import_failed`, Notino paused after
+  the bounded cycle and Brasty completed. No job was running and no duplicate
+  import was started for v196.
+- Latest audited public counters remain Notino 8,663; Brasty 5,370; Flaconi
+  3,754; Cocolita 896; Drogeria.pl 862; Aelia.pl 1,471; Douglas 2,966; exact
+  total 23,982. The same read reported 11,110 catalog groups and 627 brands.
+  Sites v196 did not mutate those values.
+
+### Known issues and exact next task
+
+The read-only recovery audit before v196 observed intermittent
+`catalog_unavailable` HTTP 503 responses from `/api/catalog` and one generic
+search probe, while a concrete Libre search and compare request succeeded.
+Apex and `www` DNS also retain the separately documented stale OVH routing
+risk. Neither issue was changed by this UX deployment.
+
+The exact next task is to diagnose and minimally repair the intermittent
+`/api/catalog` 503 in the existing v196 source without running imports or
+changing catalog data. Domain changes remain a separate routing task. Report
+#011 remains the latest confirmed delivered report; no report was requested or
+sent for v196.
 
 ## TradeDoubler snapshot-safety checkpoint (Sites v195)
 
