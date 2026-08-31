@@ -53,11 +53,13 @@ post-deployment and report-delivery checks.
   per step with a fresh other-store witness. Cursor drift is at most 2%, capped
   at 250 rows; only guarded EOF may finish a drifted query and scopes above
   10,000 are skipped safely.
-- Flaconi completed maintenance is capped at 40. Douglas paused recovery, EOF
-  cleanup, safety phases and counter reconciliation are bounded, resumable and
-  fail closed. A stale, duplicate or reused external ID fails closed once the
-  conflict is observed; if contradictory copies are on different pages, the
-  first can be briefly public before the second is read and quarantine begins.
+- Flaconi completed-generation review-backlog reprocessing is capped at 40
+  rows per step; its separate safety phase has its own 400-row bound. Douglas
+  paused recovery, EOF cleanup, safety phases and counter reconciliation are
+  bounded, resumable and fail closed. A stale, duplicate or reused external ID
+  fails closed once the conflict is observed; if contradictory copies are on
+  different pages, the first can be briefly public before the second is read
+  and quarantine begins.
   This is not a global semantic-duplicate audit across different product IDs.
   Only an exact safe restock may reactivate a row.
 - Every TradeDoubler Unlimited chunk now contains the complete raw slice and
