@@ -1,9 +1,71 @@
 # Perfumetr project state
 
-Updated: 2026-08-31 12:19 UTC after the Sites v201 production recovery
+Updated: 2026-08-31 12:46 UTC after the Sites v202 homepage stability hotfix
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
+
+## Homepage stability hotfix (Sites v202)
+
+Verified through 2026-08-31 12:46 UTC. This checkpoint records the urgent
+main-domain hero repair after the user's iPhone recording. It does not claim a
+new importer cycle or any catalog mutation.
+
+### Deployment
+
+- Sites v202 source commit:
+  `50cdf9541d618307ffd32216c00c2f0679d7afcb`.
+- Sites version ID:
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_9565ccfb2f0081918525f24d2ce1cbde`.
+- Production deployment:
+  `appgdep_6a957772d4348191924371a233d91898`, publish `succeeded`
+  with no failure message at 2026-08-31 12:45:52 UTC.
+- Provider URL: `https://perfumetr.borodzicz85.chatgpt.site`.
+  Sites remains active and public, reports v202 and keeps
+  `https://beta.perfumetr.pl` as its main live URL.
+
+### Recovered defect and repair
+
+- The recording showed a deterministic fallback-to-live swap on
+  `perfumetr.pl`: YSL MYSLF 60 ml appeared without a real price for about
+  1.2 seconds, then text and price changed before the image finally changed to
+  the real rotating Emporio Armani offer. Refresh reproduced it.
+- The fast server shell intentionally passes `deal={null}`, but the client
+  converted that absence into a hard-coded YSL title, variant link and cutout,
+  then waited 1,200 ms before fetching the real homepage DTO. This was not a
+  Safari or network fault.
+- v202 keeps the fast D1-independent shell but removes every concrete fallback
+  product identity, product link, image and placeholder price. The homepage
+  request starts immediately. A complete real deal is rendered only after the
+  live DTO arrives.
+- The comparison-store coverage area now reserves its final height before the
+  async response, preventing the 35–40 pixel vertical shift visible in the
+  recording. The deal reveal is disabled for reduced-motion users.
+- Loading and completed-without-deal are separate states. A null, non-OK,
+  parse-failed or network-failed response clears `aria-busy` and shows a
+  neutral invitation to the open beta instead of a permanent blank loader or
+  a fabricated product.
+
+### Verification and boundary
+
+- Build and Sites artifact validation passed.
+- Full Sites suite passed 85/85. The regression requires neutral initial HTML,
+  absence of the old YSL identity, immediate fetching, a settled no-deal state
+  and reserved layout space.
+- Lint passed with zero errors and the same three pre-existing unrelated
+  warnings. `git diff --check` passed. Independent review found no blocker.
+- The first ten-minute post-deployment error-only Worker log query returned no
+  events. The deployment is technically complete; user visual acceptance on
+  the original iPhone path is not yet recorded.
+- v202 changed no D1 data, import job, schedule, classifier, partner credential,
+  secret, domain, routing rule or e-mail. No manual import or duplicate job was
+  started. No report was requested or sent; report #011 remains the latest
+  confirmed delivered report.
+- Exact next step: verify the refreshed `perfumetr.pl` entry on the user's
+  iPhone no longer shows the YSL placeholder or shifts when the real deal
+  arrives. Then resume the already documented read-only reconciliation of the
+  newest importer workflow and authenticated owner review of the reorganized
+  integration panel. Do not start an import for either verification.
 
 ## Production recovery and integration panel checkpoint (Sites v201)
 
