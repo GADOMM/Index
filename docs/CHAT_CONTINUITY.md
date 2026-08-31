@@ -4,7 +4,43 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: Sites v201 production recovery and integration panel
+## Current handoff: Sites v202 homepage stability
+
+Verified through 2026-08-31 12:46 UTC.
+
+- Sites v202 is deployed from source commit
+  `50cdf9541d618307ffd32216c00c2f0679d7afcb`; version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_9565ccfb2f0081918525f24d2ce1cbde`;
+  deployment `appgdep_6a957772d4348191924371a233d91898` succeeded
+  with no failure message at 12:45:52 UTC.
+- The user's iPhone recording reproduced the main-domain defect twice: a
+  hard-coded YSL MYSLF bottle and placeholder copy appeared for about 1.2
+  seconds, live price text changed first, and the real Emporio Armani bottle
+  followed. Store coverage insertion also shifted the page by about 35–40 px.
+- Root cause: the fast server shell correctly supplied `deal={null}`, but
+  `coming-soon.tsx` mapped null to a concrete YSL product and deliberately
+  delayed `/api/homepage?surface=main` for 1,200 ms.
+- v202 preserves the fast D1-independent shell. It renders no product identity,
+  image, variant link or price until one complete live deal is available,
+  starts the request immediately and reserves the store-coverage height.
+- A null or failed homepage response now settles loading and presents neutral
+  beta guidance. It never fabricates a product and never remains permanently
+  `aria-busy`. Reduced-motion preference is respected.
+- Verification passed build, Sites artifact validation, 85/85 tests, lint with
+  zero errors and three pre-existing warnings, and `git diff --check`.
+  Independent review returned safe to deploy. The first post-deployment
+  error-only Worker log query contained no events.
+- This is technically deployed but has not yet received the user's visual
+  acceptance on the original iPhone path.
+- No D1 mutation, importer run, schedule, classifier, credential, secret,
+  domain, routing or e-mail change was made. No report was requested or sent;
+  report #011 remains the latest confirmed delivered report.
+- Exact next task: verify one refreshed entry to `perfumetr.pl` on the user's
+  iPhone no longer shows the YSL placeholder or vertical shift. Afterwards
+  continue the v201 read-only importer reconciliation and authenticated owner
+  review of the reorganized integration panel. Do not start a duplicate import.
+
+## Previous handoff: Sites v201 production recovery and integration panel
 
 Verified through 2026-08-31 12:19 UTC.
 
