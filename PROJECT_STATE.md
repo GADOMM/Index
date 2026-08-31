@@ -1,6 +1,6 @@
 # Perfumetr project state
 
-Updated: 2026-08-31 00:16 UTC after the Sites v195 post-deployment verifier
+Updated: 2026-08-31 00:38 UTC after the Sites v195 and report-delivery checks
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
@@ -25,6 +25,10 @@ without starting an import.
   merged. Its pull-request validation is run #128, ID `33343249979`, and
   succeeded. That run validated the importer with 27/27 tests and skipped the
   production job; it is not evidence of a production import.
+- Documentation pull request #45 is merged as
+  `12b5bb9346430bc1fa626c327e8b92e59ed48f1d`. Its pull-request validation is
+  run #129, ID `33344895933`, with 27/27 tests and the production import job
+  skipped. It is documentation evidence, not a product import.
 - Future-contract fields in the GitHub worker were inert, optional metadata
   ignored by Sites v194 while it continued to receive its established
   compatible payload. The same worker revision also added independent local
@@ -202,10 +206,11 @@ time. Do not request or store the CJ token, a credential-bearing download URL
 or a raw private feed in this repository. Compare that inventory with the
 persisted selected feed before changing discovery or publication behavior.
 
-The user explicitly requested consolidated report #011 after all work is
-finished. At this documentation draft stage, report #010 remains the last
-confirmed delivered report and #011 must remain `pending` until mailbox
-delivery is verified.
+The user explicitly requested consolidated report #011 after all work was
+finished. Report #011 was delivered to `support@perfumetr.pl` on 2026-08-31 at
+00:36:59 UTC; Gmail records both `SENT` and `INBOX`. Report #010 is the
+immediately previous delivered report and report #003 remains the visual
+template authority.
 
 ## Earlier marketing analytics production checkpoint (Sites v183)
 
@@ -1233,11 +1238,13 @@ the panel is only a view and the user does not manually accept coupons.
 
 ## Deployment reports
 
-Report `#010`, dated 2026-08-27, is the latest confirmed delivered message to
+Report `#011`, dated 2026-08-31, is the latest confirmed delivered message to
 `support@perfumetr.pl`. Gmail records `SENT` and `INBOX` at
-2026-08-27 01:08:03 UTC. It uses the established report template and covers the
-audited Douglas PL launch. Report `#009` remains the immediately previous
-delivered report, and report `#003` remains the visual template authority.
+2026-08-31 00:36:59 UTC. It uses the established report template and covers
+marketing analytics, audited catalog identity and freshness, the v184-v194
+safety baseline and the Sites v195 atomic TradeDoubler rollout. Report `#010`
+is the immediately previous delivered report, and report `#003` remains the
+visual template authority.
 
 Current reporting instruction:
 
@@ -1247,7 +1254,7 @@ Current reporting instruction:
    its exact visual template, wordmark, layout, typography and footer;
 4. recheck the latest delivered report number immediately before assigning the
    next sequential number;
-5. after confirmed report `#010`, the next number is `#011` only if the
+5. after confirmed report `#011`, the next number is `#012` only if the
    mailbox check still confirms that sequence and the user explicitly requests
    another consolidated report.
 
@@ -1318,5 +1325,5 @@ ambiguous GTIN, reused external-ID or identity-conflict rows, and do not weaken
 `perfume-v1`, hidden-catalog or identity gates to increase the visible offer
 count. Do not describe the intermittent apex response as fully fixed, and do
 not claim that `www.perfumetr.pl` works while it returns 502. Do not present the
-Parfumdreams registry row as current partner approval. Report `#010` is the
-latest confirmed delivered report; do not claim that report `#011` was sent.
+Parfumdreams registry row as current partner approval. Report `#011` is the
+latest confirmed delivered report; do not claim that report `#012` was sent.
