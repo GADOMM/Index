@@ -25,10 +25,13 @@ without starting an import.
   merged. Its pull-request validation is run #128, ID `33343249979`, and
   succeeded. That run validated the importer with 27/27 tests and skipped the
   production job; it is not evidence of a production import.
-- The additive GitHub worker landed first while the previous Sites consumer
-  could safely ignore the additional validated fields. Sites v195 then enabled
-  the strict staged contract. The merge used the supported CI-skip marker, so
-  it did not launch an unrelated product import.
+- Future-contract fields in the GitHub worker were inert, optional metadata
+  ignored by Sites v194 while it continued to receive its established
+  compatible payload. The same worker revision also added independent local
+  duplicate-offer detection and bounded chunk validation, but did not rely on
+  or activate a new Sites contract. Sites v195 was the first side to enforce
+  strict dual validation, staging and atomic completion. The merge used the
+  supported CI-skip marker, so it did not launch an unrelated product import.
 
 ### v195 full-snapshot contract
 
@@ -45,8 +48,10 @@ without starting an import.
   marks the feed completed.
 - An interrupted or failed session therefore cannot expose a partial new
   generation. Staging rows are excluded from public and global catalog counts.
-- Unlimited begin, chunk, complete, fail and browser-ticket actions are
-  OIDC-only and retain audience `perfumetr-tradedoubler-bridge`.
+- Unlimited begin, chunk, complete and fail actions, plus issuance of the
+  `unlimited_full` browser ticket, are OIDC-only and retain audience
+  `perfumetr-tradedoubler-bridge`. This statement does not apply to other
+  browser-ticket modes.
 - Selector `all-products-v2:perfume-v1` is persisted in the active session,
   completed feed metadata and completion receipt. A missing or older selector
   forces a full replay even when the provider timestamp did not change; an old
@@ -59,6 +64,61 @@ without starting an import.
 - GTIN conflict quarantine is symmetric, including conflicts witnessed by
   rows whose own GTIN is null. No classifier, identity or publication gate was
   weakened.
+
+### Preserved v184-v194 identity and freshness baseline
+
+Sites v195 preserves the consolidated production behavior introduced between
+v184 and v194; it does not recreate those releases or infer undocumented UI
+changes.
+
+- v184 (`daafa64`) made the consent choice compact. After the user decides,
+  there is no permanent bottom-right privacy control.
+- v185 (`c1d9696`) introduced an explicit dictionary of 19 audited brand
+  groups, including Jean Paul Gaultier, shared by CJ, Douglas, Flaconi and
+  TradeDoubler. Automatic family repair is limited to 28 audited family keys
+  and two explicit Stronger With You aliases. It is never fuzzy and a semantic
+  slot conflict is not auto-merged. Seventy-one confirmed nonstandard variants
+  are hidden. Brand counters use the normalized brand, and public rows must be
+  standard, active and nonhidden.
+- v186 (`2efd3c1`) canonicalizes only the exact brand and line pair Xerjoff +
+  `XJ 1861 Naxos` to `Naxos`; that narrow line rewrite is independent of GTIN.
+  Separately, targeted reprocessing of earlier conflict rows is limited to
+  GTIN `8033488155070` and its leading-zero form `08033488155070`. This is not
+  a general rule for every Xerjoff or every `XJ 1861` title. The same release
+  set a global 30-hour publication cap for every source across the catalog,
+  comparison, store rail, counters, coupons and outbound redirect. CJ rolling
+  refresh targets 20 hours. An older offer is intentionally hidden rather than
+  presented as current. The Naxos regression proves the exact code contract,
+  not the live D1 state of every Naxos offer.
+- v187-v188 (`be14b7d`, `0e81f89`) preserve the guarded CJ cursor and retryable
+  mappings, and make unavailable-offer retirement and exact restock
+  confirmation-safe. A provider total may drift by at most 2%, capped at 250
+  rows, and only a guarded EOF can finish a drifted query; repeated cursor,
+  empty-page and overrun guards still fail closed. A result above 10,000 is
+  `scope_skipped`. This bounded allowance is not an immutable provider
+  snapshot.
+- v189 (`6770264`) caps one completed Flaconi maintenance step at 40 rows.
+- v190-v192 (`e98a0eb`, `aab3032`, `bd152b0`) make Douglas paused recovery,
+  safety cleanup, EOF finalization and source-counter reconciliation bounded,
+  resumable and fail closed. EOF first becomes a durable paused checkpoint;
+  idempotent cleanup and safety phases heartbeat the lease. Completion and
+  atomic counter publication occur only after the required phases agree.
+- v193 (`ed95d7d`) rechecks stale CJ unavailability tombstones and can restore
+  an exact confirmed restock without treating the stale tombstone as current
+  truth.
+- v194 (`57b6161`) fails closed on stale or contradictory Douglas feed rows
+  and duplicate/reused external product IDs once the conflict is observed. A
+  conflict split across feed pages is detected only when the second occurrence
+  is read, so the first may have been briefly public before quarantine. Out-of-
+  stock or parser-rejected rows are invalidated; only an exact safe restock may
+  reactivate them. This is not a global semantic-duplicate audit across
+  different product IDs.
+
+These rules prefer hiding an uncertain or stale offer over publishing it. The
+global semantic-duplicate audit is still incomplete. The Naxos correction is a
+specific audited repair, not proof of complete CJ coverage. CJ still discovers
+one largest eligible feed from at most the first 20 Product Feeds, so the full
+Notino and Brasty feed topology remains unconfirmed.
 
 Verification before deployment:
 
@@ -119,11 +179,14 @@ invented.
 
 Five of five direct apex requests returned HTTP 200, but average response time
 was poor at 11.69 seconds. Four production assets were byte-identical with the
-v195 build, and Sites reported zero worker error events in the first 15 minutes
-after publication. These checks verify the deployed code path but do not make
-the apex fast; do not describe it as fully stable. The separate `www` host
-remains an unresolved historical domain risk and must be rechecked before any
-newer claim.
+v195 build. Native post-publication logs contained no application exception or
+error payload. An errors-only filter returned three canceled technical
+`/api/search` reads and one verifier request to the nonexistent `/katalog`
+route that returned 404. All four originated from the deployment check, had
+`error=null`, and the 404 recorded worker outcome `ok`. These checks verify the
+deployed code path but do not make the apex fast; do not describe it as fully
+stable. The separate `www` host remains an unresolved historical domain risk
+and must be rechecked before any newer claim.
 
 ### Remaining CJ coverage limitation
 

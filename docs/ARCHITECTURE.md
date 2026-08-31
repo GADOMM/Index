@@ -31,10 +31,11 @@ Unlimited generation is still transferring.
 8. Failure or interruption leaves the prior canonical/public snapshot intact.
    A later run starts or resumes only a contract-compatible session.
 
-Unlimited begin, chunk, complete, fail and browser-ticket operations are
-OIDC-only. They retain audience `perfumetr-tradedoubler-bridge` and the exact
-repository, branch and workflow identity checks. A browser or owner-panel
-session cannot invoke these actions.
+Unlimited begin, chunk, complete and fail operations, plus issuance of the
+`unlimited_full` browser ticket, are OIDC-only. They retain audience
+`perfumetr-tradedoubler-bridge` and the exact repository, branch and workflow
+identity checks. This restriction is specific to the Unlimited full-import
+contract and does not describe other browser-ticket modes.
 
 Selector version is durable in the active session, completed feed metadata and
 completion receipt. A missing or older selector forces a replay even if the
@@ -74,6 +75,61 @@ country, language, currency, product count and update time. Do not copy a CJ
 token, authenticated download URL or private raw feed into GitHub or project
 documentation. A topology change must remain bounded, source-isolated and must
 not weaken product identity or `perfume-v1`.
+
+## Audited identity and freshness safety (Sites v185-v194)
+
+Catalog identity is shared by CJ, Douglas, Flaconi and TradeDoubler. It uses an
+explicit dictionary of 19 audited brand groups and stores the normalized brand
+used by public counters. Family repair is limited to 28 audited family keys and
+two explicit Stronger With You aliases. It is not fuzzy: a concentration,
+audience, product-type or volume slot conflict cannot be auto-merged. Public
+rows must be standard, active and nonhidden; 71 confirmed nonstandard variants
+are quarantined instead of being counted or exposed.
+
+The Xerjoff line rule is intentionally narrow and independent of GTIN. Only the
+exact brand and line pair Xerjoff + `XJ 1861 Naxos` canonicalizes to `Naxos`;
+other `XJ 1861` names remain unchanged. Separately, targeted reprocessing of
+earlier conflict rows is restricted to GTIN `8033488155070` and its leading-
+zero form `08033488155070`. The regression proves these code contracts; it is
+not proof that every possible Naxos offer exists in current D1.
+
+One global freshness contract caps publication at 30 hours for every source
+across catalog pages, comparison results, the store rail, public counters,
+coupons and outbound redirects. CJ rolling refresh targets 20 hours so a
+normal cycle can refresh an offer before it disappears. An older offer is
+deliberately hidden, never treated as current merely to keep a store or price
+visible.
+
+CJ lifecycle maintenance remains bounded and confirmation-safe:
+
+- at most 50 known product IDs are refreshed in one maintenance batch;
+- a transient omission becomes retryable, with confirmation no sooner than the
+  15-minute cooldown; a changed GTIN returns to review instead of replacing an
+  identity;
+- an unavailable tombstone is rechecked after six hours and only an exact
+  confirmed restock may reactivate the offer;
+- one coverage step examines at most three verified standard-GTIN variants,
+  each requiring a fresh offer witness from another verified store;
+- the first provider total is the cursor baseline. Drift is limited to 2%,
+  capped at 250 rows, and a drifted query may complete only at a guarded EOF.
+  Repeated cursors, empty non-EOF pages and overruns fail closed; result scopes
+  above 10,000 are `scope_skipped`.
+
+Flaconi completed-generation maintenance processes at most 40 rows per step.
+Douglas EOF first persists a durable paused checkpoint. Idempotent cleanup and
+safety phases heartbeat the lease and may resume; only their successful end
+can mark the generation completed. Source-counter reconciliation is atomic.
+Stale, duplicate or reused Douglas external product IDs fail closed, while an
+exact confirmed restock can safely reactivate an invalidated row. The duplicate
+gate applies once a conflict is observed. If two contradictory copies are on
+different feed pages, the first can be briefly public before the second copy is
+read and both are quarantined. This source-ID gate is not a global semantic-
+duplicate audit across different product IDs.
+
+These mechanisms prefer temporary non-publication over an ambiguous family,
+identity or stale price. They do not complete the outstanding global semantic-
+duplicate audit, and they do not prove that the single largest CJ feed selected
+from at most 20 returned feeds represents the complete programme topology.
 
 ## First-party marketing analytics (Sites v183)
 
@@ -361,15 +417,16 @@ test does not prove that its product feed is active or visible.
 
 ## Migration rule
 
-Contract rollouts must preserve compatibility at every intermediate state. A
-consumer change lands first when the existing producer would otherwise send a
-request the new consumer rejects. An additive producer change may land first
-only when the current consumer safely ignores the new fields and retains its
-existing safety gates.
+Sites changes that define or enforce a new contract land first and remain
+backward compatible. GitHub changes that rely on that contract land second.
+Removing an old endpoint, audience or workflow path is always a later,
+separately verified deployment.
 
-The v195 rollout used the latter order: the additive GitHub worker sent the
-complete raw slice and classifier metadata while the prior Sites version still
-accepted its established payload; Sites v195 then enforced exact dual
-classification, staging and atomic publication. The merge did not start a
-production import. Removing an old endpoint, audience or workflow path remains
-a later, separately verified deployment.
+Before v195 enforcement, future-contract fields in the GitHub worker were
+inert, optional metadata that Sites v194 ignored while it continued accepting
+the established payload. The same worker revision also added independent local
+duplicate-offer detection and bounded chunk validation, but did not rely on or
+activate a new Sites contract. Sites v195 was the first side to enforce exact
+dual classification, staging and atomic publication, and the already
+compatible worker supplied the required fields. The preparatory merge did not
+start a production import.

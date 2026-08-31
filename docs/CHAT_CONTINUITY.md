@@ -20,9 +20,42 @@ post-deployment read-only check.
   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_0581a7ae25848191bb7b847085f737f1`;
   deployment `appgdep_6a94c5dc21308191812d9bf6d472fe08` publish
   succeeded with null failure message.
-- The additive worker landed first while the prior Sites consumer could safely
-  ignore the new raw-snapshot fields. Sites v195 then enabled strict staging
-  and atomic publication. No import was started by either rollout.
+- Future-contract fields in the worker were inert, optional metadata ignored
+  by Sites v194 while it continued to receive its established compatible
+  payload. The same worker revision also added independent local duplicate-
+  offer detection and bounded chunk validation, but did not rely on or activate
+  a new Sites contract. Sites v195 was the first side to enforce strict dual
+  validation, staging and atomic publication. No import was started by either
+  rollout.
+- The v184-v194 baseline remains active. v184 made analytics consent compact;
+  after a decision there is no permanent bottom-right privacy control.
+- Shared identity across CJ, Douglas, Flaconi and TradeDoubler uses only 19
+  audited brand groups, 28 audited family keys and two explicit Stronger With
+  You aliases. Jean Paul Gaultier is one of those brand groups. There is no
+  fuzzy merge, semantic slot conflicts stay separate, counters use the
+  normalized brand and 71 confirmed nonstandard variants remain hidden.
+- Only the exact brand and line pair Xerjoff + `XJ 1861 Naxos` canonicalizes to
+  `Naxos`; this narrow rewrite is independent of GTIN. Separately, targeted
+  reprocessing of earlier conflict rows is restricted to GTIN `8033488155070`
+  and its leading-zero form `08033488155070`. This is test-backed code behavior,
+  not proof of every live Naxos row or permission to remove `XJ 1861` globally.
+- A global 30-hour publication cap applies to every source across catalog,
+  comparison, store rail, counters, coupons and outbound redirects. CJ rolling
+  refresh targets 20 hours. Older offers are intentionally hidden instead of
+  presented as current.
+- CJ known-ID maintenance is capped at 50, confirmation retry waits 15 minutes,
+  stale unavailability is rechecked after six hours, a changed GTIN goes to
+  review and coverage examines at most three verified standard-GTIN variants
+  per step with a fresh other-store witness. Cursor drift is at most 2%, capped
+  at 250 rows; only guarded EOF may finish a drifted query and scopes above
+  10,000 are skipped safely.
+- Flaconi completed maintenance is capped at 40. Douglas paused recovery, EOF
+  cleanup, safety phases and counter reconciliation are bounded, resumable and
+  fail closed. A stale, duplicate or reused external ID fails closed once the
+  conflict is observed; if contradictory copies are on different pages, the
+  first can be briefly public before the second is read and quarantine begins.
+  This is not a global semantic-duplicate audit across different product IDs.
+  Only an exact safe restock may reactivate a row.
 - Every TradeDoubler Unlimited chunk now contains the complete raw slice and
   its exact ordered `perfume-v1` subset. Sites independently recomputes the
   subset and rejects an omission, addition, mutation or order change.
@@ -33,9 +66,10 @@ post-deployment read-only check.
 - Selector `all-products-v2:perfume-v1` is durable in the active session,
   completed feed metadata and receipt. An old selector forces replay and an
   old session cannot resume or complete under v195.
-- Unlimited begin, chunk, complete, fail and browser-ticket actions are
-  OIDC-only with audience `perfumetr-tradedoubler-bridge` and exact workflow
-  identity checks.
+- Unlimited begin, chunk, complete and fail actions, plus issuance of the
+  `unlimited_full` browser ticket, are OIDC-only with audience
+  `perfumetr-tradedoubler-bridge` and exact workflow identity checks. Other
+  browser-ticket modes are outside this statement.
 - The validated exact classifier subset bypasses only the older narrower
   perfume-name predicate. Category-only perfume evidence works; description-
   only references, shampoo, testers, samples, refills, sets, body care, mists
@@ -80,10 +114,13 @@ post-deployment read-only check.
   application did not retain or invent expired DUO pricing.
 - Five of five direct apex requests returned HTTP 200, but average response
   time was 11.69 seconds. Four production assets were byte-identical with the
-  v195 build, and Sites reported zero worker error events during the first 15
-  minutes. This proves the deployed asset and initial error-free window, not a
-  fast apex. Do not call it fully stable or fast. Recheck `www` separately
-  before changing its historical unresolved status.
+  v195 build. Native post-publication logs contained no application exception
+  or error payload. An errors-only filter returned three canceled technical
+  `/api/search` reads and one verifier request to the nonexistent `/katalog`
+  route that returned 404. All came from the deployment check, had
+  `error=null`, and the 404 recorded worker outcome `ok`. This proves the
+  deployed asset, not a fast apex. Do not call it fully stable or fast. Recheck
+  `www` separately before changing its historical unresolved status.
 - Current CJ discovery chooses the largest eligible feed from at most the first
   20 Product Feeds returned. Complete Notino and Brasty programme coverage is
   therefore not proven. The owner may provide a Product Feeds list/export with
