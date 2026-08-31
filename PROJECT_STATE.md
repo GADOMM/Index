@@ -1,9 +1,100 @@
 # Perfumetr project state
 
-Updated: 2026-08-31 12:46 UTC after the Sites v202 homepage stability hotfix
+Updated: 2026-08-31 13:30 UTC after the Sites v204 integration-panel recovery and report #012
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
+
+## Integration panel recovery and best-offer store label (Sites v204)
+
+Verified through 2026-08-31 13:30 UTC. This checkpoint supersedes the v200
+authenticated integration-panel implementation and records the requested
+end-of-day report. It does not claim a new import, catalog mutation or user
+visual acceptance.
+
+### Deployment and fixes
+
+- Sites v204 is deployed from source commit
+  `e0ec3f63e87c994e381f54deb29a36a23751fefc`.
+- Sites version ID:
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_962d93f004bc81919f6dde56325f1e38`.
+- Production deployment:
+  `appgdep_6a957f32977c81919e0c0eecee1e5c7e`, publish `succeeded`
+  with no failure message at 2026-08-31 13:19:31 UTC.
+- v203 from `92b5f409b6b0a6bb6190c9a768822e7c29cf3e41` was published
+  briefly, then immediately superseded by v204 after independent review found
+  a programme-status/feed-status conflation. v204 preserves the persisted
+  affiliate decision, restores valid/invalid credential-state derivation and
+  requires the AWIN Feed API Key for both Flaconi and Douglas.
+- The best-offer verdict now visibly renders `bestOffer.store` beside the
+  cheapest-price label. The production client asset was checked directly and
+  contains that rendering. Ranking and outbound links were not changed.
+- The protected integration page no longer starts the old heavy
+  `getTradedoublerSyncOverview` and `getAffiliatePortfolioOverview` fan-outs
+  during SSR. The recovered code path could start at least 18 D1 operations,
+  with an initial wave of about 12 connections against a per-invocation limit
+  of 6. This is the strongest code-level explanation for the reported 1101;
+  an authenticated production stack trace was not available.
+- The authenticated shell now uses four sequential, read-only D1 queries and a
+  750 ms per-render deadline. A stalled snapshot returns a usable page with
+  unknown values, never a 1101 or invented zero.
+- The panel summary derives its supported-store count from
+  `COMPARISON_STORES`, includes Douglas while its publication flag is active,
+  separates affiliate approval from feed availability, delays coupon reads
+  until the section opens and removes the technical Hebe diagnostic from the
+  automatic queue.
+- Automatic status reads remain enabled at most once per source every eight
+  hours, begin after 90 seconds and stay serialized at least 45 seconds apart.
+  No import is started by those reads.
+
+### Production verification
+
+- Build and Sites artifact validation passed. The full Sites suite passed
+  86/86. Lint passed with zero errors and the same three pre-existing unrelated
+  warnings. `git diff --check` passed. Independent review found no remaining
+  blocker.
+- The authenticated runtime regression completely stalls the first snapshot
+  query and still requires HTTP 200 plus the usable fallback shell in about
+  1.6 seconds. The route remains private and no secret value is rendered.
+- `perfumetr.pl`, `beta.perfumetr.pl`, the anonymous integration gate, the
+  Sites provider and a Versace search all returned HTTP 200. Error-only Worker
+  logs after v204 contained no events.
+- Worker logs showed 4–54 ms for the root pages and anonymous panel and
+  146–468 ms for the basic Versace UI search. Separate 7–10 second curl totals
+  were entirely local TLS-proxy handshake time; connection-reuse probes were
+  sub-second. Beta still intentionally defers its optional homepage DTO by
+  four seconds, so secondary counters can settle later; that is non-blocking
+  UX debt and was not changed in v204.
+- Sites is active and public. `perfumetr.pl` and `beta.perfumetr.pl` retain
+  active provider and SSL state with no error. The historical
+  `www.perfumetr.pl` custom hostname remains pending validation.
+- The public homepage DTO reported Notino 8,663; Brasty 5,370; Flaconi 3,754;
+  Cocolita 896; Drogeria.pl 862; Aelia.pl 1,471; Douglas 3,057; exact total
+  24,073 active offers. It also reported 11,097 catalog entries, all with an
+  image, and 628 brands.
+- GitHub `master` before this documentation PR was
+  `d8756ea87e4c9945c98fe44ddf782049bf02fb79`. Latest run #134, ID
+  `33393585171`, was pull-request validation and succeeded; it is not an
+  importer run. Latest production run #133, ID `33388076416`, was scheduled
+  and succeeded. No job was running during the recovery and no duplicate was
+  started.
+
+### Report, boundary and next task
+
+- Report #012, “Stabilna wyszukiwarka, ceny i panel integracji”, was sent to
+  `support@perfumetr.pl` at 2026-08-31 13:28:16 UTC. Gmail confirms labels
+  `SENT` and `INBOX`; report #003 remained the visual template authority.
+- v203-v204 changed no D1 data, import generation, schedule, classifier,
+  product-review decision, partner secret, domain or routing rule. No manual
+  import was started and no review product was published.
+- The deployment is technically verified. Fresh user acceptance of the
+  authenticated panel and best-offer label on the original iPhone path is not
+  yet recorded.
+- Exact next task: verify only the two user paths on the refreshed production
+  build when the owner next opens them. If no 1101 and the merchant label is
+  visible, continue the already documented read-only reconciliation of run
+  #133 and its source generations. Do not reimplement v204 or start an import
+  merely to verify it.
 
 ## Homepage stability hotfix (Sites v202)
 

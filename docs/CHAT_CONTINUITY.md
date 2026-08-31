@@ -4,7 +4,53 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: Sites v202 homepage stability
+## Current handoff: Sites v204 panel recovery and merchant label
+
+Verified through 2026-08-31 13:30 UTC.
+
+- Sites v204 is deployed from
+  `e0ec3f63e87c994e381f54deb29a36a23751fefc`; version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_962d93f004bc81919f6dde56325f1e38`;
+  deployment `appgdep_6a957f32977c81919e0c0eecee1e5c7e` succeeded
+  at 13:19:31 UTC with no failure message.
+- The best-offer card visibly includes the store name. The cheaper offer
+  remains present only once and the lower list contains only alternatives.
+- The reported authenticated integration-panel 1101 is addressed by replacing
+  the first-render fan-out of at least 18 D1 operations with four sequential,
+  read-only snapshot queries and a 750 ms deadline. A stalled query now
+  returns a usable unknown-state shell instead of a crash or false zero.
+- Independent review caught and fixed the brief v203 conflation of live offers
+  with affiliate approval. v204 preserves programme and feed statuses,
+  distinguishes invalid credentials, applies the AWIN feed-key requirement to
+  Douglas and derives the visible store list from `COMPARISON_STORES`.
+- Coupons load only when opened. Hebe technical diagnostics are manual.
+  Normal source status reads remain automatic at most once every eight hours,
+  start after 90 seconds and run one at a time with 45-second spacing.
+- Verification passed build, artifact validation, 86/86 tests, lint with zero
+  errors and three existing warnings, `git diff --check` and independent
+  review. The forced stalled-D1 authenticated test returns HTTP 200 in about
+  1.6 seconds. Production root, beta, panel gate, provider and Versace search
+  returned HTTP 200; post-deployment error logs were empty.
+- Worker logs show 4–54 ms for pages/panel and 146–468 ms for the basic search.
+  The observed multi-second standalone curl time was local TLS-proxy setup, not
+  Worker execution. Beta's optional homepage DTO still has an intentional
+  four-second delay; it is separate non-blocking UX debt.
+- Current production DTO: Notino 8,663; Brasty 5,370; Flaconi 3,754; Cocolita
+  896; Drogeria.pl 862; Aelia.pl 1,471; Douglas 3,057; exact total 24,073.
+  Catalog 11,097, all with images, 628 brands.
+- Latest GitHub validation is run #134, ID `33393585171`, success,
+  `pull_request`. Latest production run is #133, ID `33388076416`,
+  scheduled and successful. No job was duplicated.
+- Report #012 was sent to `support@perfumetr.pl` at 13:28:16 UTC and is
+  confirmed with `SENT` and `INBOX`. It reused the report #003 template.
+- No D1/catalog mutation, manual import, review publication, classifier,
+  credential, secret, domain or routing change was made for v203-v204.
+- Technical deployment is complete; fresh iPhone user acceptance is not yet
+  recorded. Exact next task is only to verify the refreshed authenticated
+  panel and merchant label when next opened, then read-only reconcile run #133
+  and its generations. Do not rebuild v204 or start an import for verification.
+
+## Previous handoff: Sites v202 homepage stability
 
 Verified through 2026-08-31 12:46 UTC.
 
