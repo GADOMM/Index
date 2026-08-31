@@ -8,14 +8,19 @@ import {
   providerPayloadShapeCode,
 } from "./tradedoubler-products.mjs";
 import { createOidcTokenProvider, validatedSiteOrigin } from "./github-oidc.mjs";
-import { isPerfumeProduct } from "./perfume-classifier.mjs";
+import {
+  PERFUME_CLASSIFIER_VERSION,
+  isPerfumeProduct,
+} from "./perfume-classifier.mjs";
 
 const BRIDGE_MAXIMUM_BYTES = 2 * 1024 * 1024;
-const CHUNK_TARGET_BYTES = 1_500_000;
 const PROVIDER_MAXIMUM_BYTES = 512 * 1024 * 1024;
 const PAGE_SIZE = 100;
 const PROOF_PAGE_LIMIT = 10;
 const FULL_PAGE_LIMIT = 10_000;
+const IMPORT_STRUCTURE_MAXIMUM_NODES = 25_000;
+const IMPORT_STRUCTURE_MAXIMUM_DEPTH = 16;
+const RAW_CHUNK_MAXIMUM_PRODUCTS = 100;
 const OIDC_AUDIENCE = "perfumetr-tradedoubler-bridge";
 const mode = process.env.PERFUMETR_MODE === "full" ? "full"
   : process.env.PERFUMETR_MODE === "proof" ? "proof" : null;
@@ -364,34 +369,202 @@ const fetchPagedSnapshot = async (feedId, expectedProductCount) => {
   };
 };
 
-const buildChunks = (products) => {
-  const chunks = [];
-  let current = [];
-  let currentBytes = 64;
-  const makeEnvelope = (items) => ({ productHeader: { totalHits: products.length }, products: items });
-  for (const product of products) {
-    const productBytes = Buffer.byteLength(JSON.stringify(product)) + (current.length ? 1 : 0);
-    if (current.length && (current.length >= 100 || currentBytes + productBytes > CHUNK_TARGET_BYTES)) {
-      chunks.push(makeEnvelope(current));
-      current = [];
-      currentBytes = 64;
+const boundedStructureNodeCount = (root, initialDepth = 0) => {
+  const stack = [{ key: null, value: root, depth: initialDepth }];
+  let nodes = 0;
+  while (stack.length) {
+    const current = stack.pop();
+    nodes += 1;
+    if (nodes > IMPORT_STRUCTURE_MAXIMUM_NODES
+      || current.depth > IMPORT_STRUCTURE_MAXIMUM_DEPTH) return null;
+    if (typeof current.value === "string") {
+      if (current.value.length > 20_000) return null;
+      continue;
     }
-    if (productBytes + 64 > CHUNK_TARGET_BYTES) throw new Error("single_product_too_large");
-    current.push(product);
-    currentBytes += productBytes;
+    if (!current.value || typeof current.value !== "object") continue;
+    if (Array.isArray(current.value)) {
+      const key = current.key?.toLocaleLowerCase() ?? "";
+      const maximum = key === "products" ? 100
+        : key === "offers" ? 20
+          : key === "pricehistory" ? 50
+            : key === "fields" ? 100
+              : key === "categories" ? 50
+                : 500;
+      if (current.value.length > maximum) return null;
+      for (const value of current.value) {
+        stack.push({ key: null, value, depth: current.depth + 1 });
+      }
+      continue;
+    }
+    const entries = Object.entries(current.value);
+    if (entries.length > 100) return null;
+    for (const [key, value] of entries) {
+      stack.push({ key, value, depth: current.depth + 1 });
+    }
   }
-  if (current.length) chunks.push(makeEnvelope(current));
-  if (chunks.some((chunk) => Buffer.byteLength(JSON.stringify({
-    action: "import_unlimited_chunk",
-    feedId: "999999",
-    sessionId: "00000000-0000-4000-8000-000000000000",
-    chunkIndex: 1_000_000,
-    snapshotHash: "f".repeat(64),
-    rawProductCount: chunk.products.length,
-    payload: chunk,
-  })) > BRIDGE_MAXIMUM_BYTES)) {
-    throw new Error("bridge_payload_too_large");
+  return nodes;
+};
+
+const makeUnlimitedChunkPayload = (rawProducts, totalHits) => ({
+  productHeader: { totalHits },
+  products: rawProducts.filter(isPerfumeProduct),
+  rawProducts,
+  classifierVersion: PERFUME_CLASSIFIER_VERSION,
+});
+
+const makeUnlimitedChunkRequest = ({
+  feedId,
+  sessionId,
+  snapshotHash,
+  chunkIndex,
+  rawProducts,
+  totalHits,
+}) => ({
+  action: "import_unlimited_chunk",
+  feedId,
+  sessionId,
+  chunkIndex,
+  snapshotHash,
+  rawProductCount: rawProducts.length,
+  payload: makeUnlimitedChunkPayload(rawProducts, totalHits),
+});
+
+const isRecord = (value) => Boolean(value && typeof value === "object" && !Array.isArray(value));
+
+const trimmedIdentityPart = (value) => {
+  if (typeof value !== "string" && typeof value !== "number") return null;
+  if (typeof value === "number" && !Number.isFinite(value)) return null;
+  const normalized = String(value).trim();
+  return normalized || null;
+};
+
+const nonNegativeInteger = (value) => {
+  if (typeof value === "number") return Number.isSafeInteger(value) && value >= 0 ? value : null;
+  if (typeof value !== "string" || !/^-?\d+$/.test(value.trim())) return null;
+  const parsed = Number(value.trim());
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : null;
+};
+
+const snapshotOfferRecords = (product) => {
+  if (!isRecord(product)) return [];
+  if (Array.isArray(product.offers)) return product.offers.filter(isRecord);
+  const hasFlatOffer = [
+    "feedId",
+    "productUrl",
+    "sourceProductId",
+    "id",
+    "price",
+    "priceHistory",
+  ].some((field) => product[field] !== undefined);
+  return hasFlatOffer ? [product] : [];
+};
+
+const assertUniqueSnapshotOfferIdentities = (products, configuredFeedId) => {
+  const seenOfferIds = new Set();
+  for (const product of products) {
+    for (const offer of snapshotOfferRecords(product)) {
+      const sourceProductId = trimmedIdentityPart(offer.sourceProductId);
+      const upstreamOfferId = trimmedIdentityPart(offer.id);
+      if (sourceProductId === null && upstreamOfferId === null) continue;
+      const parsedFeedId = nonNegativeInteger(offer.feedId ?? configuredFeedId);
+      const externalOfferId = upstreamOfferId
+        ?? `tradedoubler:${parsedFeedId ?? "unknown"}:${sourceProductId}`;
+      if (seenOfferIds.has(externalOfferId)) {
+        throw new Error("provider_snapshot_duplicate_offer_id");
+      }
+      seenOfferIds.add(externalOfferId);
+    }
   }
+};
+
+const buildChunks = (products, { feedId, sessionId, snapshotHash }) => {
+  const chunks = [];
+  let currentProducts = [];
+  let currentRawBytes = 0;
+  let currentPerfumeBytes = 0;
+  let currentPerfumeCount = 0;
+  let currentStructureNodes = boundedStructureNodeCount(
+    makeUnlimitedChunkPayload([], products.length),
+  );
+  if (currentStructureNodes === null) throw new Error("bridge_payload_too_large");
+
+  const emptyRequestBytes = (chunkIndex, rawProductCount) => {
+    const emptyRequest = makeUnlimitedChunkRequest({
+      feedId,
+      sessionId,
+      snapshotHash,
+      chunkIndex,
+      rawProducts: [],
+      totalHits: products.length,
+    });
+    emptyRequest.rawProductCount = rawProductCount;
+    return Buffer.byteLength(JSON.stringify(emptyRequest));
+  };
+
+  const pushCurrent = () => {
+    const request = makeUnlimitedChunkRequest({
+      feedId,
+      sessionId,
+      snapshotHash,
+      chunkIndex: chunks.length,
+      rawProducts: currentProducts,
+      totalHits: products.length,
+    });
+    if (Buffer.byteLength(JSON.stringify(request)) > BRIDGE_MAXIMUM_BYTES
+      || boundedStructureNodeCount(request.payload) === null) {
+      throw new Error("bridge_payload_too_large");
+    }
+    chunks.push(request);
+    currentProducts = [];
+    currentRawBytes = 0;
+    currentPerfumeBytes = 0;
+    currentPerfumeCount = 0;
+    currentStructureNodes = boundedStructureNodeCount(
+      makeUnlimitedChunkPayload([], products.length),
+    );
+  };
+
+  for (const product of products) {
+    const serializedProduct = JSON.stringify(product);
+    const productBytes = Buffer.byteLength(serializedProduct);
+    const productNodes = boundedStructureNodeCount(product, 2);
+    const perfume = isPerfumeProduct(product);
+    if (productNodes === null) throw new Error("single_product_too_large");
+
+    const candidateState = () => {
+      const rawCount = currentProducts.length + 1;
+      const perfumeCount = currentPerfumeCount + (perfume ? 1 : 0);
+      const rawBytes = currentRawBytes + productBytes + (currentProducts.length ? 1 : 0);
+      const perfumeBytes = currentPerfumeBytes
+        + (perfume ? productBytes + (currentPerfumeCount ? 1 : 0) : 0);
+      const requestBytes = emptyRequestBytes(chunks.length, rawCount) + rawBytes + perfumeBytes;
+      const structureNodes = currentStructureNodes + productNodes * (perfume ? 2 : 1);
+      return {
+        rawCount,
+        perfumeCount,
+        rawBytes,
+        perfumeBytes,
+        structureNodes,
+        fits: rawCount <= RAW_CHUNK_MAXIMUM_PRODUCTS
+          && requestBytes <= BRIDGE_MAXIMUM_BYTES
+          && structureNodes <= IMPORT_STRUCTURE_MAXIMUM_NODES,
+      };
+    };
+
+    let candidate = candidateState();
+    if (!candidate.fits && currentProducts.length) {
+      pushCurrent();
+      candidate = candidateState();
+    }
+    if (!candidate.fits) throw new Error("single_product_too_large");
+
+    currentProducts.push(product);
+    currentRawBytes = candidate.rawBytes;
+    currentPerfumeBytes = candidate.perfumeBytes;
+    currentPerfumeCount = candidate.perfumeCount;
+    currentStructureNodes = candidate.structureNodes;
+  }
+  if (currentProducts.length) pushCurrent();
   return chunks;
 };
 
@@ -552,38 +725,30 @@ const runFullImport = async (feedId) => {
     if (snapshot.snapshotHash && snapshot.snapshotHash !== downloaded.snapshotHash) {
       throw new Error("snapshot_file_mismatch");
     }
+    assertUniqueSnapshotOfferIdentities(providerProducts, feedId);
     const perfumeProducts = providerProducts.reduce(
       (count, product) => count + (isPerfumeProduct(product) ? 1 : 0),
       0,
     );
     if (!perfumeProducts) throw new Error("no_perfume_products");
-    const chunks = buildChunks(providerProducts);
+    const chunks = buildChunks(providerProducts, {
+      feedId,
+      sessionId,
+      snapshotHash: downloaded.snapshotHash,
+    });
     const nextChunk = Number(snapshot.nextChunk ?? 0);
     if (!Number.isSafeInteger(nextChunk) || nextChunk < 0 || nextChunk > chunks.length) {
       throw new Error("invalid_snapshot_cursor");
     }
     const skippedRawCount = chunks.slice(0, nextChunk)
-      .reduce((total, chunk) => total + chunk.products.length, 0);
+      .reduce((total, chunk) => total + chunk.rawProductCount, 0);
     if (skippedRawCount !== Number(snapshot.rawCount ?? 0)) {
       throw new Error("snapshot_cursor_mismatch");
     }
 
     let latest = null;
     for (let index = nextChunk; index < chunks.length; index += 1) {
-      const rawChunk = chunks[index];
-      const perfumeChunk = {
-        ...rawChunk,
-        products: rawChunk.products.filter(isPerfumeProduct),
-      };
-      latest = await importUnlimitedChunk({
-        action: "import_unlimited_chunk",
-        feedId,
-        sessionId,
-        chunkIndex: index,
-        snapshotHash: downloaded.snapshotHash,
-        rawProductCount: rawChunk.products.length,
-        payload: perfumeChunk,
-      });
+      latest = await importUnlimitedChunk(chunks[index]);
     }
     const confirmationTicket = await issueTicket(feedId, "feed_metadata");
     const confirmedFeedMetadata = await fetchProviderJson(confirmationTicket.ticket);
