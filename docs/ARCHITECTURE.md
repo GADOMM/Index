@@ -115,7 +115,9 @@ CJ lifecycle maintenance remains bounded and confirmation-safe:
   Repeated cursors, empty non-EOF pages and overruns fail closed; result scopes
   above 10,000 are `scope_skipped`.
 
-Flaconi completed-generation maintenance processes at most 40 rows per step.
+Flaconi completed-generation review-backlog reprocessing handles at most 40
+rows per step. Its separate safety phase has its own 400-row bound; 40 is not
+a limit for the entire maintenance path.
 Douglas EOF first persists a durable paused checkpoint. Idempotent cleanup and
 safety phases heartbeat the lease and may resume; only their successful end
 can mark the generation completed. Source-counter reconciliation is atomic.
@@ -123,7 +125,8 @@ Stale, duplicate or reused Douglas external product IDs fail closed, while an
 exact confirmed restock can safely reactivate an invalidated row. The duplicate
 gate applies once a conflict is observed. If two contradictory copies are on
 different feed pages, the first can be briefly public before the second copy is
-read and both are quarantined. This source-ID gate is not a global semantic-
+read. Once the conflict is observed, the shared external ID moves to review and
+the earlier offer is invalidated. This source-ID gate is not a global semantic-
 duplicate audit across different product IDs.
 
 These mechanisms prefer temporary non-publication over an ambiguous family,
