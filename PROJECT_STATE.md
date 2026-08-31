@@ -1,9 +1,101 @@
 # Perfumetr project state
 
-Updated: 2026-08-31 10:17 UTC after the Sites v196 search and offer UX deployment
+Updated: 2026-08-31 12:19 UTC after the Sites v201 production recovery
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
+
+## Production recovery and integration panel checkpoint (Sites v201)
+
+Verified through 2026-08-31 12:19 UTC. This checkpoint supersedes the v196
+intermittent-catalog task for the public search and comparison path. It does
+not claim that every importer or partner programme has completed a new cycle.
+
+### Deployed source
+
+- Sites v201 source commit:
+  `a278ce108d13035727fdcfde616f19aadf358f29`.
+- Sites version ID:
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_35c2087ff8a08191b085e56f59ff7789`.
+- Production deployment:
+  `appgdep_6a957116f65c819182017efa0594f75a`, publish `succeeded`
+  with no failure message at 2026-08-31 12:18:43 UTC.
+- Provider URL: `https://perfumetr.borodzicz85.chatgpt.site`.
+- The exact deployed commit is the pushed Sites source branch HEAD. No D1
+  mutation, manual import, partner credential change, domain change or e-mail
+  was performed for v197 through v201.
+
+### Search, comparison and page availability
+
+- Free-text Enter and the search button show the bounded page of all plausible
+  perfume groups instead of selecting the first suggestion.
+- The common typo `Verasce` was verified on production and returned 39
+  possible scent groups. The request returned HTTP 200 in 350 ms.
+- Versace Eros Flame EDP 100 ml was selected on production and returned seven
+  offers. The best offer appears once in the top card; the lower section
+  contains exactly the six remaining offers.
+- The original generic error text was replaced by concise human copy.
+- Main and beta shells render before optional catalog data. Production worker
+  timings in the final verification were 7 ms for `perfumetr.pl/` and 39 ms
+  for `beta.perfumetr.pl/`.
+- The v201 comparison request returned HTTP 200 in 522 ms. No new compare 503,
+  comparison deadline, coupon soft-deadline or delivery soft-deadline event
+  appeared in the post-deployment error log.
+
+### Root cause and v201 resilience
+
+- The recovered 503 was the application deadline at exactly 8,000 ms. The
+  required offer query shared `Promise.allSettled` with optional coupon and
+  delivery reads, so one optional pending operation could hold the entire
+  response until the deadline.
+- The public comparison path also called the write-capable verified-promotion
+  synchronizer. v201 removes that synchronization from the customer request;
+  controlled homepage and panel paths remain responsible for it.
+- Offer rows are now required, while coupon and verified-delivery enrichment
+  use a 750 ms soft deadline and fail open to current feed price and feed
+  delivery. A delayed optional read cannot turn already available offers into
+  a 503.
+- The full Sites suite passed 85/85, including a regression that stalls both
+  optional reads and still requires comparison offers in under two seconds.
+  Build and artifact validation passed. Lint reported zero errors and the same
+  three pre-existing warnings. An independent code review found no blocker.
+
+### Integration panel and automatic status reads
+
+- Sites v200, source commit
+  `e7d386e687740001b12274d375d5c7db8976ca3a`, reorganized the integration
+  panel into a summary, a real attention queue and a compact store overview.
+  Technical configuration, detail, coupon and registry sections remain
+  available but collapsed by default.
+- Status reads remain automatic but are intentionally infrequent: each source
+  is due at most once per eight hours in a browser origin, the first check waits
+  90 seconds and checks are serialized with at least 45 seconds between them.
+  Manual refresh uses the same serialization.
+- Legacy open panel tabs can still emit their old parallel one-minute polling
+  pattern until reloaded or closed. The v200 server returns HTTP 429 before D1
+  for those missing-header background requests, so they do not start an import
+  or consume catalog reads. TradeDoubler and Hebe status endpoints are
+  explicitly read-only.
+- The panel was covered by server-render and behavior tests. Its protected
+  authenticated interior was not visually opened or bypassed during this
+  checkpoint.
+
+### Current public counters and remaining boundary
+
+The final production store rail showed Notino 8,663; Brasty 5,370; Flaconi
+3,754; Cocolita 896; Drogeria.pl 862; Aelia.pl 1,471; Douglas 3,057; exact
+total 24,073, and 628 brands. Douglas had increased from 2,964 observed earlier
+in the same work window. That is a production-state change from existing
+automation, not a mutation attributed to the v197-v201 deployments. The
+corresponding GitHub Actions run and importer generation must be read before
+describing why it changed.
+
+No report or partner message was requested or sent. Report #011 remains the
+latest confirmed delivered report. The exact next task is the read-only
+reconciliation of the newest GitHub Actions importer result and source
+generations behind the 24,073-offer rail, followed by authenticated owner
+review of the reorganized integration panel. Do not start a duplicate import
+for that verification.
 
 ## Search and offer UX checkpoint (Sites v196)
 
