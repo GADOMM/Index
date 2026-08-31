@@ -101,7 +101,9 @@ changes.
   empty-page and overrun guards still fail closed. A result above 10,000 is
   `scope_skipped`. This bounded allowance is not an immutable provider
   snapshot.
-- v189 (`6770264`) caps one completed Flaconi maintenance step at 40 rows.
+- v189 (`6770264`) caps completed-generation review-backlog reprocessing at
+  40 rows per step. A separate safety phase has its own 400-row bound, so 40
+  is not a global limit for all Flaconi maintenance.
 - v190-v192 (`e98a0eb`, `aab3032`, `bd152b0`) make Douglas paused recovery,
   safety cleanup, EOF finalization and source-counter reconciliation bounded,
   resumable and fail closed. EOF first becomes a durable paused checkpoint;
