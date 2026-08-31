@@ -1,11 +1,150 @@
 # Perfumetr project state
 
-Updated: 2026-08-29 12:49 UTC
+Updated: 2026-08-31 00:16 UTC after the Sites v195 post-deployment verifier
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
-## Marketing analytics production checkpoint (Sites v183)
+## TradeDoubler snapshot-safety checkpoint (Sites v195)
+
+Sites v195 is deployed and its point-in-time production state was rechecked
+without starting an import.
+
+### Deployment and compatible GitHub worker
+
+- Sites version: `195`.
+- Sites source commit:
+  `7430f7b5c2b9770ad5fae7c97f8ac0375ce3e89a`.
+- Sites version ID:
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_0581a7ae25848191bb7b847085f737f1`.
+- Sites deployment: `appgdep_6a94c5dc21308191812d9bf6d472fe08`,
+  publish `succeeded` with null failure message.
+- GitHub `master` after the compatible worker rollout:
+  `de1f14fb224e38a669258bac42d81d5c5ecb1cc6`.
+- Pull request #44, `Make full TradeDoubler snapshots atomic and exact`, is
+  merged. Its pull-request validation is run #128, ID `33343249979`, and
+  succeeded. That run validated the importer with 27/27 tests and skipped the
+  production job; it is not evidence of a production import.
+- The additive GitHub worker landed first while the previous Sites consumer
+  could safely ignore the additional validated fields. Sites v195 then enabled
+  the strict staged contract. The merge used the supported CI-skip marker, so
+  it did not launch an unrelated product import.
+
+### v195 full-snapshot contract
+
+- Every TradeDoubler Unlimited chunk carries the complete bounded raw product
+  slice in `rawProducts`, the exact ordered `perfume-v1` subset in `products`
+  and classifier version `perfume-v1`.
+- The worker rejects a duplicate offer identity anywhere in the complete
+  provider snapshot before sending the first chunk. Sites independently
+  validates each complete raw chunk and recomputes the exact classifier subset,
+  rejecting omissions, additions, mutations and reordered accepted rows.
+- Chunks only stage snapshot candidates. Public listings, canonical offers and
+  public counters do not change until one final D1 transaction verifies the
+  session hash, cursor, counts and selector, applies the complete snapshot and
+  marks the feed completed.
+- An interrupted or failed session therefore cannot expose a partial new
+  generation. Staging rows are excluded from public and global catalog counts.
+- Unlimited begin, chunk, complete, fail and browser-ticket actions are
+  OIDC-only and retain audience `perfumetr-tradedoubler-bridge`.
+- Selector `all-products-v2:perfume-v1` is persisted in the active session,
+  completed feed metadata and completion receipt. A missing or older selector
+  forces a full replay even when the provider timestamp did not change; an old
+  session cannot resume or complete through the v195 contract.
+- Exact validated classifier rows bypass only the older, narrower downstream
+  perfume-name predicate. Hidden-catalog, exclusion, identity, duplicate and
+  GTIN gates still run. Category-only perfume evidence is accepted, while
+  description-only references, testers, samples, refills, sets, deodorants,
+  body care, mists and home fragrance remain excluded.
+- GTIN conflict quarantine is symmetric, including conflicts witnessed by
+  rows whose own GTIN is null. No classifier, identity or publication gate was
+  weakened.
+
+Verification before deployment:
+
+- Sites build and artifact validation: passed.
+- Full Sites suite: 80/80 passed.
+- GitHub worker suite: 27/27 passed.
+- Lint: zero errors and three pre-existing warnings.
+- `git diff --check`: passed for both repositories.
+- Two independent final reviews returned GO for the exact reviewed code.
+
+No production workflow was manually started to test v195. The next scheduled
+full TradeDoubler cycle is the first production exercise of this contract and
+must be observed without manually retrying provider HTTP 429 responses.
+
+### Latest automation and post-deployment D1 truth
+
+- The latest scheduled production cycle is run #127, ID `33340455040`, from
+  2026-08-30 22:56 UTC. Importer validation succeeded and the full
+  TradeDoubler job was correctly skipped, but the bounded partner orchestrator
+  ended the workflow in failure: Flaconi and Notino returned
+  `orchestrator_import_failed`; Brasty completed. This is not a global catalog
+  outage and no manual retry was launched.
+- Run #126, ID `33338337893`, is the newest full TradeDoubler attempt. It
+  failed after Douglas persisted a safe checkpoint near 39,000 scanned rows;
+  the prior public snapshot remained available. Do not describe run #126 as a
+  completed full refresh.
+- `sync_locks` was empty and the full `catalog_meta` scan contained no active
+  or abandoned Unlimited session key. No import or live lease was running.
+
+Latest directly read source checkpoints after deployment:
+
+| Source | Post-deployment D1 state |
+| --- | --- |
+| Douglas | generation 6 `failed` at the safe 39,000-row checkpoint; 2,407 accepted, 2,322 review, 34,271 rejected; error `import_failed`; no active lock |
+| Flaconi | generation 15 `completed`; 35,010 received, 3,754 accepted, 1,332 review, 29,924 rejected; source error null |
+| Notino | generation 22 `paused`, no source error; 19,269 received, 11,380 accepted, 2,947 review, 4,942 rejected; current bounded query 9,500 of 9,681; product status `syncing` |
+| Brasty | generation 17 `completed`; 13,161 received, 11,320 accepted and 300 rejected. D1 later showed 1,541 review while run #127 overview showed 658; keep the discrepancy explicit until a later consistent read |
+
+Three consecutive post-deployment SSR reads were identical:
+
+| Store | Fresh public offers |
+| --- | ---: |
+| Notino | 8,686 |
+| Brasty | 5,370 |
+| Flaconi | 3,754 |
+| Cocolita | 896 |
+| Drogeria.pl | 862 |
+| Aelia.pl | 1,471 |
+| Douglas | 2,966 |
+| **Total** | **24,005** |
+
+These are public fresh-offer counters, not accepted-generation counters.
+The same SSR reported 11,122 catalog entries, all 11,122 with an image, across
+628 brands. Flaconi returned to the public rail with 3,754 fresh offers after
+the earlier pre-deployment read showed it absent. No import was started to
+produce this verification, and expired DUO pricing was not retained or
+invented.
+
+Five of five direct apex requests returned HTTP 200, but average response time
+was poor at 11.69 seconds. Four production assets were byte-identical with the
+v195 build, and Sites reported zero worker error events in the first 15 minutes
+after publication. These checks verify the deployed code path but do not make
+the apex fast; do not describe it as fully stable. The separate `www` host
+remains an unresolved historical domain risk and must be rechecked before any
+newer claim.
+
+### Remaining CJ coverage limitation
+
+Current CJ discovery selects one largest eligible feed from at most the first
+20 returned Product Feeds. It does not yet prove that every Notino or Brasty
+country/language/currency feed has been enumerated. Therefore neither the
+Naxos investigation nor the successful per-feed refresh may be generalized to
+complete CJ programme coverage without a real Product Feeds inventory.
+
+The safe next evidence is a CJ Product Feeds list or export containing only
+feed ID, feed name, country, language, currency, product count and last update
+time. Do not request or store the CJ token, a credential-bearing download URL
+or a raw private feed in this repository. Compare that inventory with the
+persisted selected feed before changing discovery or publication behavior.
+
+The user explicitly requested consolidated report #011 after all work is
+finished. At this documentation draft stage, report #010 remains the last
+confirmed delivered report and #011 must remain `pending` until mailbox
+delivery is verified.
+
+## Earlier marketing analytics production checkpoint (Sites v183)
 
 Verified through approximately 2026-08-29 12:49 UTC. This section supersedes the
 older analytics assumptions below; importer and partner-history sections remain
@@ -107,7 +246,7 @@ historical unless explicitly refreshed here.
   `qa_production_20260829` campaign name.
 - No report #011 and no partner email was sent for this deployment.
 
-## Latest production checkpoint
+## Earlier Sites v180 production checkpoint
 
 Verified through approximately 2026-08-27 18:15 UTC for the completed catalog
 recovery, Sites v180 and direct production verification. No credential, private
