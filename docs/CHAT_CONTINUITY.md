@@ -4,7 +4,143 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: Sites v183 marketing analytics
+## Current handoff: Sites v195 atomic TradeDoubler snapshots
+
+Verified through approximately 2026-08-31 00:16 UTC after the Sites v195
+post-deployment read-only check.
+
+- GitHub `master` is
+  `de1f14fb224e38a669258bac42d81d5c5ecb1cc6`.
+- Pull request #44, `Make full TradeDoubler snapshots atomic and exact`, is
+  merged. Pull-request validation run #128, ID `33343249979`, succeeded with
+  27/27 worker tests and skipped the production job. Never describe run #128
+  as a product import.
+- Sites v195 is deployed from source commit
+  `7430f7b5c2b9770ad5fae7c97f8ac0375ce3e89a`; version ID
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_0581a7ae25848191bb7b847085f737f1`;
+  deployment `appgdep_6a94c5dc21308191812d9bf6d472fe08` publish
+  succeeded with null failure message.
+- Future-contract fields in the worker were inert, optional metadata ignored
+  by Sites v194 while it continued to receive its established compatible
+  payload. The same worker revision also added independent local duplicate-
+  offer detection and bounded chunk validation, but did not rely on or activate
+  a new Sites contract. Sites v195 was the first side to enforce strict dual
+  validation, staging and atomic publication. No import was started by either
+  rollout.
+- The v184-v194 baseline remains active. v184 made analytics consent compact;
+  after a decision there is no permanent bottom-right privacy control.
+- Shared identity across CJ, Douglas, Flaconi and TradeDoubler uses only 19
+  audited brand groups, 28 audited family keys and two explicit Stronger With
+  You aliases. Jean Paul Gaultier is one of those brand groups. There is no
+  fuzzy merge, semantic slot conflicts stay separate, counters use the
+  normalized brand and 71 confirmed nonstandard variants remain hidden.
+- Only the exact brand and line pair Xerjoff + `XJ 1861 Naxos` canonicalizes to
+  `Naxos`; this narrow rewrite is independent of GTIN. Separately, targeted
+  reprocessing of earlier conflict rows is restricted to GTIN `8033488155070`
+  and its leading-zero form `08033488155070`. This is test-backed code behavior,
+  not proof of every live Naxos row or permission to remove `XJ 1861` globally.
+- A global 30-hour publication cap applies to every source across catalog,
+  comparison, store rail, counters, coupons and outbound redirects. CJ rolling
+  refresh targets 20 hours. Older offers are intentionally hidden instead of
+  presented as current.
+- CJ known-ID maintenance is capped at 50, confirmation retry waits 15 minutes,
+  stale unavailability is rechecked after six hours, a changed GTIN goes to
+  review and coverage examines at most three verified standard-GTIN variants
+  per step with a fresh other-store witness. Cursor drift is at most 2%, capped
+  at 250 rows; only guarded EOF may finish a drifted query and scopes above
+  10,000 are skipped safely.
+- Flaconi completed maintenance is capped at 40. Douglas paused recovery, EOF
+  cleanup, safety phases and counter reconciliation are bounded, resumable and
+  fail closed. A stale, duplicate or reused external ID fails closed once the
+  conflict is observed; if contradictory copies are on different pages, the
+  first can be briefly public before the second is read and quarantine begins.
+  This is not a global semantic-duplicate audit across different product IDs.
+  Only an exact safe restock may reactivate a row.
+- Every TradeDoubler Unlimited chunk now contains the complete raw slice and
+  its exact ordered `perfume-v1` subset. Sites independently recomputes the
+  subset and rejects an omission, addition, mutation or order change.
+- The worker rejects duplicate offer identities across the entire snapshot
+  before chunk one. Sites validates the full raw chunk again. Chunks write only
+  session-scoped staging; public listings, offers, store rails and global
+  counts change only in one verified completion transaction.
+- Selector `all-products-v2:perfume-v1` is durable in the active session,
+  completed feed metadata and receipt. An old selector forces replay and an
+  old session cannot resume or complete under v195.
+- Unlimited begin, chunk, complete and fail actions, plus issuance of the
+  `unlimited_full` browser ticket, are OIDC-only with audience
+  `perfumetr-tradedoubler-bridge` and exact workflow identity checks. Other
+  browser-ticket modes are outside this statement.
+- The validated exact classifier subset bypasses only the older narrower
+  perfume-name predicate. Category-only perfume evidence works; description-
+  only references, shampoo, testers, samples, refills, sets, body care, mists
+  and home fragrance remain excluded. Hidden-catalog, identity, duplicate,
+  semantic and exact-GTIN gates remain active. GTIN quarantine is symmetric,
+  including a null-GTIN witness.
+- Verification passed: Sites build and artifact validation, Sites suite 80/80,
+  worker suite 27/27 and `git diff --check` in both repositories. Lint has zero
+  errors and three pre-existing warnings. Two independent exact-code reviews
+  returned GO.
+- The latest scheduled production cycle is run #127, ID `33340455040`, from
+  2026-08-30 22:56 UTC. Validation passed and full TradeDoubler was correctly
+  skipped, but the partner job failed: Flaconi and Notino returned
+  `orchestrator_import_failed`; Brasty completed. One failed bounded partner
+  cycle is not a global catalog outage. No manual retry was launched.
+- Run #126, ID `33338337893`, is the latest full TradeDoubler attempt and
+  failed after Douglas persisted a safe checkpoint near 39,000 scanned rows.
+  It is not a completed full snapshot. The first successful scheduled full
+  cycle after v195 is still required to prove the new contract in production.
+- `sync_locks` was empty, and a complete `catalog_meta` scan found no active or
+  abandoned Unlimited session key. No import or catalog lease was running.
+- Post-deployment D1 source truth:
+  - Douglas generation 6 is `failed` at the safe 39,000 checkpoint with 2,407
+    accepted, 2,322 review and 34,271 rejected; error `import_failed`, no lock.
+  - Flaconi generation 15 is `completed` with 35,010 received, 3,754 accepted,
+    1,332 review, 29,924 rejected and null source error.
+  - Notino generation 22 is safely `paused`, not completed and not running. It
+    has no source error; 19,269 received, 11,380 accepted, 2,947 review and
+    4,942 rejected. The active bounded query checkpoint is 9,500 of 9,681 and
+    product status is `syncing`.
+  - Brasty generation 17 is `completed` with 13,161 received, 11,320 accepted
+    and 300 rejected. Run #127 overview reported 658 review, but a later D1
+    row reported 1,541; preserve both until a consistent later read resolves
+    the discrepancy.
+- Three consecutive post-deployment SSR reads were identical: Notino 8,686,
+  Brasty 5,370, Flaconi 3,754, Cocolita 896, Drogeria.pl 862, Aelia.pl 1,471
+  and Douglas 2,966, total 24,005. The same reads reported 11,122 catalog
+  entries, all with an image, across 628 brands. These are live public counts,
+  not generation accepted counts.
+- Flaconi returned to the rail after an earlier pre-deployment read showed it
+  absent. No import was started to create this read-only verification, and the
+  application did not retain or invent expired DUO pricing.
+- Five of five direct apex requests returned HTTP 200, but average response
+  time was 11.69 seconds. Four production assets were byte-identical with the
+  v195 build. Native post-publication logs contained no application exception
+  or error payload. An errors-only filter returned three canceled technical
+  `/api/search` reads and one verifier request to the nonexistent `/katalog`
+  route that returned 404. All came from the deployment check, had
+  `error=null`, and the 404 recorded worker outcome `ok`. This proves the
+  deployed asset, not a fast apex. Do not call it fully stable or fast. Recheck
+  `www` separately before changing its historical unresolved status.
+- Current CJ discovery chooses the largest eligible feed from at most the first
+  20 Product Feeds returned. Complete Notino and Brasty programme coverage is
+  therefore not proven. The owner may provide a Product Feeds list/export with
+  feed ID, name, country, language, currency, product count and update time.
+  Never request or store the CJ token, an authenticated feed URL or a private
+  raw feed in the repository.
+- Do not start an import merely to observe v195. Let the ordinary schedule
+  exercise it, then read the completed session, receipt, source counters,
+  public offers and locks. Do not manually retry HTTP 429.
+- The user explicitly requested consolidated report #011 after the work is
+  complete. Report #010 remains the last confirmed delivered report until the
+  mailbox proves otherwise. Reuse report #003's exact visual template and
+  claim `sent` only after delivery confirmation.
+- Exact next task: observe the next ordinary full TradeDoubler cycle, then
+  verify its session, receipt, D1 source rows, public counters and empty locks.
+  Separately compare the official CJ Product Feeds inventory before making any
+  source-discovery change. Do not weaken `perfume-v1`, exact GTIN,
+  hidden-catalog or duplicate gates.
+
+## Earlier Sites v183 marketing analytics continuity checkpoint
 
 Verified approximately 2026-08-29 12:49 UTC.
 
@@ -111,7 +247,7 @@ change:
 8. make no code, import, configuration or production change until the checks are
    complete.
 
-## Latest continuity checkpoint
+## Earlier Sites v180 continuity checkpoint
 
 Verified through approximately 2026-08-27 18:15 UTC for the completed catalog
 recovery and Sites v180. Report #010 is the latest confirmed delivered report.

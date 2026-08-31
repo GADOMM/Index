@@ -1,5 +1,136 @@
 # Perfumetr importer architecture
 
+## Atomic TradeDoubler full snapshots (Sites v195)
+
+Sites v195 and GitHub worker `de1f14f` make Products Unlimited a staged,
+complete-snapshot protocol. The public catalog no longer changes while an
+Unlimited generation is still transferring.
+
+### Snapshot sequence
+
+1. The worker downloads and validates the complete official provider snapshot.
+2. Before the first bridge write, it rejects any duplicate offer identity
+   across the whole snapshot. Identity uses `offer.id` when present; otherwise
+   it uses `tradedoubler:<feedId-or-unknown>:<sourceProductId>`, matching Sites.
+3. The worker derives selector `all-products-v2:perfume-v1`, computes the
+   snapshot hash and begins an OIDC-authenticated Unlimited session.
+4. Every bounded chunk carries:
+   - the complete raw slice in `payload.rawProducts`;
+   - the exact ordered `perfume-v1` result for that slice in
+     `payload.products`;
+   - `classifierVersion: "perfume-v1"`;
+   - raw count, cursor, session and snapshot identity.
+5. Sites validates every raw record, required field and within-chunk identity,
+   recomputes `perfume-v1` from `rawProducts`, then rejects any omitted, added,
+   mutated or reordered accepted row.
+6. Valid chunks write only session-scoped staging rows. Staging is excluded
+   from public listings, offers, store rails and global catalog counters.
+7. Completion rechecks selector, hash, cursor, raw count, accepted count and
+   session ownership. One D1 transaction applies the complete candidate
+   snapshot, records the completion receipt and marks the feed completed.
+8. Failure or interruption leaves the prior canonical/public snapshot intact.
+   A later run starts or resumes only a contract-compatible session.
+
+Unlimited begin, chunk, complete and fail operations, plus issuance of the
+`unlimited_full` browser ticket, are OIDC-only. They retain audience
+`perfumetr-tradedoubler-bridge` and the exact repository, branch and workflow
+identity checks. This restriction is specific to the Unlimited full-import
+contract and does not describe other browser-ticket modes.
+
+Selector version is durable in the active session, completed feed metadata and
+completion receipt. A missing or older selector forces a replay even if the
+provider timestamp is unchanged. A pre-v195 session cannot download, resume or
+complete under the v195 contract. Completion remains idempotent only for the
+current selector and the same verified receipt.
+
+The dual classifier is intentional. The worker filters before transfer for a
+separate accepted count; Sites recomputes the same function from every raw row
+and is authoritative. A category-only perfume can therefore pass when its
+structured category is explicit. A perfume mention found only in description
+is still insufficient. Explicit exclusions for testers, samples, refills,
+sets, deodorants, body care, mists and home fragrance still win.
+
+Validated v195 rows bypass only the legacy narrower downstream perfume-name
+predicate. All hidden-catalog, semantic identity, duplicate, source and exact
+GTIN gates remain active. GTIN quarantine is symmetric: a new row conflicts
+with an existing visible identity even when the witness row has a null GTIN,
+and the conflict cannot be published by choosing an arbitrary side.
+
+The old local full-import helper is not a compatibility path for v195. GitHub
+remains the scheduler and worker; Sites and D1 remain the source of truth. A
+production proof is a completed scheduled full generation, not a successful
+pull-request test or a partially transferred session.
+
+### CJ feed-discovery boundary
+
+CJ uses a separate bounded server-side importer and is not covered by the
+TradeDoubler atomic snapshot protocol. Current CJ discovery selects the largest
+eligible feed from at most the first 20 Product Feeds returned for a programme.
+That proves safe processing of the selected feed, not enumeration of every
+possible Notino or Brasty feed topology.
+
+Before claiming complete CJ programme coverage, compare the persisted feed
+selection with an official Product Feeds inventory containing feed ID, name,
+country, language, currency, product count and update time. Do not copy a CJ
+token, authenticated download URL or private raw feed into GitHub or project
+documentation. A topology change must remain bounded, source-isolated and must
+not weaken product identity or `perfume-v1`.
+
+## Audited identity and freshness safety (Sites v185-v194)
+
+Catalog identity is shared by CJ, Douglas, Flaconi and TradeDoubler. It uses an
+explicit dictionary of 19 audited brand groups and stores the normalized brand
+used by public counters. Family repair is limited to 28 audited family keys and
+two explicit Stronger With You aliases. It is not fuzzy: a concentration,
+audience, product-type or volume slot conflict cannot be auto-merged. Public
+rows must be standard, active and nonhidden; 71 confirmed nonstandard variants
+are quarantined instead of being counted or exposed.
+
+The Xerjoff line rule is intentionally narrow and independent of GTIN. Only the
+exact brand and line pair Xerjoff + `XJ 1861 Naxos` canonicalizes to `Naxos`;
+other `XJ 1861` names remain unchanged. Separately, targeted reprocessing of
+earlier conflict rows is restricted to GTIN `8033488155070` and its leading-
+zero form `08033488155070`. The regression proves these code contracts; it is
+not proof that every possible Naxos offer exists in current D1.
+
+One global freshness contract caps publication at 30 hours for every source
+across catalog pages, comparison results, the store rail, public counters,
+coupons and outbound redirects. CJ rolling refresh targets 20 hours so a
+normal cycle can refresh an offer before it disappears. An older offer is
+deliberately hidden, never treated as current merely to keep a store or price
+visible.
+
+CJ lifecycle maintenance remains bounded and confirmation-safe:
+
+- at most 50 known product IDs are refreshed in one maintenance batch;
+- a transient omission becomes retryable, with confirmation no sooner than the
+  15-minute cooldown; a changed GTIN returns to review instead of replacing an
+  identity;
+- an unavailable tombstone is rechecked after six hours and only an exact
+  confirmed restock may reactivate the offer;
+- one coverage step examines at most three verified standard-GTIN variants,
+  each requiring a fresh offer witness from another verified store;
+- the first provider total is the cursor baseline. Drift is limited to 2%,
+  capped at 250 rows, and a drifted query may complete only at a guarded EOF.
+  Repeated cursors, empty non-EOF pages and overruns fail closed; result scopes
+  above 10,000 are `scope_skipped`.
+
+Flaconi completed-generation maintenance processes at most 40 rows per step.
+Douglas EOF first persists a durable paused checkpoint. Idempotent cleanup and
+safety phases heartbeat the lease and may resume; only their successful end
+can mark the generation completed. Source-counter reconciliation is atomic.
+Stale, duplicate or reused Douglas external product IDs fail closed, while an
+exact confirmed restock can safely reactivate an invalidated row. The duplicate
+gate applies once a conflict is observed. If two contradictory copies are on
+different feed pages, the first can be briefly public before the second copy is
+read and both are quarantined. This source-ID gate is not a global semantic-
+duplicate audit across different product IDs.
+
+These mechanisms prefer temporary non-publication over an ambiguous family,
+identity or stale price. They do not complete the outstanding global semantic-
+duplicate audit, and they do not prove that the single largest CJ feed selected
+from at most 20 returned feeds represents the complete programme topology.
+
 ## First-party marketing analytics (Sites v183)
 
 Marketing attribution is implemented inside Sites and D1. It is deliberately
@@ -103,10 +234,14 @@ or logged. AWIN and CJ credentials remain entirely server-side.
 11. On page transport, require the same metadata `totalHits` on every page,
     exactly 100 records except the final remainder, the exact combined count
     and no more than 10,000 pages. Hash the combined JSON snapshot with SHA-256.
-12. Count every raw provider product.
-13. Apply `perfume-v1` before sending a chunk to the catalog.
-14. Send raw count and filtered payload separately.
-15. Complete the snapshot only after cursor, hash, count and version checks.
+12. Count every raw provider product and reject duplicate offer identities
+    across the full snapshot before the first write.
+13. Build bounded chunks containing the complete raw slice and its exact
+    ordered `perfume-v1` subset.
+14. Let Sites revalidate each raw record and independently recompute the exact
+    subset before writing only session-scoped staging rows.
+15. Publish the staged snapshot atomically only after cursor, hash, raw count,
+    accepted count, classifier and selector checks all pass.
 
 Aelia program ticket request:
 
@@ -282,6 +417,16 @@ test does not prove that its product feed is active or visible.
 
 ## Migration rule
 
-Sites changes land first and remain backward compatible. GitHub changes land
-second. Removing an old endpoint, audience or workflow path is always a later,
+Sites changes that define or enforce a new contract land first and remain
+backward compatible. GitHub changes that rely on that contract land second.
+Removing an old endpoint, audience or workflow path is always a later,
 separately verified deployment.
+
+Before v195 enforcement, future-contract fields in the GitHub worker were
+inert, optional metadata that Sites v194 ignored while it continued accepting
+the established payload. The same worker revision also added independent local
+duplicate-offer detection and bounded chunk validation, but did not rely on or
+activate a new Sites contract. Sites v195 was the first side to enforce exact
+dual classification, staging and atomic publication, and the already
+compatible worker supplied the required fields. The preparatory merge did not
+start a production import.
