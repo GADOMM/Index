@@ -6,15 +6,19 @@ conversation.
 
 ## Current handoff: Sites v195 atomic TradeDoubler snapshots
 
-Verified through approximately 2026-08-31 00:16 UTC after the Sites v195
-post-deployment read-only check.
+Verified through approximately 2026-08-31 00:38 UTC after the Sites v195
+post-deployment and report-delivery checks.
 
-- GitHub `master` is
+- The compatible GitHub worker checkpoint is
   `de1f14fb224e38a669258bac42d81d5c5ecb1cc6`.
 - Pull request #44, `Make full TradeDoubler snapshots atomic and exact`, is
   merged. Pull-request validation run #128, ID `33343249979`, succeeded with
   27/27 worker tests and skipped the production job. Never describe run #128
   as a product import.
+- Documentation pull request #45 is merged as
+  `12b5bb9346430bc1fa626c327e8b92e59ed48f1d`. Pull-request validation run
+  #129, ID `33344895933`, also succeeded with 27/27 tests and skipped the
+  production import job. It is not a product import.
 - Sites v195 is deployed from source commit
   `7430f7b5c2b9770ad5fae7c97f8ac0375ce3e89a`; version ID
   `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_0581a7ae25848191bb7b847085f737f1`;
@@ -130,10 +134,11 @@ post-deployment read-only check.
 - Do not start an import merely to observe v195. Let the ordinary schedule
   exercise it, then read the completed session, receipt, source counters,
   public offers and locks. Do not manually retry HTTP 429.
-- The user explicitly requested consolidated report #011 after the work is
-  complete. Report #010 remains the last confirmed delivered report until the
-  mailbox proves otherwise. Reuse report #003's exact visual template and
-  claim `sent` only after delivery confirmation.
+- The user explicitly requested consolidated report #011 after the work was
+  complete. Report #011 was delivered to `support@perfumetr.pl` on 2026-08-31
+  at 00:36:59 UTC; Gmail records both `SENT` and `INBOX`. Report #010 is the
+  immediately previous delivered report and report #003 remains the visual
+  template authority.
 - Exact next task: observe the next ordinary full TradeDoubler cycle, then
   verify its session, receipt, D1 source rows, public counters and empty locks.
   Separately compare the official CJ Product Feeds inventory before making any
@@ -1214,12 +1219,13 @@ per-deployment-email rule.
    recipient.
 6. Record `sent` only after delivery is confirmed. Otherwise use `deferred`,
    `pending` or `not required`.
-7. Report `#010`, dated 2026-08-27, is the latest confirmed delivered report.
-   Gmail records `SENT` and `INBOX` at 2026-08-27 01:08:03 UTC. It covers the
-   audited Douglas PL launch. Report `#009` is the immediately previous
-   delivered report, and report `#003` remains the visual template authority.
-   If the sequence remains unchanged and the user explicitly requests another
-   report, the next number is `#011`.
+7. Report `#011`, dated 2026-08-31, is the latest confirmed delivered report.
+   Gmail records `SENT` and `INBOX` at 2026-08-31 00:36:59 UTC. It covers
+   marketing analytics, audited catalog identity and freshness, the v184-v194
+   safety baseline and the Sites v195 atomic TradeDoubler rollout. Report
+   `#010` is the immediately previous delivered report, and report `#003`
+   remains the visual template authority. If the sequence remains unchanged
+   and the user explicitly requests another report, the next number is `#012`.
 8. Never put credentials, provider payloads or private mailbox content into the
    repository.
 
