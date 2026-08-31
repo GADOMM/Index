@@ -1,9 +1,81 @@
 # Perfumetr project state
 
-Updated: 2026-08-31 13:30 UTC after the Sites v204 integration-panel recovery and report #012
+Updated: 2026-08-31 14:30 UTC after the confirmed Sites v205 owner-panel recovery and report #013
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
+
+## Confirmed owner-panel recovery and navigation cleanup (Sites v205)
+
+Verified through 2026-08-31 14:30 UTC. This checkpoint corrects the v204
+diagnosis after the owner confirmed that the authenticated integration route
+still returned Cloudflare 1101. It records the actual production exception,
+the deployed repair and report #013. It does not claim fresh owner acceptance
+of the authenticated interior on the original iPhone.
+
+### Corrected incident diagnosis and repair
+
+- Sites v204 was technically deployed but was not a working authenticated
+  integration panel. Report #012 and the prior continuity checkpoint
+  prematurely described it as recovered.
+- Fresh production Worker logs for authenticated
+  `GET /panel-opinii/integracje` recorded `outcome=exception` and the exact
+  error `Disallowed operation called within global scope`. The stack resolved
+  to module-scope `crypto.randomUUID()` in
+  `app/integration-status-scheduler.ts`; its `Math.random()` fallback was
+  equally unsafe. The earlier D1 fan-out was real performance debt but was not
+  the logged cause of this 1101.
+- Sites v205 is deployed from source commit
+  `8af98234899bb5245762ec53cc32852565389ddc`.
+- Sites version ID:
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_7296cd6e915881918b2bc7729acba65b`.
+- Production deployment:
+  `appgdep_6a958cfa2458819181657fca662db56a`, publish `succeeded`
+  with no failure message at 2026-08-31 14:17:43 UTC.
+- Scheduler identity and start time are now initialized lazily and only in the
+  browser. The built SSR bundle has no risky top-level random, timer, network
+  or D1 operation.
+- The protected page now renders an immediate shell. A separate authenticated,
+  private, no-store endpoint loads the read-only integration overview after
+  render and converts storage failures into a controlled response. D1 can no
+  longer block or crash the panel route.
+- Opinie, Marketing and Integracje use one `OwnerPanelNav` in the fixed order
+  Opinie, Marketing, Integracje, Zamknij panel. Navigation is clean text with
+  no rectangular button styling; the active item stays in place. Very narrow
+  screens use the shorter `Zamknij` label to avoid clipping.
+- Automatic status reads retain the accepted cadence: at most once per source
+  per eight hours, first check after 90 seconds and checks serialized at least
+  45 seconds apart. They remain read-only and do not start an import.
+
+### Verification, boundary and report
+
+- Build and Sites artifact validation passed. The full Sites suite passed
+  88/88. Lint passed with zero errors and the same three pre-existing unrelated
+  warnings. `git diff --check` passed. Independent review found no critical
+  or high-risk issue.
+- A stalled integration overview returns the initial panel shell in about
+  60-74 ms and starts no snapshot read during SSR. The protected overview
+  endpoint has authenticated/anonymous and secret-redaction coverage.
+- Two fresh production requests to the integration route returned HTTP 200,
+  `outcome=ok`, with Worker wall times of 40 ms and 6 ms. The post-v205
+  error-only log query contained zero events.
+- The current GitHub `master` before this documentation PR is
+  `e8a7b2aa69665fa4975b324bbfa29e950a0f90b5`. PR #51 is merged and its
+  pull-request validation run #135, ID `33397381448`, succeeded. It is not an
+  importer run. The latest previously verified production cycle remains
+  scheduled run #133, ID `33388076416`, success; no duplicate was started.
+- Report #013, “Panel właściciela naprawiony i uporządkowany”, was sent to
+  `support@perfumetr.pl` at 2026-08-31 14:25:36 UTC. Gmail confirms
+  `SENT` and `INBOX`; it explicitly corrects report #012 and reuses the
+  report #003 visual template.
+- v205 changed no D1 data, import generation, schedule, classifier, product
+  review decision, partner secret, domain or routing rule. No manual import was
+  started and no review product was published.
+- Technical recovery is complete. Exact next task: the owner should reload the
+  production session once and verify the authenticated Integracje interior plus
+  the clean shared navigation on Opinie. If both match, record user acceptance
+  and resume the already documented read-only reconciliation of run #133. Do
+  not reimplement v205 or start an import merely for verification.
 
 ## Integration panel recovery and best-offer store label (Sites v204)
 

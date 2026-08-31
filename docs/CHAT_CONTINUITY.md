@@ -4,7 +4,53 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: Sites v204 panel recovery and merchant label
+## Current handoff: Sites v205 confirmed owner-panel recovery
+
+Verified through 2026-08-31 14:30 UTC.
+
+- The owner proved that authenticated Integracje still returned 1101 after
+  v204. The v204 checkpoint and report #012 were therefore technically
+  overclaimed.
+- Fresh production logs identified the exact exception: random identity
+  generation ran during global Worker module evaluation. The stack mapped to
+  module-scope `crypto.randomUUID()` in the integration status scheduler; its
+  random fallback was also unsafe. D1 load was secondary, not the logged cause.
+- Sites v205 is deployed from
+  `8af98234899bb5245762ec53cc32852565389ddc`; version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_7296cd6e915881918b2bc7729acba65b`;
+  deployment `appgdep_6a958cfa2458819181657fca662db56a` succeeded at
+  14:17:43 UTC with no failure message.
+- Scheduler identity is now initialized lazily in the browser. The page renders
+  a lightweight shell immediately, then uses a protected private/no-store API
+  for its read-only overview. A D1 delay can no longer block or crash the route.
+- Opinie, Marketing and Integracje now share one stable text-only navigation:
+  Opinie, Marketing, Integracje, Zamknij panel. There are no rectangular nav
+  buttons. The active section stays in place and very narrow screens use the
+  shorter Zamknij label.
+- Automatic status reads remain at most once per source every eight hours,
+  start after 90 seconds and stay serialized at least 45 seconds apart. They do
+  not start imports.
+- Verification passed build, artifact validation, 88/88 tests, lint with zero
+  errors and three existing warnings, `git diff --check` and independent
+  review. Two fresh production Integracje requests returned HTTP 200,
+  `outcome=ok`, with Worker times of 40 ms and 6 ms. Post-v205 error logs
+  contained zero events.
+- GitHub `master` before the continuity PR is
+  `e8a7b2aa69665fa4975b324bbfa29e950a0f90b5`. PR #51 is merged; its
+  validation run #135, ID `33397381448`, succeeded and was not an import.
+  Latest previously verified production run remains scheduled #133, ID
+  `33388076416`, success. No job was duplicated.
+- Report #013 was sent to `support@perfumetr.pl` at 14:25:36 UTC and is
+  confirmed with `SENT` and `INBOX`. It corrects #012 and preserves the
+  report #003 visual template.
+- No import, D1/catalog mutation, review publication, classifier, credential,
+  secret, domain or routing change was made for v205.
+- Technical recovery is complete; authenticated production user acceptance is
+  not yet recorded. Exact next task is one owner reload of Integracje and one
+  check of the clean Opinie navigation. If accepted, resume the read-only
+  reconciliation of run #133. Do not start an import for verification.
+
+## Previous handoff: Sites v204 panel recovery and merchant label
 
 Verified through 2026-08-31 13:30 UTC.
 
