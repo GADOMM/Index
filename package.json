@@ -7,7 +7,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "check": "node --check scripts/github-oidc.mjs && node --check scripts/perfume-classifier.mjs && node --check scripts/tradedoubler-products.mjs && node --check scripts/tradedoubler-import.mjs && node --check scripts/catalog-orchestrator.mjs",
+    "check": "node --check scripts/github-oidc.mjs && node --check scripts/perfume-classifier.mjs && node --check scripts/tradedoubler-products.mjs && node --check scripts/import-result-contract.mjs && node --check scripts/tradedoubler-import.mjs && node --check scripts/catalog-orchestrator.mjs",
     "test": "npm run check && node --test tests/*.test.mjs"
   }
 }
