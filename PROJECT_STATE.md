@@ -1,11 +1,167 @@
 # Perfumetr project state
 
-Updated: 2026-09-01 11:08 UTC after the Sites v207 grouped Flaconi homepage deployment
+Updated: 2026-09-01 14:44 UTC after production recovery, final verification
+and confirmed delivery of report #014
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
-## Homepage visibility for both Flaconi campaigns (Sites v207)
+## Current state: seven-store catalog recovered (Sites v208-v213, PR #53-#54)
+
+Verified directly after terminal attempt 3 of production run #146. The public
+catalog, homepage behavior and customer search/comparison flow are operational.
+The GitHub workflow is red only because the earlier runtime-proof step retained
+its controlled 409; the full TradeDoubler stage, partner stage and status
+publication all completed successfully.
+
+### Final production outcome
+
+Both `perfumetr.pl` and `beta.perfumetr.pl` returned HTTP 200 with
+`storeCoverage.status=complete` and the same one-coherent snapshot at
+2026-09-01 14:38 UTC:
+
+| Source | Fresh active offers |
+| --- | ---: |
+| Notino | 8,609 |
+| Brasty | 5,327 |
+| Flaconi | 3,764 |
+| Cocolita | 897 |
+| Drogeria.pl | 864 |
+| Aelia.pl | 1,467 |
+| Douglas | 3,050 |
+| **Exact total** | **23,978** |
+
+- Aelia feed 258031 completed from 8,553 raw rows: 1,803 perfume rows, 86
+  chunks and 1,467 live/imported offers. Its registry is `available`, its
+  success timestamp is current, and the TradeDoubler lock was released.
+- Main has the bottle and CTA, no promotion module, no visible error and no
+  horizontal overflow. Beta has exactly the two verified Flaconi campaigns
+  (SEPTEMBER and SAVEMORE), the catalog search and no visible error/overflow.
+  Sites v212 explicitly supersedes v207 homepage placement.
+- Enter on `Versace` shows 48 possible fragrances rather than selecting the
+  first one. Versace Eros EDP for women, 100 ml has three unique offers:
+  Notino appears once as best offer; only Aelia.pl and Flaconi appear below.
+  Store names are visible.
+- Production Worker logs read at 14:40:17 UTC contain zero 1101 errors, zero
+  5xx responses and zero exceptions for the latest public homepage/search/
+  comparison traffic. Worker wall times were 14-42 ms for `/`, 507-1,405 ms
+  for homepage data, 163-396 ms for search and 411-496 ms for comparison.
+  Longer local curl times were workspace-proxy overhead, not Worker latency.
+- The integration panel route returns HTTP 200; anonymous data access correctly
+  returns 401. No 1101 appears after v209. A fresh authenticated owner-session
+  walkthrough was not fabricated where no existing signed-in session was
+  available.
+
+### Confirmed causes and safeguards
+
+- Cocolita and Drogeria.pl used exact first-party tracking hosts absent from
+  the allowlists. Valid rows became `program_mismatch`, and the former
+  completion order could invalidate the prior snapshot before proving a
+  nonzero replacement. v208 adds only the exact aliases, verifies the final
+  publishable count before invalidation and returns
+  `safety_invariant_failed` while preserving a valid prior snapshot if a
+  non-empty feed would publish zero.
+- Cocolita's provider revision changed during import. The mixed snapshot was
+  correctly rejected, but the failed session initially blocked an immediate
+  replay. v210 added guarded snapshot recovery and materialized Aelia conflict
+  work.
+- Aelia completion repeated full-catalog GTIN conflict scans. v210 removed the
+  first correlated path; v211 removed the two remaining paths and reuses one
+  computed quarantine result.
+- A later Aelia failure left an unlimited snapshot session marked active for a
+  three-hour window even though there was no live GitHub job and no
+  `sync_lock`. A provider revision change therefore returned
+  `bridge_already_running`. v213 replaces such a session only when it has a
+  recorded failure and either `provider_snapshot_changed` or a changed
+  `remoteVersion`, and only when no live claim exists. A live claim still
+  returns 409. Cleanup is lease/CAS/session guarded and removes only staged
+  candidates for the old session; published listings/offers are untouched.
+- Flaconi's ordinary panel status previously ran an expensive full safety
+  audit and caused the separate 1101. v209 uses bounded counters and an
+  index-friendly certificate read; full audits remain at mutation/finalization.
+  PR #54 makes the runner proceed from safety recertification into a real
+  generation instead of exiting early.
+- UI coverage now distinguishes seven configured sources from stores with
+  currently fresh prices. An unavailable or separately timed partial read is
+  not presented as a global catalog total.
+- Product safety was not weakened: GTIN conflicts still go to review, no
+  product was unconditionally approved, no manual JSON replaced a provider
+  feed and no credentials were changed.
+
+### Recovery chronology and provenance
+
+- Run #144, ID `33505667808`, commit
+  `e21d289aaa73b22ab0a1101c01bdc882c51fd0b6`, failed and restored only
+  17,805 fresh offers in five stores.
+- Run #146 attempt 1 ran 13:03:25-13:35:52 UTC and failed on Aelia
+  `bridge_already_running`; six stores reached 22,376.
+- Scheduled run #147, ID `33514918059`, ran 13:41:34-13:52:52 UTC and
+  succeeded, but it was partner-only; proof/full TradeDoubler were skipped.
+- Run #146 attempt 2 was resumed at 13:52:32 UTC; the main job ran
+  13:52:54-14:06:23 UTC and failed because proof and full Aelia returned
+  `bridge_already_running`. Six stores reached 22,501. Zero active jobs and
+  zero locks proved an abandoned failed session, not a concurrent import.
+- Sites v213 was deployed, then run #146 attempt 3 ran
+  14:11:14-14:36:59 UTC. Workflow conclusion is `failure` solely because
+  proof retained the earlier controlled 409. Full TradeDoubler succeeded
+  14:11:43-14:17:55; partner stage succeeded 14:17:55-14:36:56; Douglas was
+  intentionally skipped by the shared-run policy; status publication
+  succeeded.
+- Run URL:
+  https://github.com/GADOMM/Index/actions/runs/33511129720
+- Importer production commit:
+  `42ff3737e79b3453bdd94a62610d3e462cf230fb` (merged PR #54).
+- PR #53 is merged as
+  `e21d289aaa73b22ab0a1101c01bdc882c51fd0b6`. Full TradeDoubler runs are
+  scheduled at 02:47 and 14:17 UTC; bounded partner and isolated Douglas slots
+  remain automatic with `cancel-in-progress: false`.
+- Sites v208: source `9fd1b805e775a90ced84cb2bc7d8f98cf3644c6f`,
+  version `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_553787002dcc8191b8ade6ffda65d9c4`,
+  deployment `appgdep_6a96bae703308191a3841caee47b4025`, succeeded.
+- Sites v209: source `603a218f93226c09e5e412801dfe9ec3bd7fb835`,
+  version `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_82c07dbd283c8191bc440b03df116648`,
+  deployment `appgdep_6a96befc8bb88191afb89f8711041d20`, succeeded.
+- Sites v210: source `0a0b7ffc78ee8ec0dc67e6afbe1b12380fa4af9b`,
+  version `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_1967ae49e6248191a4c15f397725828e`.
+- Sites v211: source `e41869916257d1f8af06399599d5f5ec739c5a2d`,
+  version `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_1cd1b6e4d43081918cc7084ccd79a3a9`,
+  deployment `appgdep_6a96d0a19840819190e1dab20838a24c`, succeeded.
+- Sites v212: source `f95db906af72334ced4f7e79430c52e3ded89617`,
+  version `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_50e0695a45fc8191b42cbb10f0150134`,
+  deployment `appgdep_6a96d5f35d788191a5542a9d47f3716e`, succeeded at
+  13:41:22 UTC. It moves promotions to beta, adds a four-second bottle fallback
+  without an invented price and replaces the 1.46 MB PNG with a 33,822-byte
+  WebP.
+- Sites v213: source `edab402caa61f7e6db809148ff4e7e7b9db8411c`,
+  version `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_fcea6989757081919540d0c8f1818c9a`,
+  deployment `appgdep_6a96dce9822881919adaaf8e00741183`, succeeded at
+  14:11:01 UTC. Sites tests passed 96/96, build passed, lint has zero errors
+  and three pre-existing warnings.
+- Test-only source commit
+  `fab1bd51cce1b3098254d28d937efdb7ab33f17e` adds the legacy
+  same-`remoteVersion` regression path. It is pushed to the Sites source
+  `main` but deliberately not deployed because runtime is identical to v213.
+- No workflow is active, queued or pending and no catalog lock remains after
+  attempt 3.
+
+### Reporting and exact next task
+
+- Report #013 is the previous confirmed delivered report.
+- Report #014 subject:
+  `[Perfumetr] Raport wdrożeniowy #014 — Incydent katalogu: przyczyna i zabezpieczenia — 01.09.2026`.
+  It was sent from and to `support@perfumetr.pl` at 2026-09-01 14:43:38 UTC.
+  Gmail message/thread ID `1a05d6cfb350f4e1`; labels
+  `UNREAD`, `SENT`, `INBOX`. Exactly one sent copy was found.
+- Durable report files:
+  `/Perfumetr/report-014.txt`
+  (`libfile_f92f44e4bed48191894c1f8e7197060d`) and
+  `/Perfumetr/report-014.html`
+  (`libfile_ca3ee42771d8819185dd6834428db9e2`).
+- Exact next task: perform one read-only walkthrough of the authenticated
+  owner Integration panel in an existing owner session. Do not start another
+  import merely for reassurance.
+
+## Historical checkpoint: grouped Flaconi homepage campaigns (Sites v207; superseded by v212)
 
 Verified through 2026-09-01 11:08 UTC. The owner explicitly selected both
 verified Flaconi campaigns for the homepage. This checkpoint records the
