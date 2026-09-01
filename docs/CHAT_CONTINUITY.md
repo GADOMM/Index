@@ -4,7 +4,76 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: Sites v207 grouped Flaconi homepage campaigns
+## Current handoff: catalog recovered, homepage repaired, report #014 delivered
+
+Verified through 2026-09-01 14:44 UTC.
+
+- Production is operational on both `perfumetr.pl` and
+  `beta.perfumetr.pl`: HTTP 200, complete and identical seven-store coverage,
+  exact total 23,978 fresh active offers. Counts are Notino 8,609; Brasty
+  5,327; Flaconi 3,764; Cocolita 897; Drogeria.pl 864; Aelia.pl 1,467;
+  Douglas 3,050.
+- Aelia recovery is complete: 8,553 raw rows, 1,803 perfume rows, 86 chunks and
+  1,467 live/imported offers; registry `available`, success current, no lock.
+- Run #146 attempt 3 (ID `33511129720`, importer commit
+  `42ff3737e79b3453bdd94a62610d3e462cf230fb`) ran
+  14:11:14-14:36:59 UTC. Workflow conclusion is `failure` only because the
+  pre-full proof kept a controlled Aelia 409. Full TradeDoubler succeeded,
+  partner stage succeeded, Douglas was skipped by policy and status
+  publication succeeded. There are zero active/queued/pending workflows and
+  zero catalog locks.
+- Earlier evidence remains distinct: #144 failed at 17,805/five stores; #146
+  attempt 1 failed at 22,376/six; scheduled #147 succeeded but was partner-only
+  with proof/full skipped; #146 attempt 2 failed at 22,501/six and proved the
+  Aelia session was abandoned because both jobs and locks were absent.
+- Confirmed cause chain:
+  exact Cocolita/Drogeria tracking aliases were missing and old completion
+  could invalidate too early; Cocolita revision changed mid-run; Aelia
+  repeated full conflict scans; Flaconi ordinary status ran a heavy safety
+  audit and the runner stopped after recertification; a failed Aelia snapshot
+  session plus changed provider revision remained marked active inside its
+  three-hour window; UI separately labelled partial, differently timed
+  freshness reads as a whole-system total.
+- Safeguards:
+  v208 blocks zero publication from non-empty feeds and separates configured
+  from fresh coverage; v209 bounds/indexes Flaconi status work; v210-v211
+  safely resume provider changes and remove all repeated Aelia scans; v212
+  removes promotions from main, keeps both Flaconi campaigns on beta and uses
+  a four-second 33,822-byte bottle fallback with no invented price; v213
+  replaces a failed changed-revision session only without a live claim and
+  cleans only session-staged candidates under lease/CAS/session guards.
+- Production Sites is v213: source
+  `edab402caa61f7e6db809148ff4e7e7b9db8411c`, version
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_fcea6989757081919540d0c8f1818c9a`,
+  deployment `appgdep_6a96dce9822881919adaaf8e00741183`, succeeded at
+  14:11:01 UTC. Tests 96/96, build pass, lint zero errors plus three old
+  warnings.
+- Source-only commit `fab1bd51cce1b3098254d28d937efdb7ab33f17e`
+  adds legacy same-`remoteVersion` regression coverage and is pushed to
+  Sites `main`; no new deployment was made because runtime is identical.
+- PR #53 merged as `e21d289aaa73b22ab0a1101c01bdc882c51fd0b6`;
+  PR #54 merged as `42ff3737e79b3453bdd94a62610d3e462cf230fb`.
+  Full TradeDoubler remains automatic at 02:47 and 14:17 UTC; concurrency does
+  not cancel a live run.
+- Main UI has bottle/CTA and no promotions/error/overflow. Beta has both
+  Flaconi promotions and no error/overflow. Versace + Enter returns 48
+  candidates. Eros EDP women 100 ml has three unique offers: Notino only in
+  best-offer, Aelia.pl and Flaconi only below, all with store names.
+- Latest Worker log check: zero 1101, zero 5xx and zero exceptions. Panel page
+  returns 200; anonymous API correctly returns 401. Do not claim a fresh
+  authenticated owner-session walkthrough unless one is actually available.
+- Report #014 was sent from/to `support@perfumetr.pl` at
+  2026-09-01 14:43:38 UTC. Message/thread `1a05d6cfb350f4e1`, labels
+  `UNREAD`, `SENT`, `INBOX`, one sent copy. Durable copies:
+  `/Perfumetr/report-014.txt`
+  (`libfile_f92f44e4bed48191894c1f8e7197060d`) and
+  `/Perfumetr/report-014.html`
+  (`libfile_ca3ee42771d8819185dd6834428db9e2`).
+- Exact next task: one read-only authenticated walkthrough of the owner
+  Integration panel in an existing owner session. Do not trigger another
+  import for reassurance.
+
+## Previous handoff: Sites v207 grouped Flaconi homepage campaigns (superseded by v212)
 
 Verified through 2026-09-01 11:08 UTC.
 
