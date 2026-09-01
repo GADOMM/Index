@@ -23,6 +23,16 @@ test("schedules Douglas only in its isolated catalog cycle", async () => {
   assert.match(douglasStep, /node scripts\/catalog-orchestrator\.mjs awin:douglas/);
 });
 
+test("runs a full TradeDoubler recovery twice inside the 30 hour freshness window", async () => {
+  const workflow = await readFile(new URL("../.github/workflows/tradedoubler.yml", import.meta.url), "utf8");
+  const fullStep = workflow.match(
+    /- name: Run the full TradeDoubler import[\s\S]*?(?=\n      - name: Advance partner sources)/,
+  )?.[0] ?? "";
+  assert.match(fullStep, /github\.event\.schedule == '47 2 \* \* \*'/);
+  assert.match(fullStep, /github\.event\.schedule == '17 14 \* \* \*'/);
+  assert.match(fullStep, /PERFUMETR_MODE: full/);
+});
+
 test("one partner failure does not prevent CJ and TradeDoubler vouchers from advancing", async () => {
   const originalArgv = process.argv;
   const originalFetch = globalThis.fetch;

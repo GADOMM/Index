@@ -12,6 +12,7 @@ import {
   PERFUME_CLASSIFIER_VERSION,
   isPerfumeProduct,
 } from "./perfume-classifier.mjs";
+import { validateFullImportCompletion } from "./import-result-contract.mjs";
 
 const BRIDGE_MAXIMUM_BYTES = 2 * 1024 * 1024;
 const PROVIDER_MAXIMUM_BYTES = 512 * 1024 * 1024;
@@ -746,9 +747,8 @@ const runFullImport = async (feedId) => {
       throw new Error("snapshot_cursor_mismatch");
     }
 
-    let latest = null;
     for (let index = nextChunk; index < chunks.length; index += 1) {
-      latest = await importUnlimitedChunk(chunks[index]);
+      await importUnlimitedChunk(chunks[index]);
     }
     const confirmationTicket = await issueTicket(feedId, "feed_metadata");
     const confirmedFeedMetadata = await fetchProviderJson(confirmationTicket.ticket);
@@ -763,6 +763,7 @@ const runFullImport = async (feedId) => {
       lastUpdated: confirmedFeedMetadata,
       rawProductCount: providerProducts.length,
     });
+    const completionCounts = validateFullImportCompletion(completion, perfumeProducts);
     return {
       ok: true,
       mode: "full",
@@ -774,8 +775,8 @@ const runFullImport = async (feedId) => {
       chunks: chunks.length,
       transport: downloaded.transport ?? "unlimited",
       ...(downloaded.pages ? { pages: downloaded.pages } : {}),
-      liveOffers: Number(completion.liveOffers ?? latest?.storeLiveOffers ?? 0),
-      importedCount: Number(completion.importedCount ?? latest?.matchedCandidates ?? 0),
+      liveOffers: completionCounts.liveOffers,
+      importedCount: completionCounts.importedCount,
     };
   } catch (error) {
     await bridgePost({

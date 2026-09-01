@@ -115,7 +115,15 @@ jobs:
         run: node scripts/tradedoubler-import.mjs
 
       - name: Run the full TradeDoubler import
-        if: always() && (github.event_name == 'push' || (github.event_name == 'schedule' && github.event.schedule == '17 14 * * *') || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'full' || inputs.mode == 'all')))
+        if: >-
+          always() && (
+            github.event_name == 'push' ||
+            (github.event_name == 'schedule' && (
+              github.event.schedule == '47 2 * * *' ||
+              github.event.schedule == '17 14 * * *'
+            )) ||
+            (github.event_name == 'workflow_dispatch' && (inputs.mode == 'full' || inputs.mode == 'all'))
+          )
         env:
           PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
           PERFUMETR_MODE: full
