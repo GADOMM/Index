@@ -4,7 +4,57 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: Sites v206 verified partner coupons
+## Current handoff: Sites v207 grouped Flaconi homepage campaigns
+
+Verified through 2026-09-01 11:08 UTC.
+
+- The owner explicitly chose both verified Flaconi campaigns for the homepage.
+  Production now shows one clean Flaconi module with separate SEPTEMBER and
+  SAVEMORE rows rather than two unrelated promotional boxes.
+- Scheduled campaigns are visible immediately as `Wkrótce`. SEPTEMBER shows
+  10% for 2026-09-03. SAVEMORE shows all four thresholds, PLN 49/69/89/109
+  from PLN 299/419/549/689, for 2026-09-05 through 2026-09-06.
+- Codes never stack. A scheduled code is not applied before its start, and the
+  comparison chooses the single best eligible code when campaigns overlap.
+  Each row activates and disappears automatically; the reserved parent layout
+  collapses after the last expiry.
+- The plural production allowlist contains exactly the five verified Flaconi
+  records needed for the two complete campaigns. Invalid, incomplete or
+  non-Flaconi selections fail closed. Douglas SEZON remains informational and
+  is not shown on the homepage.
+- Both main and beta homepage APIs returned HTTP 200 with exactly these two
+  scheduled Flaconi campaigns and no Douglas campaign. The current fresh rail
+  was Notino 8,550, Brasty 5,314 and Douglas 3,050, exact rail total 16,914;
+  beta reported 613 brands. Do not treat absent rail sources as zero stored
+  products.
+- Sites source commit is
+  `adb93a52658fd13453a65795205631c364f38db0`; version 207 is
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_22f5b75ab4508191a307e00c9368adc9`;
+  deployment `appgdep_6a96b0ae16e08191abfe1d26a1661c03` succeeded at
+  11:02:19 UTC with environment revision 17 and no failure message.
+- Build and artifact validation passed, full tests passed 89/89, lint has zero
+  errors and three old unrelated warnings, and independent review found no
+  blocker. Post-deployment logs contain no Worker exception; only harmless
+  `/robots.txt` 404 entries with `outcome=ok`.
+- The server shell reserves the module before the async homepage response, and
+  the Sites desktop capture confirms that this column does not overlap the
+  hero. The connected cloud browser could not open the public hosts, so fresh
+  owner iPhone visual acceptance of the hydrated module is still unrecorded.
+- GitHub `master` before this continuity commit is
+  `a0a22ffba8b6bd676e3998d00fe941c3973a24b4`. Latest workflow run #142,
+  ID `33496392931`, scheduled, attempt 1, succeeded. It ran validation and
+  isolated Douglas only; full TradeDoubler and the shared partner cycle were
+  skipped. Douglas ended completed with 3,050 live offers. No workflow is
+  running and this homepage deployment started no import.
+- No catalog/classifier/review data, domain, routing, partner credential or
+  report changed. Report #013 remains the last confirmed delivered report; no
+  report was requested or sent specifically for v207.
+- Exact next task: record the owner's natural iPhone visual check of both
+  homepage rows. If accepted, leave v207 in place and let the verified dates
+  control activation and expiry. Do not redeploy or start an import merely for
+  reassurance.
+
+## Previous handoff: Sites v206 verified partner coupons
 
 Verified through 2026-09-01 10:09 UTC.
 

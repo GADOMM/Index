@@ -1,9 +1,104 @@
 # Perfumetr project state
 
-Updated: 2026-09-01 10:09 UTC after the verified Sites v206 partner-coupon deployment
+Updated: 2026-09-01 11:08 UTC after the Sites v207 grouped Flaconi homepage deployment
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
+
+## Homepage visibility for both Flaconi campaigns (Sites v207)
+
+Verified through 2026-09-01 11:08 UTC. The owner explicitly selected both
+verified Flaconi campaigns for the homepage. This checkpoint records the
+production implementation and deployment. It does not claim fresh visual
+acceptance from the owner's iPhone, a new import, a classifier change or a
+product-review decision.
+
+### Homepage behavior and safety boundary
+
+- Production environment revision 17 adds one plural, fail-closed homepage
+  allowlist containing exactly the verified Flaconi percentage row and all
+  four rows required for the SAVEMORE threshold campaign. An invalid ID,
+  incomplete threshold group or non-Flaconi merchant makes the affected
+  campaign disappear instead of publishing partial or unrelated terms.
+- Both public surfaces use one restrained Flaconi module with two separated
+  campaign rows rather than independent promotional boxes. Scheduled campaigns
+  are visible immediately with the label `Wkrótce`.
+- `SEPTEMBER` shows 10% on eligible products for 2026-09-03. `SAVEMORE`
+  shows all four verified thresholds: PLN 49 from PLN 299, PLN 69 from PLN
+  419, PLN 89 from PLN 549 and PLN 109 from PLN 689 for 2026-09-05 through
+  2026-09-06. One shared note identifies exclusions and explains that
+  Perfumetr uses the single most advantageous available code.
+- Scheduled coupons are not applied before their start. When multiple coupons
+  are active, comparison evaluates them independently and never stacks them.
+  Tests cover both directions: the tier can beat the percentage at one basket
+  value and the percentage can beat the highest tier at another.
+- Douglas `SEZON` remains informational and is deliberately absent from the
+  homepage allowlist. Its variable SKU-level benefit is not represented as a
+  guaranteed percentage.
+- Each campaign changes from scheduled to active on its verified timestamp and
+  disappears after expiry without a redeploy. After the last campaign ends,
+  the parent layout also collapses. The initial server shell reserves the
+  module space when a valid configured campaign is expected, preventing a
+  late horizontal layout jump.
+- The homepage API now exposes the plural `promotions` contract while
+  retaining the singular percentage field for cached older clients. Both
+  clients request schema version 2 and normalize the old singular response.
+
+### Code, deployment and production verification
+
+- Sites source commit:
+  `adb93a52658fd13453a65795205631c364f38db0`
+  (`Show grouped Flaconi campaigns on homepages`), pushed to the Sites source
+  `main` branch with a clean worktree.
+- Sites version 207, version ID
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_22f5b75ab4508191a307e00c9368adc9`.
+- Production deployment
+  `appgdep_6a96b0ae16e08191abfe1d26a1661c03` succeeded at
+  2026-09-01 11:02:19 UTC with no failure message and environment revision 17.
+  Sites is active and public; provider URL remains
+  `https://perfumetr.borodzicz85.chatgpt.site` and the reported live URL is
+  `https://beta.perfumetr.pl`.
+- Fresh production requests to both
+  `/api/homepage?surface=main&schema=2` and
+  `/api/homepage?surface=beta&schema=2` returned HTTP 200 and exactly two
+  Flaconi campaigns: one scheduled percentage campaign and one scheduled
+  four-tier campaign. Neither response contained a Douglas homepage campaign.
+- The same response reported the current fresh visible offer rail as Notino
+  8,550, Brasty 5,314 and Douglas 3,050, exact rail total 16,914; beta reported
+  613 brands. This rail is not an all-store or stored-product total. Sources
+  absent from the rail are not recorded as zero merely because their offers
+  are outside the public freshness window.
+- Both production HTML shells contain the reserved promotion placeholder and
+  the server-side expected-campaign flag. The Sites 1200x750 capture confirms
+  the reserved desktop column does not overlap the beta hero. The connected
+  cloud browser rejected both public hosts at the client layer, so the fully
+  hydrated module is technically deployed and API-verified but is not yet
+  visually accepted by the owner on the original iPhone.
+- Build and Sites artifact validation passed. The complete suite passed 89/89.
+  Lint passed with zero errors and the same three pre-existing unrelated
+  warnings. `git diff --check` passed and independent review found no code
+  blocker.
+- The post-deployment error-only Worker query contained no runtime exception.
+  It returned only two `GET /robots.txt` 404 records with
+  `outcome=ok`; homepage API requests succeeded.
+- GitHub `master` before this documentation commit is
+  `a0a22ffba8b6bd676e3998d00fe941c3973a24b4`. Latest workflow run #142,
+  ID `33496392931`, attempt 1, was scheduled and completed successfully from
+  10:14:34 to 10:32:50 UTC. Validation passed; full TradeDoubler and the shared
+  partner cycle were skipped. The isolated Douglas step completed with 3,050
+  live offers, 51,110 received, 3,050 imported, 2,505 review, 45,555 excluded
+  and 6,185 stored products. No workflow is currently running and v207 started
+  no duplicate or manual import.
+- v207 changed no catalog product, offer, classifier, review decision, domain,
+  routing rule or partner credential. It changed the homepage presentation and
+  the non-secret selection allowlist only.
+- Report #013 remains the latest confirmed delivered report. No report was
+  requested or sent specifically for v207.
+- Exact next task: when the owner next opens each homepage on the original
+  iPhone, verify that both rows are legible and calm after hydration. If they
+  match, record visual acceptance and otherwise wait for the automatic
+  SEPTEMBER and SAVEMORE state transitions; do not reimplement v207 or start
+  an import merely for verification.
 
 ## Verified partner coupon campaigns (Sites v206)
 
