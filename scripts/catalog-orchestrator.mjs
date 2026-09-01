@@ -110,6 +110,12 @@ const responseSkipped = (payload) => {
   if (payload.skipped !== "fresh") throw new Error("orchestrator_invalid_response");
   return payload.skipped;
 };
+const responseFlaconiSafetyPassed = (source, payload) => {
+  if (source !== "awin:flaconi") return null;
+  const passed = payload?.overview?.safetyAudit?.passed;
+  if (typeof passed !== "boolean") throw new Error("orchestrator_invalid_response");
+  return passed;
+};
 const safeCounterKeys = [
   "rawProducts",
   "perfumeProducts",
@@ -189,6 +195,7 @@ const runSource = async (source) => {
   let busy = responseBusy(initial);
   let counters = responseCounters(initial);
   let rejectionReasons = responseVoucherRejectionReasons(source, initial);
+  let flaconiSafetyPassed = responseFlaconiSafetyPassed(source, initial);
   let feedChangeRestarts = 0;
   let inMaintenance = state === "completed"
     && hasMaintenanceBacklog(maintenanceCounters(source, state, counters));
@@ -218,6 +225,10 @@ const runSource = async (source) => {
     busy = responseBusy(latest);
     const stepCounters = responseCounters(latest);
     const stepRejectionReasons = responseVoucherRejectionReasons(source, latest);
+    const nextFlaconiSafetyPassed = responseFlaconiSafetyPassed(source, latest);
+    const flaconiSafetyRecovered = flaconiSafetyPassed === false
+      && nextFlaconiSafetyPassed === true;
+    flaconiSafetyPassed = nextFlaconiSafetyPassed;
     const maintenance = maintenanceCounters(source, state, stepCounters);
     counters = { ...counters, ...stepCounters };
     if (stepRejectionReasons !== null) rejectionReasons = stepRejectionReasons;
@@ -227,12 +238,20 @@ const runSource = async (source) => {
       inMaintenance = false;
       continue;
     }
+    // A safety-only Flaconi step can restore the certificate while leaving the
+    // old completed generation in place. Do not mistake that intermediate
+    // state for a finished refresh: one paced follow-up lets Sites apply its
+    // normal freshness decision and start a new generation when due.
+    if (flaconiSafetyRecovered) {
+      inMaintenance = false;
+      continue;
+    }
     if (!maintenance || !hasMaintenanceBacklog(maintenance)) break;
     if (inMaintenance && maintenance.maintenanceProcessedCount === 0) break;
     inMaintenance = true;
   }
   return {
-    ok: state !== "failed",
+    ok: state !== "failed" && flaconiSafetyPassed !== false,
     source,
     state,
     steps,
