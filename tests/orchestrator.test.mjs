@@ -80,7 +80,10 @@ test("one partner failure does not prevent CJ and TradeDoubler vouchers from adv
     calls.push([body.source, body.action]);
     if (body.action === "status") {
       if (body.source === "awin:flaconi") {
-        return Response.json({ ok: true, overview: { state: "failed" } });
+        return Response.json({
+          ok: true,
+          overview: { state: "failed", safetyAudit: { passed: true } },
+        });
       }
       if (body.source === "cj:notino") {
         return Response.json({
@@ -108,7 +111,10 @@ test("one partner failure does not prevent CJ and TradeDoubler vouchers from adv
       });
     }
     if (body.source === "awin:flaconi") {
-      return Response.json({ ok: true, overview: { state: "failed" } });
+      return Response.json({
+        ok: true,
+        overview: { state: "failed", safetyAudit: { passed: true } },
+      });
     }
     if (body.source === "tradedoubler:vouchers") {
       return Response.json({
@@ -448,6 +454,7 @@ test("drains completed Flaconi catalog maintenance without feed pacing delays", 
         importedCount: 933,
         automaticReviewCount: 800,
         maintenanceProcessedCount: 0,
+        safetyAudit: { passed: true },
       } });
     }
     const counters = maintenanceSteps.shift();
@@ -455,6 +462,7 @@ test("drains completed Flaconi catalog maintenance without feed pacing delays", 
     return Response.json({ ok: true, overview: {
       state: "completed",
       importedCount: 933 + (800 - counters.automaticReviewCount),
+      safetyAudit: { passed: true },
       ...counters,
     } });
   };
@@ -475,6 +483,110 @@ test("drains completed Flaconi catalog maintenance without feed pacing delays", 
     assert.equal(report.sources[0].completed, true);
     assert.equal(report.sources[0].counters.automaticReviewCount, 0);
     assert.equal(report.sources[0].counters.maintenanceProcessedCount, 400);
+  } finally {
+    process.argv = originalArgv;
+    globalThis.fetch = originalFetch;
+    globalThis.setTimeout = originalSetTimeout;
+    process.stdout.write = originalStdout;
+    process.stderr.write = originalStderr;
+    process.exitCode = originalExitCode;
+    delete process.env.PERFUMETR_ORIGIN;
+    delete process.env.PERFUMETR_ORCHESTRATOR_STEPS;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+    delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  }
+});
+
+test("continues after Flaconi safety recovery so Sites can start a fresh generation", async () => {
+  const originalArgv = process.argv;
+  const originalFetch = globalThis.fetch;
+  const originalSetTimeout = globalThis.setTimeout;
+  const originalStdout = process.stdout.write;
+  const originalStderr = process.stderr.write;
+  const originalExitCode = process.exitCode;
+  const requestToken = "github-runner-request-token";
+  const oidcToken = [
+    Buffer.from(JSON.stringify({ alg: "RS256", kid: "test" })).toString("base64url"),
+    Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 300 })).toString("base64url"),
+    Buffer.from("signature").toString("base64url"),
+  ].join(".");
+  const calls = [];
+  const delays = [];
+  let stdout = "";
+  let stderr = "";
+  let advances = 0;
+
+  process.env.PERFUMETR_ORIGIN = "https://perfumetr.borodzicz85.chatgpt.site";
+  process.env.PERFUMETR_ORCHESTRATOR_STEPS = "2";
+  process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN = requestToken;
+  process.env.ACTIONS_ID_TOKEN_REQUEST_URL = "https://pipelines.actions.githubusercontent.com/test/idtoken?api-version=2.0";
+  process.argv = [process.execPath, "scripts/catalog-orchestrator.mjs", "awin:flaconi"];
+  process.stdout.write = ((value, ...args) => {
+    if (typeof value === "string" && value.startsWith("{")) {
+      stdout += value;
+      return true;
+    }
+    return originalStdout.call(process.stdout, value, ...args);
+  });
+  process.stderr.write = ((value) => { stderr += String(value); return true; });
+  globalThis.setTimeout = ((callback, milliseconds, ...args) => {
+    delays.push(milliseconds);
+    callback(...args);
+    return 0;
+  });
+
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(input instanceof URL ? input.href : typeof input === "string" ? input : input.url);
+    if (url.hostname === "pipelines.actions.githubusercontent.com") {
+      return Response.json({ value: oidcToken });
+    }
+    const body = JSON.parse(init.body);
+    calls.push([body.source, body.action]);
+    if (body.action === "status") {
+      return Response.json({ ok: true, overview: {
+        state: "completed",
+        importedCount: 3_737,
+        liveOffers: 0,
+        automaticReviewCount: 0,
+        maintenanceProcessedCount: 0,
+        safetyAudit: { passed: false },
+      } });
+    }
+    advances += 1;
+    return Response.json({ ok: true, overview: advances === 1 ? {
+      state: "completed",
+      importedCount: 3_737,
+      liveOffers: 0,
+      automaticReviewCount: 0,
+      maintenanceProcessedCount: 17,
+      safetyAudit: { passed: true },
+    } : {
+      state: "paused",
+      generation: 2,
+      receivedCount: 1_500,
+      importedCount: 120,
+      liveOffers: 120,
+      safetyAudit: { passed: true },
+    } });
+  };
+
+  try {
+    await import(`../scripts/catalog-orchestrator.mjs?flaconi-safety-resume-test=${Date.now()}`);
+    assert.equal(stderr, "");
+    assert.notEqual(process.exitCode, 1);
+    assert.deepEqual(calls, [
+      ["awin:flaconi", "status"],
+      ["awin:flaconi", "advance_source"],
+      ["awin:flaconi", "advance_source"],
+    ]);
+    assert.deepEqual(delays, [12_500]);
+    const report = JSON.parse(stdout);
+    assert.equal(report.ok, true);
+    assert.equal(report.sources[0].steps, 2);
+    assert.equal(report.sources[0].state, "paused");
+    assert.equal(report.sources[0].completed, false);
+    assert.equal(report.sources[0].counters.generation, undefined);
+    assert.equal(report.sources[0].counters.receivedCount, 1_500);
   } finally {
     process.argv = originalArgv;
     globalThis.fetch = originalFetch;
@@ -598,7 +710,10 @@ test("paces consecutive Flaconi feed chunks above the Sites safety interval", as
     const body = JSON.parse(init.body);
     calls.push([body.source, body.action]);
     if (body.action === "status") {
-      return Response.json({ ok: true, overview: { state: "paused", receivedCount: 0 } });
+      return Response.json({
+        ok: true,
+        overview: { state: "paused", receivedCount: 0, safetyAudit: { passed: true } },
+      });
     }
     advances += 1;
     return Response.json({
@@ -608,6 +723,7 @@ test("paces consecutive Flaconi feed chunks above the Sites safety interval", as
         receivedCount: advances * 1_500,
         importedCount: advances * 40,
         liveOffers: advances * 40,
+        safetyAudit: { passed: true },
         ...(advances === 1 ? {} : {
           automaticReviewCount: 0,
           maintenanceProcessedCount: 0,
@@ -1058,7 +1174,7 @@ test("keeps Douglas out of the default scheduled source set until explicit activ
     const maintenance = body.source.startsWith("cj:")
       ? { automaticReviewCount: 0, pendingFreshOfferCount: 0, maintenanceProcessedCount: 0 }
       : body.source === "awin:flaconi"
-        ? { automaticReviewCount: 0, maintenanceProcessedCount: 0 }
+        ? { automaticReviewCount: 0, maintenanceProcessedCount: 0, safetyAudit: { passed: true } }
         : {};
     return Response.json({
       ok: true,
