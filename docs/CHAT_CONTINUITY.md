@@ -4,7 +4,49 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: Sites v205 confirmed owner-panel recovery
+## Current handoff: Sites v206 verified partner coupons
+
+Verified through 2026-09-01 10:09 UTC.
+
+- The three requested e-mail campaigns are recovered, structured and deployed:
+  Flaconi `SEPTEMBER` (10%, 2026-09-03), Flaconi `SAVEMORE` (PLN 49/69/89/109
+  from PLN 299/419/549/689, 2026-09-05 through 2026-09-06) and Douglas
+  `SEZON` (up to 20% from PLN 129, 2026-08-31 through 2026-09-06).
+- Flaconi dates, tiers and exclusions are automatic. SAVEMORE is one campaign
+  in the panel even though four threshold rows allow the comparison engine to
+  choose the single best eligible tier.
+- SEZON applies only to exact Douglas variants marked with the code. Its rate
+  varies by SKU and Douglas has no verified delivery rule in Perfumetr, so it
+  is intentionally informational and cannot alter comparison prices.
+- Nothing is selected for the homepage. The explicit selector is empty and the
+  live homepage returned `promotion: null`. Do not publish a homepage code
+  until the owner chooses one.
+- Sites source commit is
+  `2dfe927e43c0e25cd68dcfdc03073badf3db85d9`; version 206 is
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_efde95b167788191b59bbffc58fed54f`;
+  deployment `appgdep_6a96a2beb5f88191a039a8c1674f04df` succeeded with
+  production environment revision 16.
+- An earlier deployment attempt failed before publication because the
+  environment text exceeded the Sites binding limit. The same verified data
+  was compacted without dropping campaign conditions and then deployed.
+- D1 confirms all six new rows with correct automatic/informational flags. Old
+  `DUO` is expired; unrelated existing campaigns were preserved.
+- Build and artifact checks passed, full tests passed 88/88, lint has zero
+  errors and three existing unrelated warnings, and independent review found
+  no blocker. The production homepage returned HTTP 200 and post-deployment
+  error logs were empty.
+- The latest GitHub catalog workflow is scheduled run #141, ID
+  `33484726115`, failure: validation, vouchers, Notino and Brasty completed;
+  Flaconi returned `orchestrator_import_failed`; full TradeDoubler and
+  isolated Douglas were skipped. No workflow is running and no duplicate was
+  started. This importer result is independent from the coupon deployment.
+- No manual import, catalog/classifier mutation, review publication, secret,
+  domain, routing or partner-message change was made. Report #013 remains the
+  latest confirmed delivered report; no coupon report was requested or sent.
+- Exact next task: wait for the owner's homepage selection among SEPTEMBER,
+  SAVEMORE and SEZON. Preserve the current homepage until that decision.
+
+## Previous handoff: Sites v205 confirmed owner-panel recovery
 
 Verified through 2026-08-31 14:30 UTC.
 

@@ -1,9 +1,91 @@
 # Perfumetr project state
 
-Updated: 2026-08-31 14:30 UTC after the confirmed Sites v205 owner-panel recovery and report #013
+Updated: 2026-09-01 10:09 UTC after the verified Sites v206 partner-coupon deployment
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
+
+## Verified partner coupon campaigns (Sites v206)
+
+Verified through 2026-09-01 10:09 UTC. This checkpoint records the three
+campaigns requested from the partner e-mails and their safe production
+activation. It does not select a homepage campaign, start an import, alter
+catalog classification or claim owner acceptance of the new panel entries.
+
+### Verified campaign terms and application boundary
+
+- Flaconi `SEPTEMBER`: 10% from the whole eligible order on
+  2026-09-03 00:01-23:59 Europe/Warsaw. The partner exclusion list is
+  persisted. Steampod 3.0/4.0 is excluded. Because the e-mail identified only
+  selected ANNEMARIE BOERLIND products without stable product IDs, the whole
+  brand is conservatively excluded rather than risking an invalid discount.
+- Flaconi `SAVEMORE`: one campaign valid from 2026-09-05 00:01 through
+  2026-09-06 23:59 Europe/Warsaw, represented by four mutually competing
+  thresholds: PLN 49 from PLN 299, PLN 69 from PLN 419, PLN 89 from PLN 549
+  and PLN 109 from PLN 689. The comparison engine selects only the best
+  eligible tier; discounts are never stacked. The same exclusions apply.
+- Douglas `SEZON`: active 2026-08-31 through 2026-09-06, up to 20% from
+  PLN 129, only for exact Douglas variants marked with this code. Partner
+  products, special offers and the partner exclusion lists remain outside the
+  campaign. Because the percentage varies by SKU and no verified Douglas
+  delivery rule exists, this campaign is stored and shown as informational;
+  it cannot silently lower a comparison price.
+- The official Douglas filtered catalogue was checked at variant level. The
+  observed perfume result count was 817 and is dynamic. A base product may
+  contain eligible, ineligible and special-offer variants at once, so neither
+  a brand nor a base-product match is used as proof of eligibility.
+- No campaign has been selected for the homepage. The explicit
+  `HOMEPAGE_PROMOTION_COUPON_ID` selector remains empty and the production
+  homepage API returned `promotion: null`. A code must not appear there until
+  the owner chooses it.
+
+### Code, deployment and production verification
+
+- Sites source commit:
+  `2dfe927e43c0e25cd68dcfdc03073badf3db85d9`
+  (`Add verified partner coupon campaigns`), pushed to the Sites source
+  `main` branch with a clean worktree.
+- Sites version 206, version ID
+  `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_efde95b167788191b59bbffc58fed54f`.
+- The first deployment,
+  `appgdep_6a96a253a3ac819192167f95c02c8950`, failed before publication
+  because one text environment binding exceeded the Sites size limit.
+  Production was not switched. The same verified conditions were compacted
+  without removing codes, dates, tiers or exclusions.
+- Production environment revision 16 was then deployed successfully as
+  `appgdep_6a96a2beb5f88191a039a8c1674f04df`. Sites reports the public
+  project active and version 206 live at `https://beta.perfumetr.pl`, with
+  provider URL `https://perfumetr.borodzicz85.chatgpt.site`.
+- Production D1 confirms one informational Douglas row, one Flaconi percentage
+  row and four Flaconi threshold rows with the exact windows above. The former
+  Flaconi `DUO` campaign is expired. The existing unrelated Aelia record was
+  retained. No catalog product, offer, review decision or classifier row was
+  changed.
+- Runtime configuration rejects invalid revisions without expiring the last
+  valid campaign set. Comparison can synchronize the verified set on its first
+  request. The owner panel supports Douglas and groups the four SAVEMORE rows
+  into one readable campaign card.
+- Build and Sites artifact validation passed. The full suite passed 88/88.
+  Lint passed with zero errors and the same three pre-existing unrelated
+  warnings. Independent review found no deployment blocker.
+- A production homepage request returned HTTP 200 with 10,758 catalog
+  products, 615 brands and the fresh visible offer rail Notino 8,550, Brasty
+  5,314 and Douglas 3,051. This rail is not an all-store total. The
+  post-deployment error-only Worker query contained zero events.
+- GitHub `master` before this documentation commit is
+  `53f88fab4eae5d461ac763d016513de541036f1f`. The newest catalog workflow
+  is scheduled run #141, ID `33484726115`, attempt 1, started at
+  2026-09-01 07:58:48 UTC and completed at 08:01:47 UTC with failure.
+  Validation passed; full TradeDoubler and isolated Douglas were skipped.
+  Vouchers completed, Notino completed with 8,550 live offers and Brasty with
+  5,314; Flaconi returned `orchestrator_import_failed`. No workflow is
+  currently running and no duplicate was started.
+- Report #013 remains the latest confirmed delivered report. No report was
+  requested or sent for the coupon work.
+- Exact next task: the owner chooses which of SEPTEMBER, SAVEMORE or SEZON
+  should be shown on the homepage. Preserve `promotion: null` until that
+  decision. If SEZON is chosen, present its variable discount honestly and do
+  not convert it into a guaranteed 20% price reduction.
 
 ## Confirmed owner-panel recovery and navigation cleanup (Sites v205)
 
