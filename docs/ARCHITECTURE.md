@@ -1,5 +1,23 @@
 # Perfumetr importer architecture
 
+## Public experience integration (Sites v221-v222 / 2026-09-05)
+
+- Main and beta render the same `PerfumetrExperience` client wrapper; main starts
+  on the landing, beta on search, with explicit search/variant deep links.
+  CTA/history switch panels in one document and retain bounded marketing UTM
+  fields. Main-domain catalog/search/compare/feedback/out routes use the existing
+  guarded data pipeline rather than returning a hostname-based 404.
+- `experience.css`, `glass-controls.css` and `scene-motion.ts` own the shared
+  photographic scene, matte controls, mobile offer rows and bounded parallax.
+  Reduced motion is honored. Entrance animations must not retain an opacity
+  backdrop root after completion: backwards fill permits actual backdrop blur.
+- Public v220/v221 assets are retained exactly for already-open documents,
+  with a SHA-256/dependency manifest test. Root responses use private/no-store.
+  This is frontend rollout compatibility, not a change to offer cache freshness.
+- v222 source `34dcdb094988a36cb8a0c5e2380d524bd97727ca`; final build and 106
+  tests pass. No production schema/importer/schedule changes. Visual evidence
+  uses local synthetic fixtures, never production price certification.
+
 ## Current runtime additions (Sites v218-v219 / 2026-09-05)
 
 These values supersede older freshness checkpoints below.
