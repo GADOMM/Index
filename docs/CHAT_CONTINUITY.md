@@ -4,7 +4,67 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: catalog recovered, homepage repaired, report #014 delivered
+## Current handoff: Sites v219, price schedule, report #015 delivered
+
+Verified through 2026-09-05 08:51 UTC. Read the newest PROJECT_STATE section
+first. The September 1 23,978-offer total below is historical.
+
+- Runtime is Sites v219, source `f11d571e8e1b27960c37081239b6d80c0afaa581`.
+  Deployment `appgdep_6a9bd729eca08191864ae3d750c6f514` succeeded at
+  08:47:53 UTC; production URL https://perfumetr.borodzicz85.chatgpt.site.
+  Source `main` is synchronized. Do not redeploy earlier motion branches.
+- v218 (`31a251c68d39c6ab0a32e0e9159853fb71f0bcc0`) published price
+  freshness and exact identity repairs. v219 adds the public editorial
+  petrol/paper/olive palette, larger labels/prices, compact comparison,
+  complete mobile categories and an optional feedback disclosure.
+- Static bottles remain; rejected 2.5D stays reverted. There are 26 cutout
+  entries including 20 additions. Main has a real bottle/CTA and no promotion
+  panel; beta retains date-valid promotions and their exclusions.
+- Enter returns 48 groups, never silently choosing the first suggestion.
+  Product/audience are legible in suggestions; best offer is listed once.
+- Index PR #56 merged at `b5c573be244620988d089a248ebe80394a6af25f`.
+  CJ runs eight times daily; four added slots are CJ-only. Shared partners
+  run four times, full TD twice and Douglas twice. Exact UTC slots are in
+  PROJECT_STATE and the workflow. Concurrency remains non-canceling.
+- #172 / 33955480932 completed successfully after that merge:
+  32/32 validation; proof/full check/partners/status success. All full-TD
+  snapshots were unchanged. Latest actual full transfer: successful
+  #171 / 33951651817, 07:06:48-08:15:49 UTC.
+- Notino/Brasty consumed 48 steps in #172, but maintenance is not finished:
+  pending freshness 4,148 / 2,753 respectively. Eight cycles are eight
+  bounded opportunities, not eight full refreshes. Do not dispatch a
+  duplicate import or erase safety limits to make the queue look empty.
+- Public offer maximum age is 18h; CJ refresh target 9h. Comparisons use
+  first-primary/no-store; visible pages refresh every 5min and on return
+  after 60s. A failed refresh cannot leave prices visible indefinitely.
+- Notino's exact coupon-shaped feed reductions need verified eligibility.
+  Confirmed identity repairs remain exact and tested, with no fuzzy matching
+  or unconditional review approval.
+- Sites build/artifact and 103/103 tests passed. Supported preview QA covered
+  375/390px and 1280px layouts, search, catalog, comparison, promotions and
+  feedback. Fixtures were never published. No physical iPhone or user
+  acceptance is claimed.
+- Post-v219 logs showed HTTP 200 for /, /api/homepage and marketing consent,
+  no 1101/5xx in the retrieved sample. Direct workspace public reads were
+  restricted (403), so no current all-source global total or complete
+  merchant-by-merchant live price equality check is claimed.
+- Instagram needed login; pinned comment was not read. Saved first-party brand
+  artwork supplied the visual reference. No social message/comment was sent.
+- Global duplicate/review audit, authenticated owner Integrations visit,
+  www pending/SSL and product-review provenance remain open as previously
+  documented. Do not turn these into claimed fixes.
+- **Report #015 delivered once at 2026-09-05 08:51:04 UTC**, from/to
+  support@perfumetr.pl; message/thread `1a070c3a3395785b` has SENT + INBOX.
+  Exact subject: `[Perfumetr] Raport wdrożeniowy #015 — Aktualne ceny i świeższy Perfumetr — 05.09.2026`.
+  Reused #003 template/logo. Copies: /Perfumetr/report-015.txt and
+  /Perfumetr/report-015.html. Do not send again; future reports only on request.
+
+Next useful technical check: read the next completed automatic CJ-only slot,
+its pending freshness counters and actual post-v219 search/compare logs.
+Continue ordinary bounded automation; do not manually dispatch just for proof.
+Preserve the user's right to accept or reject the new visual style.
+
+## Historical handoff: catalog recovered, homepage repaired, report #014 delivered
 
 Verified through 2026-09-01 14:44 UTC.
 
