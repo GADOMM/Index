@@ -1,5 +1,51 @@
 # Perfumetr importer architecture
 
+## Current runtime additions (Sites v218-v219 / 2026-09-05)
+
+These values supersede older freshness checkpoints below.
+
+- Public offers expire from comparison after **18h**. CJ maintenance targets
+  records older than **9h**, using bounded 50-product batches and 48-step
+  runner cycles. A completed provider generation can still have a pending
+  freshness queue; report both, never infer fresh completion from the state.
+- PR #56 adds CJ-only slots 05:47, 11:47, 17:47, 23:47 UTC to the existing
+  shared 02:47, 08:47, 14:17, 20:47 UTC cycles. Full TD remains
+  02:47/14:17 and Douglas 05:23/17:23. cancel-in-progress remains false.
+- Comparison reads use D1 `withSession("first-primary")` and no-store
+  responses/fetches. Homepage caching is 30s browser / 60s shared, or
+  10s / 30s for a fallback. No long stale-while-revalidate price window.
+- Visible comparisons refresh at five-minute intervals and on focus/pageshow/
+  visibility after 60s. Refresh timeout is eight seconds. After ten minutes
+  without a successful refresh the client clears stale offer prices.
+- Coupon-shaped exact 5/10/15/20 percent Notino feed reductions are not treated
+  as unconditional price evidence without verified coupon eligibility.
+  Delivery uncertainty stays explicit; unknown delivery is never invented as
+  zero.
+- Canonical repairs are scoped to known variant/GTIN evidence. Eros EDP/EDT,
+  Good Girl Blush/Elixir, Le Male brand identity, Sauvage refillable labeling,
+  La Vie Est Belle aliases and a known BOSS Bottled EDT/Parfum row retain
+  strict identity guards. These repairs are not a general fuzzy matcher.
+- v219 public layout is in app/editorial.css, imported after globals.css by
+  app/layout.tsx. It changes presentation only, leaves owner navigation
+  text-based and does not modify importer/GTIN/classifier rules.
+- The 26-entry cutout manifest is matched by exact GTIN. Static v216 behavior
+  is retained; v215 2.5D was explicitly rejected. A fallback never supplies a
+  fabricated price.
+
+### Retained v208-v213 snapshot safeguards
+
+Nonempty feeds cannot replace an existing valid snapshot with zero accepted
+offers. Old public rows stay active until new-snapshot validation and atomic
+completion. Exact first-party tracking hosts are allowlisted; unknown hosts
+remain rejected. Abandoned-session replacement requires a recorded failure,
+changed provider snapshot/remoteVersion and absence of an active claim.
+Cleanup uses lease/CAS/session checks and touches only old staging, not active
+offers. Repeated full Aelia GTIN conflict scans were removed. Ordinary Flaconi
+status reads use bounded counters and a lightweight safety certificate; full
+audits remain before mutation/finalization. Coverage must distinguish complete
+and unavailable reads and must not add differently timed partial source reads
+into a false global total.
+
 ## Atomic TradeDoubler full snapshots (Sites v195)
 
 Sites v195 and GitHub worker `de1f14f` make Products Unlimited a staged,

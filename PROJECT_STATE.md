@@ -1,12 +1,140 @@
 # Perfumetr project state
 
-Updated: 2026-09-01 14:44 UTC after production recovery, final verification
+## Current state: price freshness and editorial storefront (2026-09-05)
+
+Updated: 2026-09-05 08:51 UTC. This section takes precedence over the dated
+checkpoints below. Do not reuse the September 1 total as a current global count.
+
+### Canonical releases and validation
+
+- Sites **v219** is published successfully, source
+  `f11d571e8e1b27960c37081239b6d80c0afaa581`, source branch `main`.
+  Version ID: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e31d1bfbb7388191ab3356ba8716344f`.
+  Deployment: `appgdep_6a9bd729eca08191864ae3d750c6f514`, succeeded
+  2026-09-05 08:47:53 UTC, environment revision 17.
+  Native production URL: https://perfumetr.borodzicz85.chatgpt.site
+- v218 first published the price/runtime fixes from
+  `31a251c68d39c6ab0a32e0e9159853fb71f0bcc0` at 08:27:18 UTC.
+  v219 contains those changes plus the storefront refresh.
+- Index PR #56 was merged as
+  `b5c573be244620988d089a248ebe80394a6af25f`.
+  https://github.com/GADOMM/Index/pull/56
+- Sites build and artifact validation passed; all **103/103 tests** passed.
+  No test-only preview files were included in the committed source/archive.
+- The first production run after PR #56, **#172 / 33955480932**, succeeded
+  08:31:06-08:43:51 UTC. Importer validation: **32/32**.
+  Proof, full TradeDoubler check, partners and status publication succeeded.
+  Douglas was skipped by the shared-run policy. The new CJ-only scheduled step
+  was not exercised by this push event.
+- #172's full TradeDoubler stage reported `unchanged=true` for all three feeds.
+  The latest full data transfer is **#171 / 33951651817**, successful
+  07:06:48-08:15:49 UTC. Do not describe #172 as a new full snapshot transfer.
+- Post-v219 production logs show `ok` / HTTP 200 for `/`,
+  `/api/homepage` and `/api/marketing/consent`, with no 1101 or Worker 5xx
+  in the small retrieved post-publication sample. A canceled homepage request
+  was recorded during v218 publication; cancellation is not a 5xx.
+
+### Price freshness and schedule
+
+| Source | Scheduled times (UTC) |
+| --- | --- |
+| Notino and Brasty | 02:47, 05:47, 08:47, 11:47, 14:17, 17:47, 20:47, 23:47 |
+| Flaconi and shared partners | 02:47, 08:47, 14:17, 20:47 |
+| Full TradeDoubler | 02:47, 14:17 |
+| Douglas | 05:23, 17:23 |
+
+- CJ has eight bounded cycles per day, not eight guaranteed full-catalog
+  refreshes. Additional CJ-only slots do not run the other partners.
+- `cancel-in-progress: false` and existing 48-step cycle limits remain.
+  GitHub can delay scheduled starts. Do not dispatch an extra import merely
+  to confirm the schedule.
+- Public offer freshness is **18 hours**, replacing 30 hours. The CJ refresh
+  target is **9 hours**, replacing 20 hours; each maintenance step remains
+  bounded at 50 known products.
+- Comparison reads use D1 `first-primary` and no-store caching. Homepage cache
+  lifetime is shortened (normal 30s browser / 60s shared; fallback 10s / 30s).
+- The open comparison refreshes every five minutes while visible, and on
+  focus/pageshow/visibility after at least 60 seconds. Requests have an
+  eight-second timeout. After ten minutes without a successful refresh, old
+  UI prices are cleared rather than presented as current.
+- Exact 5/10/15/20 percent Notino feed discounts that resemble a conditional
+  coupon need verified coupon eligibility; the regular product price is used
+  when this evidence is missing. This is a bounded guard, not proof that
+  every merchant price equals its current checkout price.
+- After #172, Notino reported 8,935 live offers and **4,148 pending freshness
+  items**; Brasty reported 5,154 live offers and **2,753 pending freshness
+  items**. Both consumed 48 maintenance steps. Their generation state
+  `completed` does not mean the maintenance queue is empty.
+- Flaconi was completed/fresh at 3,739 offers. Earlier #171 transferred
+  Cocolita 895, Drogeria.pl 861 and Aelia.pl 1,459 offers. These source-stage
+  counters were read at different times. **Do not sum them into a current
+  seven-store total**; no coherent full production coverage read was obtained
+  in this pass.
+
+### Catalog and visual changes
+
+- v214's Rabanne 1 Million grouping is retained. v218 contains narrowly scoped
+  identity repairs for confirmed Eros, Good Girl Blush, Le Male, Sauvage,
+  La Vie Est Belle and BOSS Bottled cases. GTIN, concentration, volume,
+  classifier and publication safety remain strict.
+- v215's bottle motion was rejected and reverted in v216. **Do not restore
+  2.5D or device-tilt motion.**
+- The source includes **26 reviewed cutout entries**, including the 20 added
+  in v217. Homepage selection remains tied to an exact GTIN and a real offer;
+  unavailable data uses the stable unpriced fallback. v219 keeps bottles
+  static.
+- `app/editorial.css` supplies the public petrol/paper/olive palette from
+  the saved September brand artwork. Owner-panel navigation is unchanged.
+- Larger text and prices, simpler product photo stages, compact comparison
+  headers and visible store names; the best offer appears once.
+- Search Enter still returns up to 48 groups. Suggestions give the product
+  name priority and show audience. Results use the compact query heading.
+- All four mobile catalog categories are visible; sorting/filters occupy a
+  separate row. Desktop catalog has four columns, mobile two.
+- Feedback asks for category and message first. Rating, screenshots and contact
+  remain available under an optional disclosure.
+- Main explicitly says open beta and links to the comparison; promotions remain
+  exclusive to beta. Expired campaigns disappear by date. Do not promise that
+  the September 3 SEPTEMBER campaign is still active on September 5.
+- Browser QA used the supported internal preview at phone widths 375/390 and
+  desktop 1280, including search, catalog, comparison, promotion layout and
+  feedback disclosure. Comparison/promotion QA fixtures were local and
+  explicitly separate from production prices; no feedback was sent.
+  This is technical verification, **not user acceptance or a physical iPhone
+  test**.
+
+### Remaining verification and report
+
+- Direct current production HTTP reads through the workspace returned 403;
+  the native Sites status, D1 reads, Actions and Worker logs worked. Do not
+  classify this execution-path restriction as a public website outage.
+- No live all-seven-store price equality audit, current coherent coverage total
+  or global duplicate/manual-review audit was completed.
+- Older logs include search/comparison 503 responses during an import. Do not
+  claim the new cache/freshness changes prove all query-performance issues
+  resolved. Watch real post-deployment API traffic.
+- The Instagram profile required login; the first pinned comment was not read.
+  Visual direction used the user's preserved artwork, including the Y2K Nokia
+  and vintage perfume poster, not an invented account observation.
+- A fresh authenticated owner Integrations walkthrough and the user's visual
+  acceptance remain pending. www.perfumetr.pl's last verified state remains
+  pending / SSL pending_validation; it was not changed.
+- Report **#015** was sent **exactly once** from/to support@perfumetr.pl at
+  **2026-09-05 08:51:04 UTC** (10:51:04 Polish time). Gmail message/thread
+  `1a070c3a3395785b` has **SENT and INBOX**, confirming delivery.
+- Subject: `[Perfumetr] Raport wdrożeniowy #015 — Aktualne ceny i świeższy Perfumetr — 05.09.2026`.
+  The original #003 HTML shell, logo, palette and footer were preserved.
+  Durable copies: `/Perfumetr/report-015.txt` and
+  `/Perfumetr/report-015.html`. Do not resend.
+- Subsequent reports require a new explicit request and a fresh Sent check.
+
+Historical update: 2026-09-01 14:44 UTC after production recovery, final verification
 and confirmed delivery of report #014
 
 This file contains no credentials. Verify every external status again before a
 new change, import, deployment or report.
 
-## Current state: seven-store catalog recovered (Sites v208-v213, PR #53-#54)
+## Historical checkpoint: seven-store catalog recovered (Sites v208-v213, PR #53-#54)
 
 Verified directly after terminal attempt 3 of production run #146. The public
 catalog, homepage behavior and customer search/comparison flow are operational.
