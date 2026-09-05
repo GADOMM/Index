@@ -33,8 +33,10 @@ rejecting v219 as dated, and supplied eight design references. Latest state:
   queue read. Do not recycle September 1 totals or imply all prices verified.
 - Index baseline before documentation update:
   `f43ef220580e54ba94f0dd052552b64267b16779`; workflow runtime still PR #56 / b5c573b.
-  Last observed CI #173 success; last production #172 success.
-  No manual import or dispatch for this visual work.
+  Completed CI #173 success; latest completed production #172 success.
+  At final verification, scheduled #174 / 33957230645 was in progress;
+  documentation PR validation was pending. Do not cancel this automatic
+  cycle or duplicate it. No manual import or dispatch for this visual work.
 - Last report remains #015, delivered once. No new report was requested/sent.
 
 Status: technically deployed, user visual acceptance pending. Next step is a

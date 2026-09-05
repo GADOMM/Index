@@ -16,9 +16,12 @@ redesign using eight supplied Pinterest references, without copying them.
 - Index master before this documentation update was
   `f43ef220580e54ba94f0dd052552b64267b16779`; runtime scheduling remains PR #56,
   `b5c573be244620988d089a248ebe80394a6af25f`.
-  Last observed validation was #173 / 33956476170 (success, PR-only).
-  Last observed production run remains #172 / 33955480932 (success).
-  No manual import or workflow dispatch was performed for this redesign.
+  Most recent completed validation at takeover was #173 / 33956476170
+  (success, PR-only). At the final read, scheduled **#174 / 33957230645**
+  was **in progress**, and the documentation PR validation was pending.
+  Latest completed production run remains #172 / 33955480932 (success).
+  The active automatic cycle was not canceled or duplicated. No manual
+  import or workflow dispatch was performed for this redesign.
 - Main now uses oversized sans-serif campaign typography, the real static
   product cutout layered over the headline, a compact offer panel and a pill
   CTA. Header links directly into comparison. The mobile composition uses
