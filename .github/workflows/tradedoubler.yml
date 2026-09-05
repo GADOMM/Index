@@ -40,10 +40,14 @@ on:
   schedule:
     - cron: "47 2 * * *"
     - cron: "23 5 * * *"
+    - cron: "47 5 * * *"
     - cron: "47 8 * * *"
+    - cron: "47 11 * * *"
     - cron: "17 14 * * *"
     - cron: "23 17 * * *"
+    - cron: "47 17 * * *"
     - cron: "47 20 * * *"
+    - cron: "47 23 * * *"
 
 permissions:
   contents: read
@@ -133,15 +137,31 @@ jobs:
         if: >-
           always() && (
             github.event_name == 'push' ||
-            (github.event_name == 'schedule' &&
-              github.event.schedule != '23 5 * * *' &&
-              github.event.schedule != '23 17 * * *') ||
+            (github.event_name == 'schedule' && (
+              github.event.schedule == '47 2 * * *' ||
+              github.event.schedule == '47 8 * * *' ||
+              github.event.schedule == '17 14 * * *' ||
+              github.event.schedule == '47 20 * * *'
+            )) ||
             (github.event_name == 'workflow_dispatch' && (inputs.mode == 'partners' || inputs.mode == 'all'))
           )
         env:
           PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
           PERFUMETR_ORCHESTRATOR_STEPS: 48
         run: node scripts/catalog-orchestrator.mjs
+
+      - name: Refresh CJ price sources only
+        if: >-
+          always() && github.event_name == 'schedule' && (
+            github.event.schedule == '47 5 * * *' ||
+            github.event.schedule == '47 11 * * *' ||
+            github.event.schedule == '47 17 * * *' ||
+            github.event.schedule == '47 23 * * *'
+          )
+        env:
+          PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
+          PERFUMETR_ORCHESTRATOR_STEPS: 48
+        run: node scripts/catalog-orchestrator.mjs cj:notino cj:brasty
 
       - name: Advance the isolated Douglas source only
         if: >-

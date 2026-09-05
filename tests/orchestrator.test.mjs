@@ -2,34 +2,76 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-test("schedules Douglas only in its isolated catalog cycle", async () => {
+test("keeps scheduled catalog cycles exact, isolated, and non-cancelling", async () => {
   const workflow = await readFile(new URL("../.github/workflows/tradedoubler.yml", import.meta.url), "utf8");
+  const scheduledCrons = [...workflow.matchAll(/^\s+- cron: "([^"]+)"$/gm)].map((match) => match[1]);
   const partnerStep = workflow.match(
-    /- name: Advance partner sources through the shared orchestrator[\s\S]*?(?=\n      - name: Advance the isolated Douglas source only)/,
+    /- name: Advance partner sources through the shared orchestrator[\s\S]*?(?=\n      - name: Refresh CJ price sources only)/,
+  )?.[0] ?? "";
+  const cjStep = workflow.match(
+    /- name: Refresh CJ price sources only[\s\S]*?(?=\n      - name: Advance the isolated Douglas source only)/,
   )?.[0] ?? "";
   const douglasStep = workflow.match(
     /- name: Advance the isolated Douglas source only[\s\S]*?(?=\n      - name: Publish the first live import result)/,
   )?.[0] ?? "";
-  assert.match(workflow, /options:[\s\S]*?- douglas/);
-  assert.match(workflow, /cron: "23 5 \* \* \*"/);
-  assert.match(workflow, /cron: "23 17 \* \* \*"/);
-  assert.match(partnerStep, /github\.event\.schedule != '23 5 \* \* \*'/);
-  assert.match(partnerStep, /github\.event\.schedule != '23 17 \* \* \*'/);
+  const partnerCrons = [...partnerStep.matchAll(/github\.event\.schedule == '([^']+)'/g)]
+    .map((match) => match[1]);
+  const cjCrons = [...cjStep.matchAll(/github\.event\.schedule == '([^']+)'/g)]
+    .map((match) => match[1]);
+  const douglasCrons = [...douglasStep.matchAll(/github\.event\.schedule == '([^']+)'/g)]
+    .map((match) => match[1]);
+
+  assert.deepEqual(scheduledCrons, [
+    "47 2 * * *",
+    "23 5 * * *",
+    "47 5 * * *",
+    "47 8 * * *",
+    "47 11 * * *",
+    "17 14 * * *",
+    "23 17 * * *",
+    "47 17 * * *",
+    "47 20 * * *",
+    "47 23 * * *",
+  ]);
+  assert.match(workflow, /concurrency:\s*\n\s+group: perfumetr-catalog-import\s*\n\s+cancel-in-progress: false/);
+
+  assert.deepEqual(partnerCrons, [
+    "47 2 * * *",
+    "47 8 * * *",
+    "17 14 * * *",
+    "47 20 * * *",
+  ]);
+  assert.doesNotMatch(partnerStep, /github\.event\.schedule !=/);
   assert.doesNotMatch(partnerStep, /awin:douglas/);
+  assert.match(partnerStep, /PERFUMETR_ORCHESTRATOR_STEPS: 48/);
+  assert.match(partnerStep, /run: node scripts\/catalog-orchestrator\.mjs\s*$/m);
+
+  assert.deepEqual(cjCrons, [
+    "47 5 * * *",
+    "47 11 * * *",
+    "47 17 * * *",
+    "47 23 * * *",
+  ]);
+  assert.match(cjStep, /PERFUMETR_ORCHESTRATOR_STEPS: 48/);
+  assert.match(cjStep, /node scripts\/catalog-orchestrator\.mjs cj:notino cj:brasty/);
+  assert.doesNotMatch(cjStep, /awin:|tradedoubler:/);
+  assert.equal(new Set([...partnerCrons, ...cjCrons]).size, 8);
+
+  assert.match(workflow, /options:[\s\S]*?- douglas/);
+  assert.deepEqual(douglasCrons, ["23 5 * * *", "23 17 * * *"]);
   assert.match(douglasStep, /github\.event_name == 'workflow_dispatch' && inputs\.mode == 'douglas'/);
-  assert.match(douglasStep, /github\.event_name == 'schedule' && \([\s\S]*?github\.event\.schedule == '23 5 \* \* \*'/);
-  assert.match(douglasStep, /github\.event\.schedule == '23 17 \* \* \*'/);
   assert.match(douglasStep, /PERFUMETR_ORCHESTRATOR_STEPS: 48/);
   assert.match(douglasStep, /node scripts\/catalog-orchestrator\.mjs awin:douglas/);
 });
 
-test("runs a full TradeDoubler recovery twice inside the 30 hour freshness window", async () => {
+test("runs a full TradeDoubler recovery only in its two established slots", async () => {
   const workflow = await readFile(new URL("../.github/workflows/tradedoubler.yml", import.meta.url), "utf8");
   const fullStep = workflow.match(
     /- name: Run the full TradeDoubler import[\s\S]*?(?=\n      - name: Advance partner sources)/,
   )?.[0] ?? "";
-  assert.match(fullStep, /github\.event\.schedule == '47 2 \* \* \*'/);
-  assert.match(fullStep, /github\.event\.schedule == '17 14 \* \* \*'/);
+  const fullCrons = [...fullStep.matchAll(/github\.event\.schedule == '([^']+)'/g)]
+    .map((match) => match[1]);
+  assert.deepEqual(fullCrons, ["47 2 * * *", "17 14 * * *"]);
   assert.match(fullStep, /PERFUMETR_MODE: full/);
 });
 
