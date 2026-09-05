@@ -1,6 +1,64 @@
 # Perfumetr project state
 
-## Current state: price freshness and editorial storefront (2026-09-05)
+## Current state: silver-blue campaign redesign (2026-09-05)
+
+Updated after publication at 2026-09-05T09:11:01.401619+00:00. This section supersedes the
+v219 visual checkpoint below. The user explicitly rejected the restrained
+petrol/serif direction as dated and requested a substantial modern, nostalgic
+redesign using eight supplied Pinterest references, without copying them.
+
+- Sites **v220** is published, source `7ec3a3589528da3b1e1afc3b12cd87d8abd59c23`,
+  canonical source branch `main`.
+  Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_c5ef8091d414819197c7527b43e0da3c`.
+  Deployment: `appgdep_6a9bdc90d4248191b9f463ce2a1f27bf`, **succeeded**,
+  environment revision 17.
+  Native production URL: https://perfumetr.borodzicz85.chatgpt.site
+- Index master before this documentation update was
+  `f43ef220580e54ba94f0dd052552b64267b16779`; runtime scheduling remains PR #56,
+  `b5c573be244620988d089a248ebe80394a6af25f`.
+  Last observed validation was #173 / 33956476170 (success, PR-only).
+  Last observed production run remains #172 / 33955480932 (success).
+  No manual import or workflow dispatch was performed for this redesign.
+- Main now uses oversized sans-serif campaign typography, the real static
+  product cutout layered over the headline, a compact offer panel and a pill
+  CTA. Header links directly into comparison. The mobile composition uses
+  normal flow with a reserved photo stage rather than absolute body-copy
+  placement. Existing four-second unpriced fallback and exact deal identity
+  are preserved. No promotions were added to main.
+- Beta has the same photographic direction, a prominent rounded search
+  field, silver/light product surfaces, a responsive results contact sheet,
+  clearer catalog categories/controls and a blue price panel. Store names,
+  unique best offer, full Enter search and promotion eligibility are retained.
+- Original generated studio backdrop: `public/campaign-studio.webp`,
+  1536x1024, **101,128 bytes**. It depicts an empty photographic set, not a
+  fabricated product. The 26 reviewed real cutouts remain unchanged. No
+  bottle motion, new runtime dependency, importer, D1, secret or domain
+  change was made. Public styling remains in `app/editorial.css`.
+- Main metadata no longer says the comparison is “coming soon”.
+- Final `npm test`: **103/103**, zero failed; build and artifact validation
+  passed. Archive contains the campaign asset and no temporary QA harness.
+- **Browser visual verification did not complete.** The supported preview
+  started, but navigation returned ERR_TOO_MANY_REDIRECTS and subsequent
+  inspection was rejected by the browser URL policy. No alternate browser,
+  port, live-Sites navigation or security bypass was attempted. The created
+  tab was closed; no fresh mobile/desktop screenshot or physical iPhone
+  acceptance is claimed. Source review and tests do not substitute for this.
+- A read-only Worker error query around publication (20-minute lookback)
+  returned no errors. This is a limited log sample, not proof of every route,
+  current price equality, or user visual acceptance.
+- Price freshness remains 18h public / 9h CJ target; scheduled CJ/partners/TD/
+  Douglas cadence and bounded safety remain as documented below. No new
+  coherent catalog-total or maintenance-backlog read was made in this pass.
+- Report #015 remains the last delivered report. No new email was requested
+  or sent for this redesign; never resend #015 automatically.
+
+Status: **deployed technically, not yet accepted by the user**. Next task:
+obtain a fresh visual check of main, search, comparison and catalog at phone
+and desktop widths when the supported preview is available, and act on the
+user's concrete feedback. Do not restore the rejected v219 look or 2.5D
+without an explicit request.
+
+## Historical checkpoint: price freshness and editorial storefront (2026-09-05 08:51 UTC)
 
 Updated: 2026-09-05 08:51 UTC. This section takes precedence over the dated
 checkpoints below. Do not reuse the September 1 total as a current global count.

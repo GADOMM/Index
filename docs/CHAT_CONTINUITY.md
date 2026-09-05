@@ -4,7 +4,45 @@ The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
 
-## Current handoff: Sites v219, price schedule, report #015 delivered
+## Current handoff: Sites v220 campaign redesign, visual QA limited
+
+Updated 2026-09-05T09:11:01.401619+00:00. The user requested a major visual change after
+rejecting v219 as dated, and supplied eight design references. Latest state:
+
+- Production: **v220**, source `7ec3a3589528da3b1e1afc3b12cd87d8abd59c23`, synchronized to
+  Sites source `main`; deployment `appgdep_6a9bdc90d4248191b9f463ce2a1f27bf` succeeded.
+  Version `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_c5ef8091d414819197c7527b43e0da3c`.
+  URL https://perfumetr.borodzicz85.chatgpt.site
+- New original art direction: silver/blue photographic studio, huge sans-serif
+  typography layered behind the real static bottle on main, clear entry CTA,
+  light catalog/results and blue comparison price panel. Main has no promotion
+  module. Beta retains date-valid campaigns. New backdrop is 101,128-byte
+  WebP; the 26 real cutouts are unchanged. No 2.5D or device-tilt effect.
+- Primary modified code: `app/coming-soon.tsx`, `app/perfume-app.tsx`,
+  `app/editorial.css`, `app/page.tsx`; asset
+  `public/campaign-studio.webp`. Main SEO title no longer says “coming soon”.
+- Tests/build/artifact: **103/103 passing**, no preview fixtures shipped.
+  No importer, price-refresh, database, identity, secrets or domain changes.
+- **Do not claim fresh browser acceptance:** supported preview started but
+  browser navigation failed with ERR_TOO_MANY_REDIRECTS and inspection was
+  blocked by URL policy. No workaround or live-Sites browser was used.
+  Layout was reviewed in source; mobile normal flow avoids fixed copy offsets.
+  The preview tab was closed. No physical iPhone or user approval is claimed.
+- Error-only Worker query around publish returned no errors in a limited
+  20-minute sample. No current coherent all-source count or fresh maintenance
+  queue read. Do not recycle September 1 totals or imply all prices verified.
+- Index baseline before documentation update:
+  `f43ef220580e54ba94f0dd052552b64267b16779`; workflow runtime still PR #56 / b5c573b.
+  Last observed CI #173 success; last production #172 success.
+  No manual import or dispatch for this visual work.
+- Last report remains #015, delivered once. No new report was requested/sent.
+
+Status: technically deployed, user visual acceptance pending. Next step is a
+fresh visual check when supported preview access works, or a concrete fix from
+the user's new screenshot. Keep previous price-freshness work and strict catalog
+safety. The following v219 section is historical where it describes visuals.
+
+## Historical handoff: Sites v219, price schedule, report #015 delivered
 
 Verified through 2026-09-05 08:51 UTC. Read the newest PROJECT_STATE section
 first. The September 1 23,978-offer total below is historical.
