@@ -1,5 +1,83 @@
 # Perfumetr project state
 
+## Current state: unified frosted experience (Sites v222 / 2026-09-05)
+
+This section supersedes the v220/v221 UI checkpoints. The owner explicitly authorized
+implementation, production deployment and an email report. Follow-up screenshots
+identified real v221 defects: opaque comparison cards, brown hover/feedback states,
+truncated mobile merchant names and low-contrast footer text.
+
+- Production **v222** is published successfully at
+  `2026-09-05T10:30:54.856261+00:00`, environment revision **17**.
+  Source: `34dcdb094988a36cb8a0c5e2380d524bd97727ca`, canonical Sites branch `main`.
+  Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e81891202d848191829e2e3b787e7378`.
+  Deployment: `appgdep_6a9bef4325cc8191b39796149a913293`.
+  URLs: https://perfumetr.pl and https://perfumetr.borodzicz85.chatgpt.site.
+- v221 (`5b5d8b1cac4be86dfb31dfa54000c2c0eecb00c9`) first unified the landing
+  and search into a client view switch on the same document. Main-domain catalog,
+  search, compare, feedback and outbound routes now work with the original guards.
+  Main opens the landing unless search/product is requested; beta opens search.
+  Logo/history navigation, deep product links and bounded UTM attribution remain.
+- v222 adds bounded scene motion: background up to 28 px, product surface 18 px,
+  copy 9 px, search panel 6 px, mouse contribution 7/5 px. One coalesced RAF updates
+  CSS variables; reduced-motion disables this, and redundant legacy motion is
+  skipped in the unified wrapper. No bottle rotation or continuous oscillation.
+- The complete slogan stays together; bottle and price use separate grid cells.
+  Removed repeated copy/status decoration and the nested price-card border.
+  SVG controls replace emoji-prone text arrows.
+- `app/glass-controls.css` completes the slate/blue theme across feedback,
+  selected/hover filters, attachments, success/error states, cookie controls,
+  offer details, availability, rows and footer. Comparison panels are smoked
+  translucent glass. Mobile rows put merchant/delivery above price/action;
+  names no longer ellipsize and footer contacts wrap.
+- Crucial glass fix: the screen entrance animation uses backwards fill, not
+  retained forwards/both opacity. After entrance it no longer isolates the
+  backdrop. Existing root styling and the shared photograph stay intact.
+- Post-v221 logs showed **9 old hashed asset 404s**, not Worker 1101.
+  v222 retains the exact public v220/v221 graphs in `public/assets`, with
+  SHA-256 manifest `public/asset-retention.json`, and marks root documents
+  `Cache-Control: private, no-store`. Do not remove these during this rollout.
+  All retained imports/hashes are checked against the built artifact.
+- Validation: production build successful; **106/106** tests passed on final
+  source/build. This covers main/beta offer equality, main-domain flows,
+  cross-origin feedback rejection, bounded motion and retained asset closure.
+  Requested Chrome visual checks covered desktop and a **390 px iframe viewport**
+  using an isolated local D1 fixture. Landing/product transition, alternatives,
+  feedback open/close, catalog/filter surfaces were inspected. No feedback was
+  submitted and no store purchase was made. No physical iPhone/Safari test.
+  Temporary QA HTML was removed before the final build/archive; local fixture
+  records were never deployed. Preview was stopped.
+- A post-publication errors-only log query for the preceding 5 minutes returned
+  **0 events**. This is a short traffic sample, not a full production audit.
+  Separate TypeScript checking previously found missing ambient Cloudflare
+  types; do not call that a clean standalone typecheck. Production build passes.
+- Report **#016** was sent to the established owner/report mailbox
+  `support@perfumetr.pl`, using the required #003 template/footer.
+  Original v221 message: `1a0710cc0c3a5e23`.
+  Final v222 addendum with four screenshots: `1a07120f8d86c92d`, same thread;
+  Gmail returned SENT/INBOX. Screenshots explicitly use synthetic preview
+  prices (300.00/360.35 PLN) and two fixture stores, not production proof.
+  Updated report: `/Perfumetr/report-016.html`,
+  Library `libfile_7ce0371733188191b045584be59cf39b`, version **1**.
+- No importer, production schema/data, secrets, domains, paid services or schedules
+  changed. No additional import or workflow dispatch was initiated. Main/beta SSL
+  were active at the initial check; the prior www SSL pending status was not fixed.
+- Index repository base at this checkpoint:
+  `a77fa787ab22dc2c8ade3b3fc73c049b89e2fbe2`; preceding merged PR **#58**.
+  This documentation checkpoint is delivered through a new docs-only PR.
+  Latest pre-checkpoint CI: **#176 / 33957387804**, success, pull_request;
+  **#175 / 33957348361** was superseded/cancelled, not a production failure.
+  Latest production run: **#174 / 33957230645**, success, schedule, isolated
+  Douglas scope. Exact job evidence: completed, 41 steps, 3,150 live/imported
+  offers, 51,965 received, 2,572 review, 46,243 excluded, 6,442 stored,
+  automatic review 0, maintenance processed 306. Last full check was #172
+  (TD unchanged); last actual full transfer was #171.
+  **No new coherent all-store live total was read in this session**; do not reuse
+  historical aggregate counts as current.
+- Next: assess owner feedback on this complete v222 theme and physical mobile
+  rendering; observe actual search-to-store behavior without inventing price or
+  conversion claims. Preserve the one-document flow and the shared glass palette.
+
 ## Current state: silver-blue campaign redesign (2026-09-05)
 
 Updated after publication at 2026-09-05T09:11:01.401619+00:00. This section supersedes the

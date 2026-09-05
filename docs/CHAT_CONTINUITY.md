@@ -1,5 +1,68 @@
 # Chat continuity runbook
 
+## Current handoff: v222 published, report #016 completed
+
+Production source `34dcdb094988a36cb8a0c5e2380d524bd97727ca` is pushed to the
+canonical Sites `main`. Version **222**, deployment
+`appgdep_6a9bef4325cc8191b39796149a913293`, succeeded at
+`2026-09-05T10:30:54.856261+00:00` (environment revision 17).
+Version ID:
+`appgprj_6a8236775b808191b6b4979c4d86d889~appgver_e81891202d848191829e2e3b787e7378`.
+Use https://perfumetr.pl or https://perfumetr.borodzicz85.chatgpt.site.
+
+The owner wanted main and beta combined in one animated document, compact slogan,
+no emoji arrows, real matte glass, restrained scroll/pointer depth and more
+minimalism. They then supplied screenshots showing brown feedback/offer hover
+states, opaque panels, poor contrast and mobile merchant truncation. All are
+addressed in v222 on top of the v221 same-document integration.
+
+- Correct checkout in this session: `/workspace/sites/perfumetr-unified`.
+  Do not edit the older dirty `/workspace/sites/perfumetr` checkout; resolve/pull
+  the canonical source for a new session. Index is the importer/docs repository,
+  not the Site frontend source remote.
+- Main landing and beta search now share `PerfumetrExperience`. CTA switches
+  views without document navigation; logo/Wstecz and product deep links work.
+  API gates no longer exclude the main hostname; all original data/security
+  validation remains. No domain/DNS merge was needed.
+- Theme lives in `experience.css` and `glass-controls.css`. Backwards animation
+  fill is essential for actual backdrop blur after entrance. The shared scene
+  has small bounded translations with reduced-motion support; no bottle tilt.
+  Main comparison/offer/feedback/footer surfaces are smoked glass; form fields
+  remain light for readability. Mobile merchant rows no longer ellipsize.
+- Keep `public/assets` and `asset-retention.json`: exact v220/v221 bundles
+  support documents opened before rollout after old asset 404s were observed.
+  Root HTML/RSC responses are private/no-store. Do not casually remove the
+  retained graph or defeat its hash/dependency validation.
+- Final build + **106/106** automated tests passed. Visual checking was explicitly
+  requested by the owner's screenshot/report follow-up. Chrome desktop and
+  390 px iframe preview were inspected with isolated local fixture data.
+  Temporary viewport HTML was removed before build/package; preview stopped.
+  No production records were changed and no purchase/opinion was submitted.
+  Screenshots are preview evidence only, not current production prices.
+  No physical iPhone/Safari check; standalone TypeScript still has known
+  Cloudflare ambient-type limitations outside this change.
+- Short errors-only production log sample after publication: 0 events/5 min.
+  Do not elevate this to a complete production or all-store pricing audit.
+- Email report #016 original `1a0710cc0c3a5e23`; final addendum
+  `1a07120f8d86c92d`, same thread, SENT/INBOX, sent to `support@perfumetr.pl`.
+  It contains all changes and four screenshots, explicitly marked test data,
+  retaining the required original #003 layout/footer.
+  Durable `/Perfumetr/report-016.html`,
+  `libfile_7ce0371733188191b045584be59cf39b`, version 1.
+- Index base: `a77fa787ab22dc2c8ade3b3fc73c049b89e2fbe2`, preceding PR #58;
+  this checkpoint goes through a new docs-only PR. Latest preceding CI #176
+  / 33957387804 succeeded; #175 was cancelled/superseded. Latest production
+  #174 / 33957230645 succeeded, Douglas-only: completed, 41 steps,
+  3,150 live/imported, 51,965 received, 2,572 review, 46,243 excluded,
+  6,442 stored, automaticReview 0, maintenanceProcessed 306.
+  Latest full check #172 had unchanged TD; last actual full transfer #171.
+  **No coherent current all-store totals were read.**
+- No manual import, schedule, schema, secrets, paid service or domain change.
+  www pending SSL remains a prior limitation; main/beta active at initial check.
+- Next action: follow up on the owner's real mobile feedback on v222. Preserve
+  minimalism, one-document navigation and the coherent glass treatment; avoid
+  resurrecting legacy copper/serif styles or big continuous motion.
+
 The repository, not a single chat, is the durable project memory. A receiving
 chat must be able to continue safely even if it can see none of the earlier
 conversation.
