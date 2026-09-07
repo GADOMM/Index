@@ -1,5 +1,53 @@
 # Perfumetr project state
 
+## Current state: softer borderless glass (Sites v224 / 2026-09-07)
+
+Owner requested small visual changes from three supplied screenshots: remove
+visible panel outlines, use softer matte glass and make search closer to the
+translucent rounded input with its button inside the field.
+
+- Published successfully at `2026-09-07T08:37:18.156462+00:00`, environment revision **17**.
+  Source: `5cc6e27f5dd72e28fbc6261c7a44a6df3195c06d`, canonical Sites `main`.
+  Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_7543de36e9d481919edb4dccf7551cbc`.
+  Deployment: `appgdep_6a9e779c2e3c81919d8922b4c2f4194b`.
+  URL: https://perfumetr.borodzicz85.chatgpt.site; perfumetr.pl and beta share the same deployment.
+- Styling changes are confined to `experience.css` and `glass-controls.css`.
+  Main product, comparison, offers, feedback and footer panels use a neutral
+  smoked glass tint and 36px backdrop blur. Removed visible outer borders and
+  inset highlight shadows; main card/footer corners are 24px. The homepage
+  caption no longer has a hard horizontal rule.
+- The idle search stage has no surrounding box, so the search field can blur
+  the actual photographic background. The field is translucent with a delicate
+  control outline, 62px desktop / 58px mobile height and an inset rounded
+  “Szukaj” button. Input remains 16px on mobile; the button text remains visible
+  instead of an arrow-only control. Focus, loading and reduced-transparency
+  states are styled consistently.
+- Search-result card entrance fill is backwards, preserving the intended glass
+  treatment after animation. Existing reduced-motion settings remain.
+- No search, catalogue, price or navigation logic changed. v223's exact priced
+  variant links and bounded read recovery remain. Retained the actual v223
+  public bundles alongside the previous compatibility assets.
+- `npm test`: build/artifact validation and **108/108 tests passed**.
+  No new tests were added for these CSS changes. No fresh browser screenshot
+  or physical iPhone visual acceptance is claimed. User supplied the visual
+  references; no images were generated or altered.
+- Index baseline: `ffa6f659c8e2460ded4685e507b9c3464d84f05a` (merged PR #60).
+  Docs validation **#196 / 34100125419** completed successfully.
+  The earlier in-progress production run **#195 / 34095993956** has now
+  **failed** at 2026-09-07T08:25:17Z in “Advance partner sources through the
+  shared orchestrator”; its validation job passed. This is a separate
+  scheduled importer issue, not diagnosed or changed during this visual task.
+  Last successful production run remains **#194 / 34072637983**.
+  No import was dispatched, interrupted or retried. No current all-store
+  counts or live merchant-price audit were performed.
+- No production schema, importer configuration, schedules, domains, secrets
+  or runtime environment changes. Prior www SSL limitation remains.
+- Report: no new report requested or sent. Last delivered remains #016;
+  future reports wait for the owner's instruction.
+- Next: await owner feedback on the lighter panels/search styling. Separately
+  inspect the failed scheduled partner step before making any importer claim;
+  preserve normal quota and snapshot safeguards.
+
 ## Current state: homepage deal recovery (Sites v223 / 2026-09-07)
 
 Published successfully at `2026-09-07T08:19:12.408923+00:00`, environment revision **17**.
