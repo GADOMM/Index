@@ -1,5 +1,81 @@
 # Chat continuity runbook
 
+## Current state: unified glass catalog and faster first results (Sites v235 / 2026-09-07)
+
+Published successfully at `2026-09-07T15:50:30.730607+00:00`, environment revision **17**.
+Source: `30a0bfcbf89332c7f0798f2b2daac2337b285db6`, canonical Sites `main`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_4b4a91f79ca081918ce00a05b1c9d233`.
+Deployment: `appgdep_6a9edd331ef881918aff39c6c52b9fc9`.
+URL: https://perfumetr.borodzicz85.chatgpt.site; main and beta share this application.
+
+The owner requested that "Przeglądaj perfumy" match the minimalist matte-glass
+site, fix overlapping mobile sorting text and open more smoothly.
+
+- Source inspection found old warm/opaque light catalog layers and a mobile
+  pseudo-label overlaid on a native select, with competing fixed widths.
+  The catalog now uses the existing neutral 28% tint / 10px shared glass tokens
+  and a final ID-scoped stylesheet. Native and WebKit backdrop properties match;
+  accessibility fallbacks remain. Old light/brown layers no longer style the
+  public drawer, its controls, cards or detail pricing.
+- One outer glass layer replaces stacked drawer/backdrop/header/toolbar/filter
+  blurs. The header is outside the scrolling content; controls and bottle tiles
+  have borderless translucent fills. Cards use the actual existing bottle
+  images, with no new image assets or heavy per-image filters.
+- Categories are visible directly (four buttons; two columns at narrow widths),
+  optional brand/type/volume filters stay behind "Filtry", and sorting is one
+  real native 16px select with responsive width. Removed the duplicate sort
+  controls, compact overlay label and scroll-hint observer/listeners.
+  Cards use 4/3/2 columns, clear names/prices and the hint "Wybierz zapach,
+  potem pojemność." Detail volume selection, real prices and comparison remain.
+- First browse request now asks for 12 instead of 24 items and does not wait for
+  brand facets or full catalog statistics. Additive GET /api/catalog?facets=only
+  returns metadata independently when filters are opened; facets=1 and all
+  existing clients remain supported. Errors/retry/12-second timeout for optional
+  metadata do not remove or delay loaded cards.
+- Pointer/focus/touch intent can start a single first-page request before click.
+  It is consumed once, expires after 15 seconds, aborts superseded requests and
+  respects saveData/2g. This is not a persistent price or cursor cache; responses
+  remain private/no-store and reopening revalidates from the API. Existing cards
+  can stay visible but inert while refreshing. Exact variant pricing still uses
+  a fresh no-store comparison request. No 18-hour freshness gate was weakened.
+- Memoized cards with stable callbacks avoid rerendering the whole grid during
+  brand typing. Existing lazy/async images remain. Short opacity/transform
+  transitions and finite skeleton pulses respect reduced-motion preferences.
+  No dependency, extra global listener or unconditional catalog prefetch added.
+- Fixed an adjacent navigation interaction: closing the catalog history entry
+  must not increment the parent search-session revision and cancel the perfume
+  just selected from it. Actual view/variant history changes still reset search;
+  v234 back/landing/re-entry behavior and pageshow price refresh remain.
+- Production build/artifact validation and **128/128 tests passed**.
+  Seven added deterministic cases cover history close/selection, single-use
+  preload, expiry/abort/API errors, pointer/keyboard/reduced-data opening,
+  independent facet failure/recovery, rapid sorting/one-shot 409 retry and
+  facet-only API query isolation. Source/rendered regressions cover the new
+  glass/native sorting contract and legacy API compatibility.
+  Focused ESLint passes for all four changed logic files. Optional repository
+  tsc --noEmit remains unsuccessful on existing Workers bindings/importer
+  typing issues outside these changed files; no diagnostics name the changed
+  catalog/navigation/layout files. Do not call the global type check clean.
+  No browser/DOM/physical-device QA, screenshot acceptance or measured live
+  speed improvement is claimed. Exact v234 public client graph retained.
+- GitHub baseline `39ad5998be5959d9e4a578aa584ffbbff40c689c` (merged PR #71).
+  Latest completed validation #211 / 34136422847 succeeded on
+  `df0de4ff43ee56fe9f1b7e6605bbd17380030592`, updated 15:05:14Z.
+  Latest scheduled production #210 / 34132999119 remains completed/failure
+  at 14:44:48Z: validation succeeded, partner-source advance failed, full
+  TradeDoubler skipped. No importer was started, retried or canceled here.
+- No fresh all-store offer counts or generation counters were read. The dated
+  v233 generation-21 counters (raw 50,440 / accepted 3,001 / review 2,652 /
+  rejected 44,787, paused import_failed, completed_at null) remain historical
+  evidence, not current public-offer totals or a completed snapshot.
+  Douglas full finalization remains unresolved. No new owner export is needed.
+- No importer, source data, schema, scheduler, secret, campaign or price change.
+  Report deferred until explicitly requested; no email sent. Last confirmed #016.
+- Next: owner feedback on the deployed catalog; if explicitly requested, perform
+  browser/device layout and latency measurement. Separately diagnose Douglas
+  finalization / #210 before certifying a full snapshot. No further UI work is
+  in progress. This checkpoint changes documentation only in Index.
+
 ## Current state: return to an empty search panel (Sites v234 / 2026-09-07)
 
 Published successfully at `2026-09-07T15:03:36.436052+00:00`, environment revision **17**.

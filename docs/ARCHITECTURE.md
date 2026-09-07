@@ -1,5 +1,31 @@
 # Perfumetr importer architecture
 
+## Glass catalog with progressive optional data (Sites v235 / 2026-09-07)
+
+- app/catalog-glass.css loads after the shared material stylesheet and uses an
+  ID-scoped public drawer contract. One shared 10px backdrop blur, neutral tint,
+  non-scrolling header and unblurred inner controls replace old stacked catalog
+  layers. A native responsive select has no overlay label or duplicate radios.
+  Reduced motion/transparency and supported-property fallbacks remain.
+- First-page browsing uses limit=12 with no facets/stats dependency. The additive
+  facets=only API branch runs only listCatalogFacets; legacy facets=1 remains.
+  Opening filters requests abortable metadata independently, with bounded timeout
+  and retry. Metadata failure leaves product discovery operational.
+- createCatalogRequests owns one intent-driven request handoff with 15-second
+  expiry and 12-second network timeout; no persisted prices or cached cursors.
+  Consumer cancellation and sequence guards reject late results. saveData/2g
+  skip speculation. Reopening revalidates and keeps existing cards inert until
+  fresh data arrives. A catalog_changed response retries page one only once.
+- Cards are memoized with stable selection callbacks and existing lazy images.
+  Exact variants still fetch no-store comparison prices; all merchant/source,
+  public-variant and 18-hour freshness rules are unchanged.
+- Parent history synchronization now distinguishes a real view/variant change
+  from the catalog's same-intent history entry. Closing a catalog after choosing
+  a perfume cannot reset/cancel that comparison. v234 generic reset still works.
+- 128 tests and focused logic ESLint pass. Global type-check limitations outside
+  changed files, and the lack of browser/device/live timing QA, are recorded in
+  PROJECT_STATE. No importer or GitHub/Sites bridge contract changed.
+
 ## Explicit search navigation and cancellation (Sites v234 / 2026-09-07)
 
 - Landing and search remain mounted in one photographic document. A primitive
