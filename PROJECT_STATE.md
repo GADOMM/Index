@@ -1,5 +1,71 @@
 # Perfumetr project state
 
+## Current state: verified Douglas Paradoxe bottle identity repair (Sites v232 / 2026-09-07)
+
+Published successfully at `2026-09-07T13:53:07.939325+00:00`, environment revision **17**.
+Source: `272fe1cfab93fe578864b2ac3ba433a02bfb07d0`, canonical Sites `main`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_271e135c741481919f4ecfe6e2d412d6`.
+Deployment: `appgdep_6a9ec1b3b32c8191b7c72bf62d700139`.
+URL: https://perfumetr.borodzicz85.chatgpt.site; main and beta share this application.
+
+The owner supplied the official Douglas/AWIN export and authorized resuming
+the missing Prada offer investigation. File access now works; do not repeat
+the previous access blocker or ask the owner to make another export.
+
+- Diagnostic export contains 50,481 raw rows and 86 columns. Exact merchant
+  product 1027980 is Prada Paradoxe Refillable EDP 90 ml, GTIN 3614273760164.
+  Its original row passes the production gzip/CSV parser as an in-stock
+  product. The extra selected columns do not prevent parsing.
+- Reproduced the matcher failure: Douglas's line "Paradoxe Refillable" does
+  not match catalog "Paradoxe", despite corroborated exact GTIN, EDP,
+  women/standard and volume. Existing conflict/recovery paths both retain
+  this line check. The export was diagnostic evidence only and was never
+  substituted for the automatic official feed.
+- Added a Douglas-only line alias for confirmed ordinary bottle GTIN/volume
+  pairs 3614273760713/30 ml, 3614273760652/50 ml and
+  3614273760164/90 ml. Brand, complete line, EDP, women, standard and exact
+  GTIN/volume must all match. The separate 100 ml refill, other Paradoxe
+  lines, unknown GTINs and conflicting dimensions remain excluded.
+- Import revision 3 -> 4 requests a fresh official Douglas generation.
+  Preserved original observed prices/timestamps, source identity,
+  quarantine, 18-hour public freshness and existing endpoint contract.
+  No manual price, source replacement, schema, secret or scheduler change.
+- Added bounded persisted identity-result logs for these bottle aliases:
+  product/variant IDs, source status/reason and fresh-offer existence only.
+  No raw payload, authenticated URL or private mail is logged or committed.
+- Production build/artifact validation and **114/114 tests passed**.
+  Tests cover positive/negative identity cases and a synthetic SQLite
+  recovery preserving price and timestamp, plus revision refresh.
+  Exact public v231 asset graph retained. No browser/physical-device QA.
+- All v231 UI changes remain, including balanced glass, TikTok/full Instagram
+  footers and the prior explicit official Douglas campaign destination.
+- GitHub Index baseline `c8661e47d01513a7e5ff69812da10a19a72a3d63`
+  (merged PR #68). Latest baseline validation #207 / 34118909424 succeeded;
+  previous completed scheduled production #204 / 34112940046 succeeded.
+- One bounded retry of failed isolated Douglas run #201 / 34111753158 was
+  authorized by the owner's request to finish the repair. Attempt 1 failed
+  with orchestrator_unavailable, not provider 429; only its Douglas source
+  job is retried. Other sources are skipped and no schedule was changed.
+- Production proof at `2026-09-07T13:55:01.084Z`: persisted Worker logs
+  report active/fresh offers for product 1027980 -> `tdv-397ad387126b397b34c7ed4a`
+  (90 ml), 1027979 -> `tdv-752cbc0a2d254650fdf7fc2d` (50 ml), and
+  1027978 -> `cjv-7d87fa05c60d3852c34fc416` (30 ml). Each hasFreshOffer=1.
+  This verifies the three exact offers, not an all-store fresh-offer total.
+- At `2026-09-07T13:57:17.708Z`, attempt 2 remains in progress. Live generation
+  21 has received 10500, accepted 731, review 710, rejected
+  9059, cursor 10500, revision 4, error_code null. Source is paused between
+  bounded steps; workflow continues normally. These are partial snapshot
+  counters, NOT final counts or current public-offer totals.
+- The reported missing 90 ml offer is fixed and verified on production.
+  Full generation completion has NOT yet been certified. Do not restart
+  this running import, retry 429, or claim that the old completed
+  generation 20 counters describe the current generation.
+- Report deferred until the owner explicitly requests the consolidated report;
+  no email sent. Last confirmed delivered report #016.
+- Next: read the existing attempt 2 terminal result and generation 21 counters
+  at the next operational check; preserve the verified offer fix and wait for
+  the owner's next requested task. No further owner feed/export is required.
+
 ## Current state: balanced cross-browser glass and TikTok footers (Sites v231 / 2026-09-07)
 
 Published successfully at `2026-09-07T11:51:33.587665+00:00`, environment revision **17**.
