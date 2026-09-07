@@ -1,5 +1,16 @@
 # Perfumetr importer architecture
 
+## Borderless glass refinement (Sites v224 / 2026-09-07)
+
+- `experience.css` and `glass-controls.css` retain the shared photographic
+  scene with borderless smoked panels, stronger blur and no inset edge shine.
+- Search uses a translucent 62px/58px rounded field with an inset text button,
+  16px mobile input and explicit focus/loading/reduced-transparency states.
+  Its idle parent has no backdrop filter, letting the input blur the scene.
+- No component, endpoint, query, schema or importer contract change.
+  v223 exact deal recovery remains; final build and 108 tests pass.
+  Public v223 bundles are retained for already-open documents.
+
 ## Homepage read recovery (Sites v223 / 2026-09-07)
 
 - Featured products render only from a complete priced FeaturedDeal, including
