@@ -1,5 +1,20 @@
 # Perfumetr importer architecture
 
+## Homepage read recovery (Sites v223 / 2026-09-07)
+
+- Featured products render only from a complete priced FeaturedDeal, including
+  the exact comparison variant ID. No unpriced decorative bottle fallback.
+- Candidate discovery uses a bounded reviewed-GTIN lookup with EXISTS instead
+  of counting all merchant offers. Prices use the unchanged comparison pipeline
+  and first-primary reads. Public freshness remains 18h.
+- Main featured deadline: 6s; other homepage data: 2.5s. Client request: 8s,
+  with one automatic transient retry and cancellation on unmount.
+- Optional `featuredStatus` is complete/unavailable; failed responses are
+  no-store. Existing payload fields remain. New main client uses schema=4
+  and no-store; successful server responses retain 30s/60s caching.
+- v222 public assets join the retained compatibility graph. No schema,
+  importer or scheduler change. Final build and 108 automated tests pass.
+
 ## Public experience integration (Sites v221-v222 / 2026-09-05)
 
 - Main and beta render the same `PerfumetrExperience` client wrapper; main starts
