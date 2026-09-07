@@ -1,5 +1,55 @@
 # Chat continuity runbook
 
+## Current state: minimal store copy and compact footer (Sites v229 / 2026-09-07)
+
+Published successfully at `2026-09-07T10:57:10.912295+00:00`, environment revision **17**.
+Source: `97a5e8c61409a68f8b3fba80d9883eceec9687de`, canonical Sites `main`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_0dc997761b1081919be9ce0b303fd5e5`.
+Deployment: `appgdep_6a9e987995cc819181ecc8854954178a`.
+URL: https://perfumetr.borodzicz85.chatgpt.site; main and beta share this application.
+
+The owner's annotated screenshot marked the two store-count slogans, the
+623-brand count and the large search-footer panel. The owner explicitly
+paused the Douglas investigation and asked to do these UI changes first.
+
+- Both landing and search now say “Zweryfikowane drogerie. Ceny odświeżane
+  codziennie.” in compact sentence case. Removed the supported/fresh store
+  counts, pulse and divider from this shared copy. The logo rail also has a
+  nonnumeric accessible label and store-name tooltips. Actual verified/fresh
+  eligibility and internal integration counters remain unchanged.
+- Removed the brand-count line under search entirely, including its placeholder.
+  Feedback remains directly under the field, with the redundant gap removed.
+- The comparison footer uses a compact grid. On mobile, email and the accessible
+  Instagram icon share one row; “O porównywarce” and “Prywatność” share the next.
+  Kept 44px touch targets, smaller icons, light 12–13px text, 10px vertical
+  mobile padding and the existing transparent matte-glass surface.
+- Native details/summary keeps the short source/link explanation collapsed by
+  default. Removed the prominent index date and redundant hidden tagline.
+  Email copy, Instagram destination, privacy preferences and readable focus
+  states remain. No new JavaScript state or dependency.
+- Production build/artifact checks and **111/111 tests passed**. Updated the
+  existing UI/SSR expectations for the deliberately removed counts and new
+  footer; no separate CSS test suite or browser/iPhone visual QA is claimed.
+  The first suite pass found one remaining old StoreCoverage count-prop
+  assertion; corrected it and the full final suite passed.
+- Preserved the v228 public asset graph. No price, import, schema, scheduler,
+  secret, domain or production data changes; no manual import/retry/cancellation.
+  v228's explicit Douglas store CTA and removal of bottle source captions remain.
+- Index baseline `e158bab0834ed506bf456b63bd4d094062e0122c` (PR #65).
+  Latest finished docs validation **#203 / 34112064092** succeeded.
+  Scheduled production **#204 / 34112940046** was still in progress at the
+  pre-publish read; do not claim it completed or interrupt it. Prior isolated
+  Douglas #201 failed; last known completed production success remains #194.
+  No current live all-store offer totals were queried for this visual task.
+- Douglas help requested: a one-time official AWIN/Douglas feed export would
+  support finding GTIN 3614273760164 / Prada Paradoxe EDP 90 ml. It is diagnostic
+  evidence only, never a replacement for automatic imports or permission to
+  publish manually prepared data. Missing-offer cause remains unresolved and
+  paused at the owner's direction; no export has been received.
+- Reporting: no new report requested/sent; deferred. Last confirmed report #016.
+- Next: owner feedback on this smaller UI. Resume the bounded Douglas
+  product-level diagnosis only when the owner returns to it or provides the export.
+
 ## Current state: Douglas campaign link and bottle-caption repair (Sites v228 / 2026-09-07)
 
 Published successfully at `2026-09-07T10:29:53.053569+00:00`, environment revision **17**.
