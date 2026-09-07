@@ -1,5 +1,24 @@
 # Perfumetr importer architecture
 
+## Internal, live-eligible campaign examples (Sites v233 / 2026-09-07)
+
+- Store-sale campaign metadata is separate from the resolved examples.
+  getHomepageStoreSales uses the exact three Douglas source product IDs,
+  primary reads and existing public catalog scope to resolve current variants.
+  GTIN/volume/concentration, source/merchant eligibility, latest in-stock PLN
+  offer and 18-hour freshness are required. No prices or variant IDs are guessed.
+- Homepage optional reads remain parallel. A failed sale lookup returns no
+  campaign examples and no-store. Beta schema=4 separates cached older payloads;
+  additive examples retains singular example compatibility.
+- Product anchors are same-origin exact-variant deep links. Ordinary clicks
+  invoke PerfumeApp's existing abortable comparison loader in place; modified
+  clicks preserve native anchor behavior. Only campaign terms remain external.
+- Three compact text rows and their heading share the existing collapsed
+  glass disclosure. No image changes, dependencies, importer revision,
+  migration, schedule or eligibility-policy relaxation. Full tests: 115 passed.
+- Generation 21 finalization failed independently during this work; see the
+  precise nonterminal D1 state and failed Actions attempt in PROJECT_STATE.md.
+
 ## Douglas Paradoxe bottle alias (Sites v232 / 2026-09-07)
 
 - Douglas classification normalizes the confirmed full line "Paradoxe

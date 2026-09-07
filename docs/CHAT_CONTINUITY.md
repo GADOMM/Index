@@ -1,5 +1,70 @@
 # Chat continuity runbook
 
+## Current state: three internal Douglas campaign examples (Sites v233 / 2026-09-07)
+
+Published successfully at `2026-09-07T14:16:45.336563+00:00`, environment revision **17**.
+Source: `6c0b82df8785745614fe521ba904fb91f5b49e9b`, canonical Sites `main`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_c50c99f068308191b8a0ac0e08549eb1`.
+Deployment: `appgdep_6a9ec73db8fc8191bf434b81a82b0803`.
+URL: https://perfumetr.borodzicz85.chatgpt.site; main and beta share this application.
+
+The owner explicitly requested internal product comparison links and three
+different example perfumes under “Przykładowe oferty promocyjne”.
+
+- Replaced the external product CTA with a compact list of internal variant
+  links. Normal clicks call the existing comparison loader in the same page;
+  modified clicks/no-JS retain a real same-origin variant deep link.
+  The separate external link is explicitly labelled “Warunki promocji w Douglas”.
+- Selected three exact variants from Douglas's current SUPERCENY campaign:
+  Prada Paradoxe EDP 90 ml (1027980 / GTIN 3614273760164),
+  Chloé Nomade EDP 75 ml (996998 / GTIN 3614223113347),
+  Rabanne Invictus EDT 100 ml (753762 / GTIN 3349668515660).
+  Current campaign source: https://www.douglas.pl/pl/c/promocja/76,
+  read 2026-09-07. Original official owner export independently contains each
+  exact in-stock record. No prices from the export or public page are hardcoded.
+- The homepage resolves these three known source product IDs to actual live
+  catalog variant IDs using a bounded primary D1 read. It requires matching
+  GTIN/concentration/volume, public standard variant, active source without a
+  review reason and a verified active Douglas/AWIN merchant with a fresh
+  positive PLN offer. Newer out-of-stock observations prevent linking an older
+  in-stock price. Missing/hidden/stale examples are omitted; no valid example
+  means no campaign product links. A failed read is no-store and fails closed.
+- The additive examples array retains the singular example for old clients.
+  New controls ignore old external example URLs; beta schema=4 avoids the old
+  cached campaign payload. Existing date expiry, no-code rules, glass,
+  collapsed disclosure and SVG controls remain.
+- Production build/artifact validation and **115/115 tests passed**.
+  Extended rendered link/count/cached-payload coverage and added synthetic
+  SQLite checks for all three, stale prices, wrong volumes, a newer OOS row,
+  hidden variants, unverified merchant and campaign expiry. React review:
+  direct imports, parallel independent homepage reads and reuse of the existing
+  abortable comparison flow; no dependencies or extra client listeners.
+  v232's public asset graph is identical to the already-retained v231 graph.
+  No browser/physical-device QA was performed. Native deployment-probe
+  homepage requests were canceled; a successful live three-example payload
+  was not observed in logs during this checkpoint. Do not claim screenshot
+  acceptance or a measured live example count from the test fixtures.
+- Index baseline `f814198d58425904667353a7349b6b0652880f9f` (merged PR #69).
+  Its validation #208 / 34130345626 is now completed/success on
+  `d2598ece6889f89a7677101565ccdaa6dd66d481`.
+- Important operational update: existing isolated Douglas #201 / 34111753158
+  attempt 2 ended failure at 2026-09-07T14:17:44Z. Native Worker logs identify
+  stage finalize_generation, code import_failed, response 503. This is not a
+  provider 429 and not proof of an identity failure in the three example rows.
+  Live generation 21 received **50,440**, accepted **3,001**, review **2,652**,
+  rejected **44,787**, cursor/total **50,440**, revision 4, state paused,
+  error_code import_failed, completed_at null. Do not label it a completed
+  snapshot or equate counters to fresh public offers. It differs from the
+  earlier diagnostic export's 50,481 rows because it is a separate live fetch.
+- v232's three exact Prada active/fresh-offer proofs remain the last observed
+  product-level evidence (13:55:01.084Z), not a new all-store inventory count.
+  No additional import was started/retried/canceled for this UI change.
+  No importer, schedule, schema, secret or freshness policy was changed.
+- Report deferred until explicitly requested; no email sent. Last confirmed #016.
+- Next: owner feedback on the internal campaign examples; separately diagnose
+  the bounded Douglas finalization failure before certifying generation 21.
+  Do not restart the full feed or manufacture manual offer records.
+
 ## Current state: verified Douglas Paradoxe bottle identity repair (Sites v232 / 2026-09-07)
 
 Published successfully at `2026-09-07T13:53:07.939325+00:00`, environment revision **17**.
