@@ -1,5 +1,56 @@
 # Chat continuity runbook
 
+## Current state: homepage deal recovery (Sites v223 / 2026-09-07)
+
+Published successfully at `2026-09-07T08:19:12.408923+00:00`, environment revision **17**.
+Source `321e5be99ac71bec4c81d561a0878c1e44da627d` is pushed to canonical Sites `main`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_9ce6b64a751c8191b1c7747f53762709`.
+Deployment: `appgdep_6a9e735293388191ab01e4106a5edbcd`.
+Native URL: https://perfumetr.borodzicz85.chatgpt.site; existing main/beta domains keep this shared application.
+
+The owner reported that Stronger With You had no price and opened generic search.
+It was the hard-coded decorative fallback, not a priced catalogue variant.
+A production log at **2026-09-07T08:00:30.925Z** recorded
+`Homepage featured deal unavailable`; the associated main homepage request took
+2,504 ms and returned HTTP success after its 2.5-second data deadline. The old
+client permanently substituted Stronger With You and linked it to generic search.
+
+- Removed that misleading product fallback. A visible bottle now always comes
+  from a complete FeaturedDeal with its price, concentration, volume and exact
+  comparison variant ID. A bounded status/retry control replaces unavailable data;
+  no price or product identity is invented.
+- Featured candidate selection uses indexed reviewed GTINs and EXISTS for a fresh
+  eligible listing, avoiding the redundant all-merchant aggregation. Final prices
+  still use the existing comparison calculation and strict 18-hour freshness,
+  source, identity, coupon and delivery guards. Reads use first-primary sessions.
+- Main featured reads have a 6-second deadline; other homepage data keeps 2.5s.
+  The client uses an 8-second request limit and at most one automatic retry.
+  `featuredStatus` distinguishes complete empty results from failed reads;
+  failed responses are no-store, and the new client requests schema=4/no-store.
+  The existing fields remain compatible with already-open clients.
+- Compacted the mobile product stage (196px), removed the full-size empty
+  product placeholder and tightened footer rows. Matte glass, palette, SVG icons,
+  bounded motion and same-document search navigation remain.
+- Retained v220/v221 assets and added the v222 public graph rebuilt from its
+  exact source with the same lockfile, with hashes/dependencies checked.
+- Build/artifact verification passed. Final automated suite: **108/108**.
+  Added synthetic regression for Stronger With You EDT 50ml, including a
+  2.7-second database delay and equality with its exact /api/compare response;
+  also covered transient retry, complete-empty results and cancellation.
+  No fresh browser/iPhone visual test or live merchant-price audit is claimed.
+  Direct production JSON inspection from this workspace was unavailable.
+- No production data, schema, importer, schedule, domain or secret changes.
+  No manual import/workflow dispatch. Main and beta SSL active; www SSL remains
+  pending validation. No coherent current all-store offer total was read.
+- Index baseline: `a171e25e2ae3ecb0f2aa8306098acfcf354665cf` (PR #59).
+  Latest Actions/production cycle at final read: **#195 / 34095993956** still
+  in progress, schedule; latest completed **#194 / 34072637983**, success,
+  updated 2026-09-07T01:30:08Z. Do not describe #195 as completed or restart it.
+- Report: **not required/deferred** for this follow-up; no new email sent.
+  Last completed report remains #016 with its v222 addendum.
+- Next: handle the owner's next concrete tasks. Preserve exact priced variant
+  links and do not restore an unrelated decorative product on read failure.
+
 ## Current handoff: v222 published, report #016 completed
 
 Production source `34dcdb094988a36cb8a0c5e2380d524bd97727ca` is pushed to the
