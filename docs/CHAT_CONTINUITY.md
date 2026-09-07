@@ -45,10 +45,18 @@ with only Brasty/Aelia offers, and that the Aelia photo credit overlapped its im
   were not distinguished. This release fixes the misleading link and overlay,
   NOT the missing comparison offer. No importer or production data was changed.
 - Index baseline `bebee46ee37dcf1026b53a2a3de630d2e6410f27` (PR #64).
-  Latest preceding Actions **#200 / 34109315955** succeeded. Latest scheduled
-  importer remains **#195 / 34095993956**, failed in the partner step; last
-  known successful production run remains #194 / 34072637983.
-  No workflow was dispatched, cancelled or retried; no current all-store total.
+  Pre-deployment Actions **#200 / 34109315955** succeeded. While this repair
+  was being documented, scheduled isolated Douglas run **#201 / 34111753158**
+  failed at 2026-09-07T10:31:51Z in “Advance the isolated Douglas source only”.
+  Validation passed; other sources were skipped. Its Worker orchestrator request
+  recorded a canceled outcome. A fresh native D1 read still showed completed
+  Douglas generation 20 with unchanged counters and no source error code.
+  This later failed refresh is NOT proof of why the earlier screenshot lacked
+  Prada; do not claim the product-level cause is known. Previous scheduled
+  #195 / 34095993956 also failed; last known production success remains
+  #194 / 34072637983. Docs PR #65 initial validation **#202 / 34111881004**
+  succeeded. No workflow was manually dispatched, cancelled or retried here;
+  no current all-store total.
 - Report: not requested; deferred. No new email; last confirmed report #016.
 - Exact next task: obtain an authorized, bounded product-level AWIN/Douglas
   record/status/reason lookup for GTIN 3614273760164 / article 1027980 and its
