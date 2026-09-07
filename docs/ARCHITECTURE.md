@@ -1,5 +1,20 @@
 # Perfumetr importer architecture
 
+## Minimal discovery copy and footer (Sites v229 / 2026-09-07)
+
+- StoreCoverage is presentational, accepts only optional variant, and displays
+  “Zweryfikowane drogerie. Ceny odświeżane codziennie.” without numeric counts.
+  Landing/search still use actual verified/fresh store data for the logo rail.
+  Numeric diagnostic counts remain in integrations; API contracts are unchanged.
+- Search no longer renders a brand-count/placeholder row. Feedback is retained.
+- Comparison footer uses a responsive grid and native closed details/summary
+  for explanatory copy. Mobile keeps two compact rows, 44px contact/privacy/
+  summary targets and an accessible Instagram icon. Shared matte-glass
+  variables, focus and reduced-transparency/motion behavior are retained.
+- Build/artifact validation and all 111 tests pass; public v228 assets retained.
+  No importer or price behavior change. The individual Douglas offer issue
+  remains paused and unresolved at the owner's instruction.
+
 ## Editorial campaign destinations and image captions (Sites v228 / 2026-09-07)
 
 - HomepageStoreSale.example has optional url in addition to the retained
