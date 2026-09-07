@@ -1,6 +1,43 @@
 # Chat continuity runbook
 
-## Current state: softer borderless glass (Sites v224 / 2026-09-07)
+## Current state: Douglas SUPERCENY information (Sites v225 / 2026-09-07)
+
+- Published successfully at `2026-09-07T08:45:40.284485+00:00`, environment revision **17**.
+  Source: `557bccabb4ab2c21eb6e62348207211a3f1cc713`, canonical Sites `main`.
+  Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_704162f8be248191b9b5c575c22e673a`.
+  Deployment: `appgdep_6a9e79a71470819197c39f577916e5cb`.
+  URL: https://perfumetr.borodzicz85.chatgpt.site. Apex and beta share this deployment.
+- Owner requested publication after matching campaign products to the catalogue.
+  Official sources checked on September 7:
+  https://www.douglas.pl/pl/c/promocja/76 and
+  https://www.douglas.pl/pl/p/5010687030?variant=1027980.
+  Exact example: Prada Paradoxe EDP 90 ml,
+  catalogue `tdv-397ad387126b397b34c7ed4a`, GTIN `3614273760164`.
+- Added a separate, informational `store-sale` type, not a coupon.
+  `/api/homepage?surface=beta` returns additive `storeSales`; main returns [].
+  Cached coupon clients remain compatible; existing `promotions` / `promotion` contract is unchanged.
+  Search displays the existing promotion module with “bez kodu”, a comparison
+  deep link and the official campaign/terms link. No promotion module on the landing surface.
+- Campaign window is September 7, 00:00 through September 13, 23:59:59.999
+  Europe/Warsaw. Both server and existing client expiry logic suppress ended campaigns.
+  Conditions disclose stock limits, exclusions, no stacking, Special Offer and Partner products.
+- IMPORTANT: do not apply a blanket 20% reduction. This sale is already reflected in
+  merchant prices. No feed prices, coupon rows, affiliate redirects, ranking or importer
+  configuration changed. At verification the exact Prada 90 ml comparison had fresh
+  Brasty/Aelia offers but no fresh Douglas offer. Therefore the notice contains NO
+  hardcoded price or claimed Douglas checkout total; the current price must be checked
+  at the merchant. Other campaign products were not exhaustively matched.
+- Preserved the concurrently published v224 styling and retained asset manifest by
+  rebasing on `5cc6e27f5dd72e28fbc6261c7a44a6df3195c06d`.
+  Scoped promotion text uses the shared slate palette with readable light-panel contrast.
+- Validation: `npm test` passed **109/109** after that integration, including
+  campaign date boundaries, no-code/no-price contract, exact example link and
+  search-only API behavior. Build and Worker artifact validation passed.
+  No browser QA was requested or performed.
+- Latest importer run #195 was observed failed, with later documentation run #196
+  successful; no live importer retry, reset or credential change was performed for this task.
+
+## Prior state: softer borderless glass (Sites v224 / 2026-09-07)
 
 Owner requested small visual changes from three supplied screenshots: remove
 visible panel outlines, use softer matte glass and make search closer to the
