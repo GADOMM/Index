@@ -1,5 +1,25 @@
 # Perfumetr importer architecture
 
+## Explicit search navigation and cancellation (Sites v234 / 2026-09-07)
+
+- Landing and search remain mounted in one photographic document. A primitive
+  searchSession revision makes generic re-entry an explicit reset even when the
+  optional initialVariantId has not changed. Reset preserves loaded catalog and
+  campaign data rather than remounting the entire comparison component.
+- The visible back action resets the current search entry, query/result state,
+  pending variant and overlay state. Generic URLs set view=search and remove
+  variantId/hash; exact bottle links retain their variant. History state and
+  attribution are preserved. popstate refreshes the navigation intent; pageshow
+  alone keeps the current comparison and its existing price-resume behavior.
+- One stable cancellation callback aborts all four search-related request kinds,
+  invalidates sequence guards and cancels transition/scroll timers and frame.
+  Unmount, reset and a replacement lookup share it; late results fail closed.
+- Native 44px SVG/text back control is visible for all non-idle states and uses
+  shared material/focus styling. Focus returns to the search wrapper without
+  forcing a mobile keyboard. No API or persistence contract changed.
+- 120 tests pass, including five deterministic component-state regressions.
+  No browser/DOM/physical-device verification is claimed.
+
 ## Internal, live-eligible campaign examples (Sites v233 / 2026-09-07)
 
 - Store-sale campaign metadata is separate from the resolved examples.

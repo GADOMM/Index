@@ -1,5 +1,67 @@
 # Chat continuity runbook
 
+## Current state: return to an empty search panel (Sites v234 / 2026-09-07)
+
+Published successfully at `2026-09-07T15:03:36.436052+00:00`, environment revision **17**.
+Source: `9c3aabd3fd140ba2073071a766c2f4a0ce9ad6f0`, canonical Sites `main`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_03d4457271d481919c109f8da88e0eee`.
+Deployment: `appgdep_6a9ed23993f481918aa9e4c8493beb50`.
+URL: https://perfumetr.borodzicz85.chatgpt.site; main and beta share this application.
+
+The owner requested a visible way back from a perfume comparison to the ordinary
+search panel and reported that logo -> landing -> generic comparison CTA restored
+the previous perfume.
+
+- Root cause: the search component stays mounted behind the landing panel.
+  Clearing initialVariantId alone did not reset its selected/query/status state;
+  generic openSearch also left a previous variantId in the URL.
+- Added a compact "Wróć do wyszukiwarki" button above the search field for every
+  non-idle state, including loading, matches, found, not-found and error.
+  It clears selection, query, suggestions, result groups, offer dialog and transient
+  feedback state, restores the ordinary search/promotions panel and focuses the
+  search wrapper without forcing the mobile keyboard. No document reload.
+- Every explicit search entry carries a primitive search-session revision.
+  Generic landing CTA and logo navigation reset the existing component even when
+  initialVariantId was already undefined. Native history navigation resets the
+  corresponding intent; pageshow alone preserves the current comparison so a
+  return from a shop can still refresh prices.
+- Reset cancels suggestion, comparison, background price refresh and result-list
+  requests, invalidates their sequence guards, and clears the pending variant,
+  loading transition timer and delayed result-scroll timer/frame. Old responses
+  cannot restore a canceled perfume. Existing homepage/catalog data is retained.
+- Generic search URL explicitly uses view=search and removes stale variantId/hash;
+  back replaces the current search history entry and preserves other framework
+  state. Landing bottle and campaign links still select exact variants; modified
+  clicks retain native anchor behavior. UTM values remain unchanged.
+- The new native button uses the shared matte-glass tokens, local SVG back icon,
+  44px target and visible keyboard focus. No new dependency, analytics action,
+  API, importer, schema, scheduler, credentials, prices or campaign changes.
+- Production build/artifact validation and **120/120 tests passed**.
+  Five added deterministic tests execute actual component handlers/effect cleanup
+  with synthetic delayed I/O: found/empty/error/loading returns, late search and
+  comparison results, queued transition/scroll, background refresh cancellation,
+  mounted logo/CTA reopening, bottle/history targets and modified-click behavior.
+  These are component-state tests, not browser, DOM or physical-device QA.
+  React review used direct imports, stable callbacks, primitive navigation
+  dependencies and complete abort/timeout cleanup. Exact v233 public client
+  asset graph retained with existing digest/dependency coverage.
+- GitHub baseline `5af4a17f8d5d9db91741f5109a703fb71d3920d2` (merged PR #70).
+  Latest completed validation #209 / 34132656072 succeeded on
+  `ee5cc826be3244eab4b00f188e9b346f5ee8db56`.
+  Latest scheduled production #210 / 34132999119 ended failure at
+  2026-09-07T14:44:48Z. Validation job 101777354931 succeeded; partner-source
+  advance in import job 101777397560 failed. Full TradeDoubler was skipped.
+  This navigation task did not inspect that job's detailed source failure,
+  retry/cancel an import or certify a completed snapshot.
+- No fresh all-store offer count or new generation counters were read.
+  The dated v233 generation-21 counters and finalize_generation/import_failed
+  incident below remain the last detailed Douglas evidence, not current counts.
+  Douglas full finalization remains unresolved; no new owner export is needed.
+- Report deferred until explicitly requested; no email sent. Last confirmed #016.
+- Next: owner feedback on the back/search interaction; separately inspect #210's
+  bounded source failure and diagnose Douglas finalization before claiming a
+  complete snapshot. No further UI task is in progress.
+
 ## Current state: three internal Douglas campaign examples (Sites v233 / 2026-09-07)
 
 Published successfully at `2026-09-07T14:16:45.336563+00:00`, environment revision **17**.
