@@ -1,5 +1,43 @@
 # Chat continuity runbook
 
+## Current state: more transparent matte panels (Sites v226 / 2026-09-07)
+
+The owner requested more transparency while retaining matte glass. Published
+successfully at `2026-09-07T08:53:02.900005+00:00`, environment revision **17**.
+Source `97e513a9927bc3dcf6a793aa1b8d3528c6e80e57` is pushed to canonical Sites `main`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_f8dbb99f38d48191adced2e6777cb76c`.
+Deployment: `appgdep_6a9e7b6159d08191baecf880d01e768a`.
+URL: https://perfumetr.borodzicz85.chatgpt.site; main and beta use this shared deployment.
+
+- Reduced the shared panel tint from approximately 68% to 40% opacity, softened
+  the gradient and reduced backdrop blur from 36px to 22px (saturation .92).
+  Landing bottle card, comparison, offers, search results, feedback and footers
+  share the same treatment. Outer panels remain borderless.
+- Shared `--frost-backdrop` includes WebKit support. Reduced-transparency
+  preferences restore an opaque surface and disable blur, including the landing
+  bottle card. No component/navigation/price logic changed in this refinement.
+- A concurrent v225 source update was detected before push. Rebased onto
+  `557bccabb4ab2c21eb6e62348207211a3f1cc713`, preserving its date-bounded
+  Douglas SUPERCENY information and tests. Related documentation PR #62 was
+  still open at verification; this task does not merge that separate PR.
+- Retained the exact public v224 CSS and rebuilt v225 public asset graph
+  alongside older retained files, with digest/dependency checks.
+- Final merged production build/artifact validation and **109/109 existing
+  tests passed**. No new CSS tests or fresh browser/iPhone visual acceptance
+  are claimed. No development preview was started.
+- Index baseline: `02690b71d6067ff64f518b6e747ffd7f3883b0cd` (PR #61).
+  Latest completed Actions check: **#198 / 34102407108**, success, PR validation.
+  Latest scheduled production importer remains **#195 / 34095993956**, failed;
+  last known successful production run remains #194 / 34072637983. No current
+  all-store counts or merchant-price audit was performed for this visual task.
+- No importer, production data/schema, schedule, runtime or domain changes;
+  no manual import or provider retry. Prior www SSL limitation and separate
+  failed partner-step investigation remain unresolved.
+- Report: not required/deferred until the owner's explicit instruction; no
+  new email sent. Last confirmed report remains #016.
+- Next: await the owner's feedback on the clearer panels. Preserve the v225
+  campaign addition and exact priced variant navigation in later updates.
+
 ## Current state: softer borderless glass (Sites v224 / 2026-09-07)
 
 Owner requested small visual changes from three supplied screenshots: remove
