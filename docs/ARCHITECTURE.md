@@ -1,5 +1,22 @@
 # Perfumetr importer architecture
 
+## Douglas Paradoxe bottle alias (Sites v232 / 2026-09-07)
+
+- Douglas classification normalizes the confirmed full line "Paradoxe
+  Refillable" to "Paradoxe" only for Prada EDP/women/standard bottles with
+  exact GTIN/volume pairs 3614273760713/30, 3614273760652/50 and
+  3614273760164/90. The 100 ml refill and other lines remain distinct.
+- Import revision 4 makes existing completed revision-3 snapshots refresh
+  through the unchanged official AWIN adapter. No owner export is imported
+  into production. All source, GTIN, semantic, stock, quarantine and
+  18-hour public freshness gates remain.
+- Post-persist logs are limited to the recognized bottle identities and
+  query their actual source mapping/fresh-offer existence. Logging failure
+  does not change import success; credentials and payloads are excluded.
+- Two focused regressions cover exact normalization boundaries and persisted
+  recovery with unchanged observed price/time. Full suite: 114 passing tests.
+  Existing client graph and UI remain; no schema or endpoint contract change.
+
 ## Shared material compatibility and footer social links (Sites v231 / 2026-09-07)
 
 - Glass tokens live on :root, not behind :has(); base tint rgba(64,89,105,.28)
