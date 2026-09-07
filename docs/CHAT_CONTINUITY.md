@@ -1,5 +1,61 @@
 # Chat continuity runbook
 
+## Current state: balanced cross-browser glass and TikTok footers (Sites v231 / 2026-09-07)
+
+Published successfully at `2026-09-07T11:51:33.587665+00:00`, environment revision **17**.
+Source: `b3ba5c983fdbe8e74efd76f322edffcd7dc85a0d`, canonical Sites `main`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_1aa0b84140148191afbb6535c535e234`.
+Deployment: `appgdep_6a9ea5394c588191b8eeafb7e19e71e8`.
+URL: https://perfumetr.borodzicz85.chatgpt.site; main and beta share this application.
+
+Owner supplied IMG_0818.jpeg: mobile panels looked dense while desktop looked
+almost transparent. Requested one intermediate material and then TikTok in
+the footer. No desktop screenshot/browser version was supplied.
+
+- Source inspection confirmed the same old 15% base tint at both breakpoints,
+  combined with blur(12px), saturate(1.04), brightness(.86). The photographic
+  cover crop/position differs with viewport size, so perceived density depends
+  strongly on the scenery beneath each panel. No exact device-specific root
+  cause or Safari renderer fault was established.
+- Also found a real compatibility weakness: all material variables were behind
+  body:has(.perfumetr-experience), so browsers without :has support could lose
+  the panel fill/filter. This is a potential additional contributor, not a
+  confirmed fact about the owner's desktop. Tokens now live on :root.
+- Shared glass now uses a neutral rgba(64,89,105,.28) base tint with a subtle
+  highlight gradient and blur(10px) only. Removed the material's additional
+  brightness/saturation filter. Both unprefixed and WebKit properties use the
+  same variable; no width-specific material overrides. Header and inline
+  feedback now share it with the bottle card, offers, promotions, search/footer.
+  Existing scene composition, motion, one-page navigation and prices remain.
+- Added a supports fallback: browsers supporting neither backdrop property
+  retain a 46% neutral translucent fill. Reduced-transparency settings still
+  use opaque accessible fallbacks; reduced motion remains honored. Do not
+  promise pixel-identical output on different screens or with such preferences.
+- Added reusable, stateless TikTokLink to both landing and comparison footers.
+  Destination https://www.tiktok.com/@perfumetrpl is the owner's supplied
+  profile without transient share parameters. Full @perfumetrpl text,
+  accessible new-tab label, noopener/noreferrer and local monochrome Simple
+  Icons SVG. No embeds, TikTok scripts, network listeners or new dependencies.
+  Public profile retrieval could not be verified; destination comes from owner.
+- Contacts wrap naturally with compact gaps and 44px targets. Landing no
+  longer uses space-between for contacts; full Instagram name also remains
+  visible at the smallest breakpoint. v230 flow footer, promotion heading and
+  centered desktop feedback are preserved.
+- Production build/artifact and **112/112 tests passed**. Added a rendered
+  TikTok regression and extended existing glass checks for root tokens,
+  fallback and unchanged accessibility behavior. React Best Practices review:
+  direct imports, stateless component, accessible link, no added client work.
+  No browser/physical-device QA or screenshot acceptance is claimed.
+  Exact v230 public asset graph retained with digest/dependency tests.
+- Index baseline `f050c769af1c0c23ae873c1398ff97f1c5d9daa6` (merged PR #67).
+  Latest completed validation **#206 / 34117097042**, success; latest scheduled
+  production **#204 / 34112940046**, success. No live offer totals were read.
+  No importer, schema, data, scheduler, secrets or domain changes; no manual run.
+- Douglas missing Prada offer diagnosis remains paused pending the owner's
+  official AWIN download file. No export received or missing offer fixed here.
+- Report deferred until requested; no email. Last confirmed report #016.
+- Next: owner feedback on the intermediate material or the promised AWIN file.
+
 ## Current state: flow footer, promotion section and centered feedback (Sites v230 / 2026-09-07)
 
 Published successfully at `2026-09-07T11:30:44.416736+00:00`, environment revision **17**.

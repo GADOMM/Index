@@ -1,5 +1,23 @@
 # Perfumetr importer architecture
 
+## Shared material compatibility and footer social links (Sites v231 / 2026-09-07)
+
+- Glass tokens live on :root, not behind :has(); base tint rgba(64,89,105,.28)
+  plus a subtle neutral highlight and blur(10px), without material brightness/
+  saturation filters. Standard and WebKit properties share this definition.
+  Header, inline feedback, cards, promotions, search and footer share it.
+- No viewport-specific material overrides. Browser-support fallback uses a
+  46% fill; reduced-transparency restores opaque surfaces and takes priority.
+  Photographic crop still varies with viewport; no pixel-identical device
+  output is promised or browser QA claimed.
+- TikTokLink is a stateless local SVG/text anchor shared by both public
+  footers; full handle @perfumetrpl and canonical owner-supplied profile URL,
+  safe new-tab attributes, no TikTok embed/script/dependency.
+- Contacts stay close and wrap; v230 normal-flow bottom footer, promotion
+  section after feedback and centered desktop feedback remain.
+- Production build/artifact and 112 tests passed; v230 bundles retained.
+  No pricing, importer, schema or runtime contract changes.
+
 ## Minimal discovery copy and footer (Sites v229 / 2026-09-07)
 
 - StoreCoverage is presentational, accepts only optional variant, and displays
