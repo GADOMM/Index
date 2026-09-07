@@ -1,5 +1,17 @@
 # Perfumetr importer architecture
 
+## Compact campaign and glass system (Sites v227 / 2026-09-07)
+
+- HomepagePromotion is collapsed by default with a native button, useId,
+  aria-expanded/controls and an inert hidden details region. Grid track
+  transitions animate height without retaining an opacity backdrop root.
+- The campaign, main cards, footer and search share --frost-surface and
+  --frost-backdrop: approximately 15% tint and 12px blur, WebKit included.
+  Reduced-motion and reduced-transparency preferences remain supported.
+- Campaign dates/eligibility, exact links and all API contracts are unchanged.
+  SVG controls replace remaining promotion text arrows. Complete v226 public
+  bundles are retained. Build/artifact and 110 tests pass.
+
 ## Borderless glass refinement (Sites v224 / 2026-09-07)
 
 - `experience.css` and `glass-controls.css` retain the shared photographic

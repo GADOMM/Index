@@ -1,5 +1,50 @@
 # Perfumetr project state
 
+## Current state: compact campaign disclosure and clearer glass (Sites v227 / 2026-09-07)
+
+Published successfully at `2026-09-07T10:01:17.270823+00:00`, environment revision **17**.
+Source: `6289505189ecce1882d04d3703591f251a0564a9`, canonical Sites `main`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_dfa869e937d48191a313cdfa630e3ffa`.
+Deployment: `appgdep_6a9e8b5f3d3c8191b4da4778f501cff7`.
+URL: https://perfumetr.borodzicz85.chatgpt.site; perfumetr.pl and beta retain the shared application.
+
+The owner supplied IMG_0808.jpeg and requested stronger transparency plus a
+collapsed Douglas promotion. The campaign still had a separate almost-opaque
+light background, so prior shared glass changes did not affect it.
+
+- Campaigns now start collapsed. Douglas shows only its brand, “promocja
+  7–13 września” and an SVG disclosure icon in a compact 56px-minimum row.
+  A full-width native button toggles a CSS grid-height slide animation.
+  The details use useId/aria-controls, aria-expanded, aria-hidden and inert;
+  closed links cannot receive keyboard focus. Existing reduced-motion rules
+  disable the transition. No disclosure preference is persisted.
+- Campaign details preserve the precise Prada Paradoxe EDP 90 ml link,
+  no-code explanation, exclusions, store terms and Warsaw expiry boundaries.
+  Both remaining Unicode link arrows were replaced by existing SVG icons.
+- Removed the opaque promotion background overrides in experience.css;
+  glass-controls.css now applies the shared borderless glass to promotion.
+  The shared tint is approximately 15% opacity, blur 12px, saturation 1.04
+  and backdrop brightness .86. Search uses the same surface/filter rather
+  than its former stronger separate fill. Main cards and footers inherit
+  the change. Reduced-transparency settings retain solid fallbacks.
+- Production build/artifact validation and **110/110 tests passed**, including
+  a new rendered-HTML regression for the default collapsed state, matching
+  disclosure IDs, hidden/inert details, exact summary and SVG links.
+  No fresh browser or physical iPhone acceptance is claimed. The supplied
+  screenshot and source were inspected; no development preview was started.
+- Retained the exact v226 public asset graph alongside v220–v225. Digests and
+  dependency closure passed. No price, importer, schema, runtime, schedule,
+  domain, quota or production data changes; no manual workflow/import.
+- Index baseline `63d9a2d1184aff055e80d06c3efacb46a0e0528f` (PR #63); preceding Actions
+  **#199 / 34103080703** succeeded. Latest scheduled importer remains
+  **#195 / 34095993956**, failed. The separate failed partner-step investigation
+  is still unresolved; last known successful production run is #194.
+  No current all-store totals or live merchant-price audit were performed.
+- Report: no new report requested/sent; deferred until the owner's instruction.
+  Last confirmed delivered report in this task's context remains #016.
+- Next: await owner feedback on the collapsed promotion and clearer mobile
+  glass. Preserve real price/variant identities, campaign expiry and accessibility.
+
 ## Current state: more transparent matte panels (Sites v226 / 2026-09-07)
 
 The owner requested more transparency while retaining matte glass. Published
