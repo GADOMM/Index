@@ -1,5 +1,50 @@
 # Perfumetr project state
 
+## Current state: flow footer, promotion section and centered feedback (Sites v230 / 2026-09-07)
+
+Published successfully at `2026-09-07T11:30:44.416736+00:00`, environment revision **17**.
+Source: `1285a621dd7ab603b856e71e54b158f34ec24229`, canonical Sites `main`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_2030ec258e34819198ec0d2401a8daa9`.
+Deployment: `appgdep_6a9ea04234a48191a53c72f7020c0a3e`.
+URL: https://perfumetr.borodzicz85.chatgpt.site; main and beta share this application.
+
+The owner supplied IMG_0816.jpeg and requested a footer at the bottom of short
+screens, nearby email and full Instagram handle, “Aktualne promocje” below
+feedback and centered desktop feedback. Douglas feed diagnosis remains paused.
+
+- Fixed the actual later CSS override that changed the search app to block
+  layout. It is now a flex column with 100svh/100dvh minimum height, an auto
+  top margin on the footer, safe-area-aware bottom padding and a small content
+  gap. The footer remains in normal flow, follows expanded content and never
+  covers offers. It is not a fixed/sticky overlay.
+- Removed the mobile space-between/icon-only overrides. Email and the full
+  @perfumetr.pl handle are start-aligned with a 14px gap, naturally wrap on
+  narrow screens and retain 44px touch targets. Explicitly restore the handle
+  even below the older 380px breakpoint. Copy-email and Instagram actions remain.
+- Search feedback is centered under the full search field on desktop; the
+  existing mobile full-width control remains. Added an accessible “Aktualne
+  promocje” section after feedback in actual document order, not only CSS
+  order. Promotions remain collapsed, slide open, use transparent matte glass
+  and retain their original dates, expiry, official merchant link and safeguards.
+  Section visibility follows the existing promotion availability state.
+- Production build/artifact validation and **111/111 tests passed**. Updated
+  the existing discovery regression for order, heading, centering, footer flow
+  and visible contact label; no browser or physical iPhone QA was performed.
+  Preserved the exact v229 public asset graph and dependency/digest coverage.
+- No price, import, identity/freshness guard, schema, runtime, schedule, domain
+  or production data change. No workflow dispatched, cancelled or retried.
+- Index baseline `9f3d425bc4197d843adecdf4b0f485b5cf99d085`: merged prior
+  documentation PR #66 after its validation **#205 / 34114203023** succeeded.
+  Latest scheduled production **#204 / 34112940046** is now completed/success,
+  superseding v229's in-progress status. This does not certify a Douglas Prada
+  offer or any current all-store total; no current live offer counts were read.
+- Missing Douglas Prada Paradoxe EDP 90 ml offer remains unresolved. Owner
+  is obtaining the existing AWIN download file for one-time diagnostic evidence;
+  no file received here. Do not restart investigation until it is provided or
+  the owner returns to it. Automatic import behavior has not been replaced.
+- Report: deferred at the owner's request; no new email. Last confirmed #016.
+- Next: owner feedback on the updated layout, or the promised AWIN file.
+
 ## Current state: minimal store copy and compact footer (Sites v229 / 2026-09-07)
 
 Published successfully at `2026-09-07T10:57:10.912295+00:00`, environment revision **17**.
