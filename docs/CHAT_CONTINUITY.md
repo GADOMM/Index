@@ -1,5 +1,60 @@
 # Chat continuity runbook
 
+## Current state: Douglas campaign link and bottle-caption repair (Sites v228 / 2026-09-07)
+
+Published successfully at `2026-09-07T10:29:53.053569+00:00`, environment revision **17**.
+Source: `f79ad647075f15fd64416c0607c98d4f4f3224d2`, canonical Sites `main`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_35b457ae2078819199292c50b5ce5564`.
+Deployment: `appgdep_6a9e92027a048191b1e86a9aae463871`.
+URL: https://perfumetr.borodzicz85.chatgpt.site; main and beta keep the shared application.
+
+The owner reported that the Douglas campaign opened Prada Paradoxe EDP 90 ml
+with only Brasty/Aelia offers, and that the Aelia photo credit overlapped its image.
+
+- Confirmed UI cause: the editorial campaign unconditionally linked variant
+  `tdv-397ad387126b397b34c7ed4a`, without checking for an eligible Douglas offer.
+  This was already recorded as no fresh Douglas offer in the separate v225
+  campaign evidence. The banner itself neither imports nor creates offers.
+- Corrected the campaign CTA to explicitly open the exact official Douglas
+  product, https://www.douglas.pl/pl/p/5010687030?variant=1027980, with
+  “Zobacz Prada Paradoxe · EDP · 90 ml w Douglas” and an external SVG icon.
+  The optional example.url field is additive; cached data lacking it safely
+  links to Douglas campaign terms rather than an unrelated internal comparison.
+  Existing variantId metadata, expiry, exclusions and no-code rules remain.
+- Removed the shared BottleVisual source-credit anchor and all its CSS.
+  No visible source caption remains under a bottle. Product names, alt text
+  and provenance/license metadata remain; an image title preserves the source
+  description without taking layout space. No images were edited.
+- Production build/artifact validation and **111/111 tests passed**. New
+  rendered tests cover source-caption absence in loading/ready/failed/no-image
+  states, the exact merchant CTA and legacy campaign payload fallback.
+  Preserved the v227 public asset graph. No browser/physical iPhone QA claimed.
+- Douglas' official page showed the exact 90 ml variant online at the read.
+  That is merchant-page evidence, NOT a licensed-feed record or an imported price.
+  No price was hardcoded, no offer invented, no identity/freshness guard loosened.
+- Native production catalog_import_sources read: Douglas generation 20 is
+  completed, received 51,353 / accepted 3,113 / review 2,560 / rejected 45,680,
+  error_code null; completed 2026-09-06T19:40:59.328Z. These are snapshot
+  counters, NOT current fresh public offer totals. Flaconi generation 30
+  independently failed with import_failed at 2026-09-07T08:06:09.562Z.
+  Do not blame the Flaconi failure for this missing Douglas product.
+- **Still unresolved:** the exact product-level reason Douglas GTIN
+  3614273760164 is absent from comparison. The available native D1 row reader
+  has no exact-record filter; the public compare response could not be read
+  from this workspace. Feed omission, review/identity rejection or freshness
+  were not distinguished. This release fixes the misleading link and overlay,
+  NOT the missing comparison offer. No importer or production data was changed.
+- Index baseline `bebee46ee37dcf1026b53a2a3de630d2e6410f27` (PR #64).
+  Latest preceding Actions **#200 / 34109315955** succeeded. Latest scheduled
+  importer remains **#195 / 34095993956**, failed in the partner step; last
+  known successful production run remains #194 / 34072637983.
+  No workflow was dispatched, cancelled or retried; no current all-store total.
+- Report: not requested; deferred. No new email; last confirmed report #016.
+- Exact next task: obtain an authorized, bounded product-level AWIN/Douglas
+  record/status/reason lookup for GTIN 3614273760164 / article 1027980 and its
+  mapped listing, then repair only an evidenced mapping/import defect. Do not
+  fabricate a feed row, expose a public SQL/debug endpoint or reset a full feed.
+
 ## Current state: compact campaign disclosure and clearer glass (Sites v227 / 2026-09-07)
 
 Published successfully at `2026-09-07T10:01:17.270823+00:00`, environment revision **17**.

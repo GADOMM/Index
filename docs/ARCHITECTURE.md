@@ -1,5 +1,20 @@
 # Perfumetr importer architecture
 
+## Editorial campaign destinations and image captions (Sites v228 / 2026-09-07)
+
+- HomepageStoreSale.example has optional url in addition to the retained
+  variantId/label. Editorial campaign examples link explicitly to the official
+  merchant product; older payloads without url fall back to termsUrl. They no
+  longer imply the merchant has a fresh offer in internal comparison.
+- BottleVisual renders no source-credit anchor. Source/license description is
+  retained in the image title and catalog metadata; product alt text remains.
+  Removed all obsolete bottle-credit CSS. No photo or pricing changes.
+- Shared glass, collapsed campaign behavior and one-document comparison flow
+  remain. Build/artifact validation and 111 tests pass; v227 assets retained.
+- Individual Douglas Prada 90 ml feed absence remains unconfirmed/unrepaired.
+  See PROJECT_STATE.md; do not equate completed snapshot counters with current
+  fresh offers or merchant-page availability with a validated provider record.
+
 ## Compact campaign and glass system (Sites v227 / 2026-09-07)
 
 - HomepagePromotion is collapsed by default with a native button, useId,
