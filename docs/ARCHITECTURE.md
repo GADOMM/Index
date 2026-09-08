@@ -1,5 +1,24 @@
 # Perfumetr importer architecture
 
+## Scheduled coupon presentation and eligible examples (Sites v236 / 2026-09-08)
+
+- Public campaign facts live in app/flaconi-campaigns.ts. No email HTML, raw feed,
+  tracking URL, credentials or customer data are committed.
+- Runtime VERIFIED_COUPONS_JSON remains the authority for calculation and schedule.
+  Presentation enrichment requires exact configured ID, code, dates and 10% rate.
+  app/catalog-types.ts adds optional percent-promotion details/examples; existing
+  clients keep their previous percent and legacy singular contracts.
+- db/coupon-automation.ts resolves a single shared eligible example list for the
+  two Flaconi campaigns. db/catalog.ts checks source and current-offer provenance,
+  exclusions and freshness, returns only real variant IDs, caps candidates at 90
+  and examples at three, and logs public example identity changes.
+- HomepagePromotion owns one shared transition clock, groups visible campaigns by
+  merchant and renders independent glass disclosures. Quantity-based 11/12/13%
+  presentation never enters one-bottle price math; the app-only 13% limit is explicit.
+  Scheduled coupons are announced but not subtracted before their start.
+- Exact CET timestamps and all validation/deployment evidence are in the current
+  v236 checkpoint in PROJECT_STATE.md and docs/CHAT_CONTINUITY.md.
+
 ## Glass catalog with progressive optional data (Sites v235 / 2026-09-07)
 
 - app/catalog-glass.css loads after the shared material stylesheet and uses an
