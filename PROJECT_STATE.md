@@ -1,5 +1,78 @@
 # Perfumetr project state
 
+## Current state: scheduled Flaconi campaigns (Sites v236 / 2026-09-08)
+
+Published successfully at `2026-09-08T12:49:47.036133+00:00`, environment revision **18**.
+Source: `c202a60cc7b06ad2d18b34d9797a9980e122cb26`, canonical Sites main.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_60bee9cf1de48191b64ad361a450ca70`.
+Deployment: `appgdep_6aa0045bb1b081918f60b0b945b94bdb`.
+URL: https://perfumetr.borodzicz85.chatgpt.site; main and beta share this application.
+
+The owner requested the new Flaconi coupon, verified conditions, three eligible
+examples like Douglas, and immediate publication. Advertising is a later task.
+
+- Added a separate, initially collapsed Flaconi glass panel beside Douglas.
+  Both reuse the neutral shared glass material. Three internal comparison links
+  per campaign are resolved from current offers, not guessed or external shop
+  destinations. Exclusions are behind an accessible secondary disclosure.
+- BEAUTY: 9 September, 10% for one product, 11% for two, 12% for three;
+  13% from four products only in the Flaconi app. The comparison engine represents
+  only **10% for one bottle**, not a misleading 10–13% price range.
+- DEAL1: 10 September, 10% on eligible perfumes. DEAL2 is for other categories
+  and is intentionally not configured for the perfume catalog.
+- The advertiser explicitly labels 00:01–23:59 CET. Configuration follows literal
+  UTC+01:00: BEAUTY 2026-09-08T23:01Z to 2026-09-09T22:59Z;
+  DEAL1 2026-09-09T23:01Z to 2026-09-10T22:59Z. The expanded conditions explain
+  Polish summer-time equivalents (01:01 through 00:59 the following day).
+  No public confirmation that the sender intended CEST was obtained.
+- The new runtime configuration contains fla-beauty-260909 and fla-deal1-260910.
+  It replaces only previously expired managed campaigns; non-runtime imported
+  coupons are preserved. Other environment entries were not changed.
+  Coupons initialize through existing lazy verified-coupon synchronization.
+- All excluded brands from the advertiser notice and two catalog aliases are
+  covered. Without a SKU exclusion list, ANNEMARIE BÖRLIND is conservatively
+  excluded from automatic calculation. Steampod is outside perfume scope.
+- Example selection requires verified active Flaconi/Awin merchant 18563/feed
+  37697, active unambiguous source, matching GTIN/volume/concentration and listing,
+  PLN positive prices, newest available observation, freshness under 18 hours.
+  Up to three distinct fragrances are selected, with brand variety preferred.
+  A product is removed if its only Flaconi offer becomes stale or unavailable.
+- Four new v235 bundles are retained with hashes for already-open clients.
+- Validation: standalone Sites build passed; npm test **130/130 passed**.
+  Synthetic SQLite tests prove exact start/end boundaries, no early activation,
+  10% single-bottle rate, brand exclusion, three matching examples, stale/OOS/
+  mismatched-volume rejection and unverified-merchant rejection. Render tests
+  cover independent collapsed merchant cards, conditions, SVGs and internal links.
+  No browser QA or live HTTP probe was performed. Native deployment succeeded.
+  Recent Worker logs returned zero events; production example names/counts
+  therefore remain unobserved, not asserted. Public offer counts were not queried.
+  A native coupon-table read immediately after deployment still showed old rows
+  before the next lazy application sync; env revision 18 is confirmed deployed.
+
+Fresh coordination baseline: GitHub master `1eb8fa8cf3f8032cd5f96b9ef0b46b1ddf25419a` (PR #72).
+Latest scheduled importer Actions observed: **#221 / 34213511122**, failure,
+updated 2026-09-08T10:37:30Z, at "Refresh CJ price sources only".
+Preceding #220 / 34212255613 succeeded. No workflow was manually dispatched.
+
+Native source state read 2026-09-08 before this deployment:
+- Douglas generation 23 completed at 10:13:04.362Z: 50,656 raw received,
+  3,114 accepted, 2,559 review, 44,983 rejected. The prior failed-finalization
+  snapshot is historical; these counters do not replace a public-offer audit.
+- Flaconi generation 34 failed at 07:59:31.583Z after 4,000 raw received:
+  412 accepted, 150 review, 3,438 rejected; total unknown, next offset 4000,
+  safe error import_failed. A complete fresh feed is not confirmed.
+- Brasty retains generation 18, failed; Notino generation 25 completed with
+  scope_skipped on the latest price-only observation. Do not call all feeds healthy.
+  Old snapshot counts elsewhere below are historical, not current offer counts.
+
+Remaining: confirm the next scheduled Flaconi refresh, production example count
+and coupon activation from actual requests before advertising. Do not bypass
+provider quotas, manually substitute a feed, or advertise 13% on one bottle.
+The user's next intended task is advertising, once requested.
+Report: deferred at the owner's standing request; no email sent for this change.
+Newest delivered report observed in the connected mailbox is #017; recheck Sent
+and template #003 before assigning any later report number.
+
 ## Current state: unified glass catalog and faster first results (Sites v235 / 2026-09-07)
 
 Published successfully at `2026-09-07T15:50:30.730607+00:00`, environment revision **17**.
