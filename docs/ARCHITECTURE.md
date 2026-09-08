@@ -1,5 +1,21 @@
 # Perfumetr importer architecture
 
+## Promotion status material and resume clock (Sites v238 / 2026-09-08)
+
+Each campaign disclosure exposes data-promotion-state from the existing shared
+lifecycle state. Its collapsed heading includes a live text status, “Aktywna”
+or “Wkrótce”, so color is supplementary. Active glass is a low-alpha blue/teal
+gradient layered over --frost-surface; scheduled glass keeps the shared neutral
+material, backdrop and accessibility fallbacks. No timing or discount policy
+is derived from CSS.
+
+HomepagePromotion retains one boundary timer. Refresh first clears it, then
+recomputes campaign states and the next boundary. pageshow and visible
+visibilitychange recompute after suspended timers; cleanup removes both listeners
+and the timer. Independent campaign keys/expansion remain intact. Synthetic
+rendering and lifecycle tests cover activation, expiry, resume and cleanup.
+No API, importer, coupon configuration, environment or dependency changed.
+
 ## One disclosure per campaign (Sites v237 / 2026-09-08)
 
 HomepagePromotion maps each visible campaign ID to its own keyed disclosure.
