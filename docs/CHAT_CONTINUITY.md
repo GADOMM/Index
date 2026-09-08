@@ -1,5 +1,60 @@
 # Chat continuity runbook
 
+## Current state: visible promotion status and distinct glass (Sites v238 / 2026-09-08)
+
+Published at `2026-09-08T13:44:31.101257+00:00`, environment revision **18** unchanged.
+Source: `affeb77cc6fc90b1a29dbab579d36a8773e75330`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_055e5dfd14ac81919f738c4d9dadde35`.
+Deployment: `appgdep_6aa0112ff73c819186c442b0a613877f`.
+URL: https://perfumetr.borodzicz85.chatgpt.site.
+
+Owner request: distinguish active promotions from upcoming ones without requiring
+the dates to be read, and tint the glass differently. Each independently
+collapsible campaign now shows an accessible visible “Aktywna” or “Wkrótce”
+badge in its collapsed heading. Active cards layer a restrained translucent
+blue/teal tint over the shared frosted material; upcoming cards retain neutral
+glass. The active badge has a light fill and dark text, while upcoming badges
+are quieter. The distinction does not depend on color alone. Responsive heading
+wrapping preserves dates/code. No emoji, extra blur, pulse or heavy border added.
+
+The existing shared boundary clock changes the badge and tint automatically.
+It now refreshes on pageshow and return to a visible document after suspended
+mobile timers. Repeated resume clears the previous timer; unmount removes all
+listeners and timers. Expired campaigns disappear as before. v237 separate
+Flaconi cards, dates, conditions, example links and expansion state remain.
+Coupon eligibility/rates/time boundaries, offers, imports, environment and
+routes are unchanged. Three v237 JavaScript bundles are retained for open clients.
+
+Validation: standalone Sites build passed; npm test **131/131 passed**;
+git diff --check passed. Deterministic rendering tests cover active/upcoming
+badges and mixed cards; component lifecycle tests cover exact activation/expiry,
+pageshow/visibility resume, one pending timer and complete cleanup.
+No browser/device/visual QA was requested or performed; no pixel-level claim.
+Native deployment succeeded.
+
+Coordination baseline: GitHub master `83f421be0d814291ccca345b674dba052856eb2e` (merged PR #74).
+Latest completed Actions before this documentation PR: #224 / 34232336118,
+pull-request validation succeeded, updated 2026-09-08T13:30:24Z.
+Latest scheduled importer: #223 / 34229674381 failed, updated 13:22:19Z,
+at “Advance partner sources through the shared orchestrator”.
+No importer run or provider retry was started for this presentation change.
+
+Last native source counters were read during v237, not refreshed in v238:
+Douglas generation 23 completed (50,656 raw / 3,114 accepted / 2,559 review /
+44,983 rejected); Flaconi generation 35 failed (1,000 raw / 102 accepted /
+34 review / 864 rejected); Brasty generation 18 completed (12,999 raw /
+11,180 accepted / 1,523 review / 296 rejected); Notino generation 25 completed
+(6,945 raw / 3,406 accepted / 661 review / 2,878 rejected).
+These are importer counters, not public live-offer counts. No fresh public-offer
+or example-count audit was performed here. Known Flaconi freshness limitations
+remain. The v237 domain audit remains the latest; no domain changes made.
+
+Completed: requested badges, distinct active glass and publication. No unfinished
+UI task from this request. Next: the owner's next instruction; before advertising,
+verify live availability and campaign conditions. Do not claim all feeds healthy.
+Report deferred at the owner's standing request; no email sent. Last observed
+delivered report #017 is historical and must be rechecked before sending.
+
 ## Current state: separate Flaconi campaign cards (Sites v237 / 2026-09-08)
 
 Published at `2026-09-08T13:28:53.794085+00:00`, environment revision **18** unchanged.
