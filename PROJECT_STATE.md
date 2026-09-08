@@ -1,5 +1,47 @@
 # Perfumetr project state
 
+## Current state: separate Flaconi campaign cards (Sites v237 / 2026-09-08)
+
+Published at `2026-09-08T13:28:53.794085+00:00`, environment revision **18** unchanged.
+Source: `c8855e453c3035f8a88a7134da0a8210e696b531`.
+Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_55366248787c819197b74c1b23fc1c45`.
+Deployment: `appgdep_6aa00d84390c8191b3b864a6e8f0b743`.
+URL: https://perfumetr.borodzicz85.chatgpt.site.
+
+Owner correction: BEAUTY on 9 September and DEAL1 on 10 September must be
+separate promotions. HomepagePromotion now renders one independently expandable
+glass card per campaign ID instead of grouping campaigns by merchant. Each card
+retains its date/code, conditions and own example links. Stable campaign keys
+preserve the other card's state when a campaign expires. Douglas remains separate.
+Coupon rates, time boundaries, exclusions, offer selection, imports, environment,
+routes and existing visual material are unchanged. Four v236 bundles are retained.
+
+Validation: standalone Sites build passed; npm test **130/130 passed**.
+Rendering assertions require three independent cards (two Flaconi + Douglas),
+unique disclosure controls, separate BEAUTY/DEAL1 dates and codes, initially
+collapsed state and three example links per synthetic Flaconi campaign.
+No browser QA was requested or performed. Native production deployment succeeded.
+
+Audit baseline: GitHub master `4dff5cfad628da1b32d9579e7df34557ac2ac5d8` (PR #73).
+Latest scheduled Actions #223 / 34229674381 failed at "Advance partner sources
+through the shared orchestrator"; preceding PR validation #222 succeeded.
+Native source state read for this correction: Douglas generation 23 completed
+(50,656 raw / 3,114 accepted / 2,559 review / 44,983 rejected);
+Flaconi generation 35 failed (1,000 raw / 102 accepted / 34 review / 864 rejected);
+Brasty generation 18 completed (12,999 raw / 11,180 accepted / 1,523 review / 296 rejected);
+Notino generation 25 completed (6,945 raw / 3,406 accepted / 661 review / 2,878 rejected).
+These are importer counters, not public live-offer counts. Public offer counts
+and example availability were not newly audited for this presentation-only fix.
+perfumetr.pl and beta.perfumetr.pl are active with active SSL;
+www.perfumetr.pl remains pending with pending_validation SSL.
+
+Completed: requested promotion separation and publication. No active task left
+from this correction. Known feed-freshness limitations from v236 remain; do not
+claim the latest full Flaconi import succeeded. Next: the owner's next request;
+before advertising, check actual current availability and campaign conditions.
+Report deferred at the owner's standing request; no report or email sent.
+Last delivered report observed previously was #017; recheck before sending.
+
 ## Current state: scheduled Flaconi campaigns (Sites v236 / 2026-09-08)
 
 Published successfully at `2026-09-08T12:49:47.036133+00:00`, environment revision **18**.

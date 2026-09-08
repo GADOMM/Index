@@ -1,5 +1,13 @@
 # Perfumetr importer architecture
 
+## One disclosure per campaign (Sites v237 / 2026-09-08)
+
+HomepagePromotion maps each visible campaign ID to its own keyed disclosure.
+The shared lifecycle clock stays in the parent; each card owns expansion state
+and an independent useId/aria-controls target. Campaigns from the same merchant
+are no longer combined. This supersedes the v236 merchant-grouping presentation,
+without changing the API, coupon configuration, eligibility or calculation.
+
 ## Scheduled coupon presentation and eligible examples (Sites v236 / 2026-09-08)
 
 - Public campaign facts live in app/flaconi-campaigns.ts. No email HTML, raw feed,
