@@ -21,8 +21,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: perfumetr-catalog-import
+  group: ${{ github.event_name == 'pull_request' && format('perfumetr-validation-{0}-{1}', github.workflow, github.event.pull_request.number) || 'perfumetr-catalog-import' }}
   cancel-in-progress: false
+  queue: max
 
 jobs:
   validate:
@@ -72,3 +73,4 @@ jobs:
           PERFUMETR_ORIGIN: https://perfumetr.borodzicz85.chatgpt.site
           PERFUMETR_ORCHESTRATOR_STEPS: 48
         run: node scripts/catalog-orchestrator.mjs awin:flaconi
+

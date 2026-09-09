@@ -33,7 +33,8 @@ test("keeps scheduled catalog cycles exact, isolated, and non-cancelling", async
     "47 20 * * *",
     "47 23 * * *",
   ]);
-  assert.match(workflow, /concurrency:\s*\n\s+group: perfumetr-catalog-import\s*\n\s+cancel-in-progress: false/);
+  assert.match(workflow, /group:.*perfumetr-validation.*perfumetr-catalog-import/);
+  assert.match(workflow, /cancel-in-progress: false\s*\n\s+queue: max/);
 
   assert.deepEqual(partnerCrons, [
     "47 2 * * *",
@@ -1250,3 +1251,4 @@ test("keeps Douglas out of the default scheduled source set until explicit activ
     delete process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
   }
 });
+
