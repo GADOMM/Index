@@ -1,3 +1,78 @@
+## Follow-up: scheduled campaigns and daily-operation scope / 2026-09-09
+
+Owner asked whether daily review continues automatically, whether codes can be checked
+outside email, and to implement the latest Flaconi promotion everywhere.
+
+Automation was rechecked enabled: daily around 08:00 Europe/Warsaw, starting 10 September,
+no end date; first run still null. It reviews batches and fixes shared mapping causes,
+not every historical record each morning. It must continue after backlog reduction to
+handle new arrivals. Do not promise a zero queue, monotonic daily decline, no outages,
+or completion of identity conflicts without evidence. Escalate concrete blockers.
+
+Latest relevant official advertiser email dated 9 September is the LUCKY/LUCKY13
+campaign already deployed in v244. Confirmed 13–14 September literal CET:
+LUCKY 10% web, LUCKY13 13% app only. Exact UTC interval remains
+2026-09-12T23:01Z to 2026-09-14T22:59Z. DEAL1 for 10 September also remains scheduled,
+BEAUTY active on 9 September. Brand/product exclusions, automatic date transitions,
+one-bottle web calculation and timed Givenchy gift are unchanged.
+Do not duplicate coupons or send another report: #018 was already sent once.
+
+### Confirmed presentation defect and repair
+
+During endpoint verification, perfumetr.pl returned three campaigns while beta returned
+an empty coupon list and a valid Douglas sale; a later beta read returned all three.
+The previous API did not distinguish an unavailable read from an authoritative empty
+list. The client accepted partial success permanently and stopped retrying.
+
+The additive API now reports independent promotionsStatus and storeSalesStatus.
+New client schema=5 uses bounded retries (maximum three), request cancellation and
+independent source merging. Failed reads preserve valid campaigns from the other
+source. Only complete reads mark loading successful; authoritative complete empty
+results can clear genuinely ended/removed campaigns. Incomplete attempts may retry
+on page resume/visibility, without overlapping work.
+Optional Flaconi example lookup has a 600ms fallback and cannot suppress code details.
+Observed repeated 2.5s server deadlines led to a separate bounded 6s campaign budget;
+stats/merchant reads retain 2.5s, and client request timeout is 15s.
+
+TradeDoubler voucher API is already connected with a six-hour refresh policy and
+the existing partner/full cycles; it does not depend on mail. Official store pages
+are additional verifiable evidence. AWIN Offers API exists, but automatic ingestion
+of AWIN promotion codes is NOT implemented by this follow-up. Existing AWIN token/
+product-feed integration is not proof of an enabled coupon importer. No new periodic
+source or automation modification was made based only on the user's feasibility question.
+Official reference: https://help.awin.com/apidocs/promotions
+Flaconi public source: https://www.flaconi.pl/kod-rabatowy/
+
+### Deployed source and proof
+
+Sites v246, source `3b2ce91dc4253af9259d51fd765d21bb4c0629b7`.
+Deployment `appgdep_6aa14ab807288191b05adf33a8345a8e` succeeded 2026-09-09T12:02:14.336017+00:00, environment revision 19.
+Native URL: https://perfumetr.borodzicz85.chatgpt.site.
+Build and all 140 tests passed. Tests cover partial-source preservation, genuine empty
+results, bounded retries, cancellation and the additive API's failure statuses.
+Existing campaign dates, exclusions, web/app distinction and comparison math passed.
+No visual/browser/device test is claimed.
+
+After v246 deployment, both https://perfumetr.pl/api/homepage?surface=beta&schema=5 and
+https://beta.perfumetr.pl/api/homepage?surface=beta&schema=5 returned HTTP200 with
+promotionsStatus=complete and storeSalesStatus=complete. Both contained BEAUTY active,
+DEAL1 scheduled and LUCKY scheduled, each with three verified example variants.
+The native comparison also confirmed Givenchy Flaconi486PLN, BEAUTY, zero delivery,
+timed two-sample benefit and affiliate mode during this follow-up.
+Earlier v245 requests reproduced unavailable statuses; the final6s campaign budget
+was verified against complete live results. Local HTTP proxy latency is not a browser
+performance measurement.
+
+GitHub master baseline907e514dc8554452e5d89022d370a7f333eb6739 (PR78).
+Latest inspected validation run240/34344966586 succeeded.
+Last inspected production catalog run239/34342797824 and Flaconi19/34342797840 succeeded.
+No provider import was started or cancelled by this follow-up, and no database,
+secret, affiliate, commercial-rule, domain or recurring-task configuration changed.
+Report018 remains sent; no additional email requested or sent.
+Next: observe first scheduled daily operational review on10September; keep actual
+progress separate from assignments and identify remaining hard conflicts. Discuss/
+implement a dedicated AWIN promotions importer only within a subsequent change request.
+
 ## Current state: daily catalog operations live / Sites v244 / 2026-09-09
 
 Owner's priority is active daily review and publication across every configured store,
