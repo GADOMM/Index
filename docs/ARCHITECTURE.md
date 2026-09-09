@@ -1,5 +1,41 @@
 # Perfumetr importer architecture
 
+## Daily review and quality control (Sites v243-v244 / 2026-09-09)
+
+`app/catalog-review-policy.ts` centralizes24h retry eligibility for safe missing
+metadata reasons. Both selectors and automatic-review counters use it; durable
+identity conflicts and hidden items are excluded. Attempt clocks prevent hot loops.
+`catalog-orchestrator` restarts completed generations after12h despite maintenance
+backlog; bounded CJ price maintenance continues while pages advance. Douglas review
+batch is40. Existing access/OIDC scopes and publication invariants are unchanged.
+
+POST /api/internal/catalog-orchestrator accepts authenticated
+{action:"audit_quality",source:"catalog:quality"}. `db/catalog-quality.ts` audits
+all7allowed merchants and atomically persists each merchant's latest state and
+daily baseline in catalog_meta. Private rotating reviewSamples are excluded from
+workflow logs. Failure to read data returns503, never a healthy empty result.
+CJ/AWIN queues include all stored records; TD uses current candidate snapshot;
+source raw totals and accepted/queue counts have explicitly different populations.
+A full import started within24h is flagged in progress, not falsely overdue.
+
+GitHub `scripts/catalog-quality.mjs` validates completeness, unique coverage and
+counters; produces aggregate job summary and warnings; critical source/freshness
+issues fail the step. It runs after every main cycle even if import failed.
+Workflow concurrency retains serial production writes with queue:max and separates
+PR validation. There are10existing schedules; no claim of exact guaranteed start.
+
+A daily Europe/Warsaw08:00 operational task reviews the private worklists,
+official promotional evidence and public output; evidence-based systemic adapter
+fixes are preferred to repeatedly examining identical blocked records.
+Actual decisions belong in docs/CATALOG_REVIEW_LOG.md. Net count changes must never
+be reported as number of cases actually reviewed.
+
+Coupon/delivery optional reads allow2.5s; coupon fetching reuses fresh eligible
+offerRows. Comparisons retain the8s overalldeadline and fallback behavior.
+LUCKY futurecampaign is runtime-configured from official evidence, with web10% and
+explicit app-only LUCKY13 conditions. Campaign timing never follows CSS or hostlocale.
+
+
 ## Promotion status material and resume clock (Sites v238 / 2026-09-08)
 
 Each campaign disclosure exposes data-promotion-state from the existing shared

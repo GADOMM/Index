@@ -1,3 +1,110 @@
+## Current state: daily catalog operations live / Sites v244 / 2026-09-09
+
+Owner's priority is active daily review and publication across every configured store,
+fresh prices/promotions, and one comprehensive email report. Daily operational work is
+authorized; recurring email or partner correspondence is not authorized.
+
+### Deployed and publicly verified
+
+Sites v244 source `af8264867e58fdc49b5b1aebae7c21c4803ff957`.
+Deployment `appgdep_6aa13dffbedc81918759037019d6f581` succeeded
+2026-09-09T11:07:56.320857Z, environment revision 19.
+Native URL: https://perfumetr.borodzicz85.chatgpt.site.
+GitHub implementation PR #77 merged as `db95be0c7c734235acf0fc53d473e67769ff2abc`.
+Site tests/build 138/138; importer tests 33/33; both PR workflow validations passed.
+
+Public Givenchy comparison at 2026-09-09T11:08:46Z:
+Flaconi 540.00 before code, BEAUTY -54.00, free standard delivery, total486.00 PLN,
+affiliate, and timed two-sample gift with basket availability qualification.
+Brasty491.66 +12.00 delivery =503.66 PLN, direct.
+Notino461.23 PLN is the existing owner-observed appdays application price,
+not a freshly verified web price; expires2026-09-09T22:00Z and remains direct.
+Exact identities and provenance are in the v239-v242 entries and review log.
+
+Public homepage API confirmed BEAUTY active, DEAL1 scheduled, LUCKY scheduled.
+LUCKY is official advertiser evidence received9September: web10% / codeLUCKY,
+app13% / separate codeLUCKY13; starts2026-09-12T23:01Z, ends2026-09-14T22:59Z.
+No13% web deduction or invented gift extension. Existing brand exclusions remain.
+All7 stores appeared; catalog stats11099 variants/620brands are a public
+snapshot, not merchant feed coverage or number of newly added perfumes.
+
+### Operational behavior
+
+Safe missing-metadata review cases retry after24h through shared policy;
+identity conflicts and hidden entries remain guarded. Completed-generation
+age12h prevents indefinite price-maintenance starvation of full CJ discovery.
+Douglas review batch40. PR validation has separate concurrency groups; live
+workflows remain serialized with queue:max. Existing10daily UTC schedules retained.
+
+Every main catalog cycle runs authenticated audit_quality, sourcecatalog:quality.
+All7stores: flaconi.pl,douglas.pl,notino.pl,brasty.pl,cocolita.pl,drogeria.pl,aelia.pl.
+Audit persists catalog_meta keys catalog-quality:latest:<domain> and
+catalog-quality:baseline:<domain>. Worklists up to25/store rotate daily and stay private.
+CJ/AWIN review and accepted counters cover all stored source records, not only
+the changing current generation. TD counts current candidate snapshot. Source raw
+counts describe current generation/last completed full receipt and are not comparable
+denominators for all-stored counters. FreshOffers is an operational eligibility count;
+do not rename it exact public search coverage or unique perfume count.
+A recently started paused/running generation is full_import_in_progress; missing or
+over24h completion is full_import_overdue. Read failures fail the audit; no false zeros.
+Criticalflags no_fresh_offers/full_import_overdue/source_error/coupon_verification_overdue
+fail the quality step; other flags are visible warnings. Net changes are not throughput.
+
+Enabled daily task 'Kontrola katalogu Perfumetr', Europe/Warsaw, around08:00 daily
+starting10September: actively inspect all stores, prioritize approved affiliates,
+process evidence-based rotating cases and adapter-wide fixes, review promotional
+mail/conditions, test/publish safe corrections, verify public offers, record actual
+decisions in docs/CATALOG_REVIEW_LOG.md and report chat outcome. This is not a reminder.
+Respect provider429/403 without forced retries or access overrides.
+Notino is not accepted; VIV7September says prior rejection follow-up is ongoing.
+Its registry's applied label is not evidence of approval. Direct mode remains.
+No expectation that every feed row is perfume or every case can be autoapproved.
+
+### Final production proof and report delivery
+
+Initial main push run #239 /34342797824 completed successfully. Import job102437410934:
+TD proof/full steps passed, all3full feeds unchanged; Flaconi fresh skip;
+Notino48bounded steps, generation27 paused at4705raw records,2175accepted in this
+partial generation; Brasty15steps completed generation19 at12780raw records.
+Notino is incomplete by design at the step budget and retains its cursor.
+Do not mistake a successful bounded job for complete Notino feed coverage.
+Initial isolated Flaconi pushrun#19 /34342797840 also succeeded as fresh skip.
+
+Authenticated quality audit checkedAt2026-09-09T11:14:20.661Z:
+schema1,complete=true,healthy=false. All7stores audited and persisted.
+24108eligible stored offers were fresh;8492records remain in review.
+No criticalfreshness/sourceflags, but4stores have review_overdue; Notino also
+full_import_in_progress. There is no24hdelta yet (first baseline).
+This is not proof that8492cases were reviewed or that100%merchant inventory is covered.
+
+| Merchant | Stored candidates | Accepted | Fresh offers | Review | Flags |
+|---|---:|---:|---:|---:|---|
+| flaconi.pl | 5473 | 3743 | 3743 | 1376 | review_overdue |
+| douglas.pl | 6521 | 3033 | 3033 | 2668 | review_overdue |
+| notino.pl | 17889 | 8909 | 8909 | 2655 | full_import_in_progress, review_overdue |
+| brasty.pl | 7123 | 5240 | 5240 | 936 | review_overdue |
+| cocolita.pl | 1020 | 889 | 889 | 131 | none |
+| drogeria.pl | 1247 | 856 | 856 | 391 | none |
+| aelia.pl | 1773 | 1438 | 1438 | 335 | none |
+
+Remaining root-cause groups include Flaconi876gtin_identity_conflict,
+Douglas1373gtin_identity_conflict, Notino1555gtin_conflict, Drogeria389missing_valid_gtin,
+Cocolita121variant_not_found and Aelia300variant_not_found. These named groups are
+not totals of every identity conflict. Daily work must inspect evidence and fix
+shared matching problems, never mass-approve conflicts or erase backlog to improve KPIs.
+Review log records actual Givenchy evidence, production proof and the baseline only;
+other assigned samples are not falsely recorded as inspected.
+
+Report #018 sent once to support@perfumetr.pl from Perfumetr <support@perfumetr.pl>.
+Native Gmail confirmed SENT and INBOX, message/thread1a085e3fe82adc01.
+Subject: [Perfumetr] Raport #018 — Brakujące oferty, codzienna kontrola i świeże rabaty — 09.09.2026
+Exact Sent#003 layout/inline logo/footer preserved. Report includes causes, all7counts,
+138/138site tests,33/33importer tests, public Givenchy486BEAUTY/free delivery/timed samples,
+LUCKY futurecampaign, actualsuccessful run, incomplete Notino and8492remaining cases.
+Standalone HTML saved persistently; no duplicate report should be sent.
+Daily task enabled for around08:00 Europe/Warsaw starting10September; first task run
+has not happened. Continue active work and send chat outcomes, not recurring email.
+
 # Chat continuity runbook
 
 ## Current state: daily catalog review and quality audit / Sites v243 / 2026-09-09
