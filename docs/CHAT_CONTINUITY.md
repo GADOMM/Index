@@ -1,5 +1,90 @@
 # Chat continuity runbook
 
+## Current state: Flaconi Givenchy 125 ml published with BEAUTY / Sites v242 / 2026-09-09
+
+Verified public comparison at 2026-09-09T10:23:38Z: Givenchy L'Interdit EDP
+125 ml women now includes Flaconi, in stock, 540.00 PLN before code,
+54.00 PLN BEAUTY discount, zero standard delivery and **486.00 PLN total**.
+The offer is `awin-offer-e3c4c810a67f24b34732256c`, linkMode affiliate.
+Both reviewed GTIN variants retain their individual identities; the original
+comparison link is `cjv-db07d2a5811a3f5af83e9a73` and the second is
+`cjv-cfd7c64b1edb8d6dedde8dda`. Notino's existing timed app observation is
+unchanged. Do not claim Flaconi is cheaper than the 461.23 PLN Notino app offer.
+
+### Recovery and fresh evidence
+
+The owner supplied the official AWIN CSV gzip export dated 9 September.
+It contains 35,150 raw rows and exactly one matching Flaconi 125 ml item,
+feed 37697 / advertiser 18563, source product
+`6c83695c-8acb-4b77-8f19-dea8638a7cf5-4`, GTIN 3274872459090:
+540.00 PLN, in stock, zero feed delivery. Its AWIN link matches publisher
+3043535 and the correct retailer product. The raw export and email were
+not committed or substituted for the production feed. The exact product
+facts agree with the already-fresh official generation-37 observation.
+
+Sites v241 (source `327e61bd194f7f70d754f8134d0d55d50cd37baa`) had already
+deployed a scoped recovery for this reviewed trade item, but it had not
+been processed. Re-ran the existing isolated Flaconi job using native GitHub
+Actions: run #15 / 33511129905 attempt 2, job 102426392297. The workflow
+and orchestrator blobs were verified identical to master before rerunning.
+The shared queue preserved the running Douglas import; pending scheduled
+#236 was superseded by GitHub concurrency, not a running import cancellation.
+Flaconi completed successfully at 10:17:41Z: one maintenance step, one record
+recovered, automatic review zero. Generation 37 remains completed, with
+35,129 raw received, 3,743 accepted/live offers, 1,376 review, 30,010 excluded,
+and 5,473 stored perfume source products. These counters are the official
+production snapshot, not the later 35,150-row owner export.
+
+### Why the promotional price needed v242
+
+The first public proof showed the recovered affiliate offer at 540 PLN.
+Runtime BEAUTY was correctly active and eligible. Worker logs confirmed
+repeated "Comparison coupons exceeded soft deadline": the 750ms optional
+read discarded valid coupons. This was an additional public-price bug.
+
+Coupon retrieval now reuses the fresh accepted offer rows from the public
+comparison instead of repeating the expensive catalog and offers joins.
+It retains merchant verification, public merchant allowlist, exact coupon
+targets, excluded brands, active dates, freshness, conditions and existing
+delivery-aware calculation. JSON-bound ID lists avoid unbounded SQL parameters.
+Coupons have a bounded 2.5-second read budget; stalled optional data still
+falls back, and the overall comparison endpoint retains its 8-second deadline.
+No feed record, coupon configuration, secret, schema or importer contract changed.
+The existing timed sample benefit now appears with the applied BEAUTY coupon.
+
+### Publication and validation
+
+Sites source `7a63c18ba819d311395d202223cb1bae652f2282`, pushed to canonical main.
+Version `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_52ae0163e6b4819193faa4d77eedf939`.
+Deployment `appgdep_6aa13382261c81918cd7142d00e38670` succeeded
+2026-09-09T10:23:10.479148+00:00, environment revision 18 unchanged.
+Native URL: https://perfumetr.borodzicz85.chatgpt.site.
+
+npm test passed **135/135**, including the complete production build.
+The regression now proves a valid coupon arriving after one second is still
+included, while indefinitely stalled coupon/delivery reads finish within
+four seconds. Existing date-boundary, excluded-brand, exact-target,
+freshness, reviewed-GTIN and affiliate redirect tests all passed.
+Public apex comparison returned HTTP 200 with BEAUTY and 486 PLN.
+The beta outbound route returned HTTP 302 to the exact AWIN publisher,
+advertiser and tracked product from the feed. Apex HEAD probes returned
+a transient local-proxy 502; do not treat those as a retailer failure.
+No browser/device QA, purchase or commission transaction was performed.
+
+GitHub master baseline before this documentation update:
+`c1bb0e1bf1572af15de03693dc775b546110eb7e` (PR #75).
+PR #76 retains the v239/v240 history and records this completion.
+Douglas #235 / 34337324399 ended failure in a later load_import step,
+although native generation 25 reports completed: 51,098 raw / 3,033 accepted.
+Do not claim all integrations healthy. The Flaconi isolated run succeeded.
+
+Completed: requested Givenchy Flaconi offer and active promotional price.
+No further importer restart or provider download is needed for this request.
+Next: the owner's next task; normal scheduled refreshes continue. Recheck live
+price and campaign validity before advertising. Report remains deferred;
+no email sent. Never extend today's sample/coupon window without new evidence.
+
+
 ## Current state: Givenchy L'Interdit EDP 125 ml / Sites v240 / 2026-09-09
 
 Checkpoint: 2026-09-09T09:35:00Z. Owner explicitly requested publication of
