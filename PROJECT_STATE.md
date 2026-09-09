@@ -60,19 +60,50 @@ Notino is not accepted; VIV7September says prior rejection follow-up is ongoing.
 Its registry's applied label is not evidence of approval. Direct mode remains.
 No expectation that every feed row is perfume or every case can be autoapproved.
 
-### Production outcome and report checkpoint
+### Final production proof and report delivery
 
-Initial isolated Flaconi pushrun#19 /34342797840 succeeded (fresh skip; zero new
-recoveries in this particular run). The earlier Givenchy recovery added one offer.
-Initial main pushrun#239 /34342797824 is still running at this checkpoint.
-TD proof and full steps passed; partner advancement progressed Notino generation27
-to4705received/2175accepted/460review and Brasty generation19 to12395received/
-10746accepted/1407review. These are partial source counters, not final audit counts.
-Do not call the full initial run or quality audit successful until terminal proof.
+Initial main push run #239 /34342797824 completed successfully. Import job102437410934:
+TD proof/full steps passed, all3full feeds unchanged; Flaconi fresh skip;
+Notino48bounded steps, generation27 paused at4705raw records,2175accepted in this
+partial generation; Brasty15steps completed generation19 at12780raw records.
+Notino is incomplete by design at the step budget and retains its cursor.
+Do not mistake a successful bounded job for complete Notino feed coverage.
+Initial isolated Flaconi pushrun#19 /34342797840 also succeeded as fresh skip.
 
-One report #018 to support@perfumetr.pl remains pending. Last Sent checked #017.
-Use exact Sent#003 visual template and inline logo, agreed footer, verified results
-and explicit remaining backlog. Recheck Sent before sending. Do not resend blindly.
+Authenticated quality audit checkedAt2026-09-09T11:14:20.661Z:
+schema1,complete=true,healthy=false. All7stores audited and persisted.
+24108eligible stored offers were fresh;8492records remain in review.
+No criticalfreshness/sourceflags, but4stores have review_overdue; Notino also
+full_import_in_progress. There is no24hdelta yet (first baseline).
+This is not proof that8492cases were reviewed or that100%merchant inventory is covered.
+
+| Merchant | Stored candidates | Accepted | Fresh offers | Review | Flags |
+|---|---:|---:|---:|---:|---|
+| flaconi.pl | 5473 | 3743 | 3743 | 1376 | review_overdue |
+| douglas.pl | 6521 | 3033 | 3033 | 2668 | review_overdue |
+| notino.pl | 17889 | 8909 | 8909 | 2655 | full_import_in_progress, review_overdue |
+| brasty.pl | 7123 | 5240 | 5240 | 936 | review_overdue |
+| cocolita.pl | 1020 | 889 | 889 | 131 | none |
+| drogeria.pl | 1247 | 856 | 856 | 391 | none |
+| aelia.pl | 1773 | 1438 | 1438 | 335 | none |
+
+Remaining root-cause groups include Flaconi876gtin_identity_conflict,
+Douglas1373gtin_identity_conflict, Notino1555gtin_conflict, Drogeria389missing_valid_gtin,
+Cocolita121variant_not_found and Aelia300variant_not_found. These named groups are
+not totals of every identity conflict. Daily work must inspect evidence and fix
+shared matching problems, never mass-approve conflicts or erase backlog to improve KPIs.
+Review log records actual Givenchy evidence, production proof and the baseline only;
+other assigned samples are not falsely recorded as inspected.
+
+Report #018 sent once to support@perfumetr.pl from Perfumetr <support@perfumetr.pl>.
+Native Gmail confirmed SENT and INBOX, message/thread1a085e3fe82adc01.
+Subject: [Perfumetr] Raport #018 — Brakujące oferty, codzienna kontrola i świeże rabaty — 09.09.2026
+Exact Sent#003 layout/inline logo/footer preserved. Report includes causes, all7counts,
+138/138site tests,33/33importer tests, public Givenchy486BEAUTY/free delivery/timed samples,
+LUCKY futurecampaign, actualsuccessful run, incomplete Notino and8492remaining cases.
+Standalone HTML saved persistently; no duplicate report should be sent.
+Daily task enabled for around08:00 Europe/Warsaw starting10September; first task run
+has not happened. Continue active work and send chat outcomes, not recurring email.
 
 # Perfumetr project state
 
