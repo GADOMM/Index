@@ -1,6 +1,72 @@
 # Perfumetr project state
 
-## Current state: Givenchy L'Interdit EDP 125 ml / Sites v239 / 2026-09-09
+## Current state: Givenchy L'Interdit EDP 125 ml / Sites v240 / 2026-09-09
+
+Checkpoint: 2026-09-09T09:35:00Z. Owner explicitly requested publication of
+the Notino application price shown in their screenshot. This is now deployed
+and verified in the public comparison. Flaconi price/availability is NOT
+confirmed; do not interpret absence in our comparison as retailer unavailability.
+
+- Sites source: `dbcfac61a6d45d766d6cdcc9b3be82b4fe44879d`, committed and pushed.
+- Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_58f9684276e08191a83d788d9e3fb8e0`.
+- Deployment: `appgdep_6aa1279c0c908191b69426f85ee6c07a`,
+  succeeded 2026-09-09T09:32:45.522794+00:00; environment revision 18 unchanged.
+- URL: https://perfumetr.borodzicz85.chatgpt.site.
+- GitHub master baseline: `c1bb0e1bf1572af15de03693dc775b546110eb7e` (PR #75).
+- Documentation PR #76 remains open; this checkpoint supersedes the v239 price
+  publication status below without erasing its investigation history.
+- Tests: Sites `npm test` 134/134 passed, including strict offer/store/link/stock
+  scoping, nonmutation, time boundaries, background-return expiry and cleanup.
+  No schema, importer contract, feed data, provider credentials or workflow changed.
+
+### Published screenshot observation, not a feed replacement
+
+The public API for `cjv-db07d2a5811a3f5af83e9a73` was checked after deployment:
+exactly 2 offers, Notino first at 461.23 PLN with zero delivery and code
+`appdays`, followed by Brasty 491.66 + 12.00 = 503.66 PLN. Notino offer ID
+`cj-offer-cfd7c64b1edb8d6dedde8dda` is explicitly marked
+`source: owner-screenshot`, `channel: app`, base price 599.00 PLN.
+The original provider record (675 PLN at the previous check) remains unchanged.
+
+Observation time: 2026-09-09T08:52:00Z (10:52 Warsaw, screenshot).
+Conservative publication cutoff: 2026-09-09T22:00:00Z (Warsaw midnight).
+This cutoff is our manual display lifetime, NOT a verified campaign end date.
+After expiry the UI and API fall back to the unchanged provider offer, including
+an already-open tab returning from the background. No additional coupons stack.
+
+Main comparison, alternate rows and catalog detail show the application-only
+condition. The CTA copies the code and opens the product; visible text explains
+that this price requires the Notino app and checkout confirmation. The normal
+product redirect is not represented as an automatic app-price checkout.
+Implementation: `app/observed-offer.ts`, `app/use-offer-clock.ts`,
+catalog public mapping and both comparison UIs. Timers run at the expiry
+boundary and are cleaned up; no polling loop or new dependency was added.
+
+### Flaconi and remaining work
+
+A fresh official-product-page request returned HTTP 403. Exact product/EAN web
+searches produced no confirmed current 125 ml offer. Do not retry around this
+access restriction or claim a verified Flaconi price/stock status.
+The latest read of `awin:flaconi-pl:catalog` shows generation 37 completed,
+no source error, feed 37697: 35,129 raw received, 3,742 accepted perfumes,
+1,377 review and 30,010 rejected; completed_at 1788942487961.
+Our current 125 ml comparison contains no published Flaconi offer.
+
+Last production rerun #230 / 34288500715 attempt 2 remained in_progress at the
+09:33 UTC check: import job 102408855410 ongoing; validation job 102408891834
+succeeded. Full TradeDoubler and Douglas steps were skipped. No new import was
+started in this turn. Scheduled run #232 / 34324511012 was successful.
+PR validation #233 / 34334329029 was pending behind the shared importer
+concurrency slot. Verify the updated PR head and CI before merging.
+Auto-merge is not enabled on this repository; do not change settings or bypass CI.
+
+Exact next task: investigate the missing Flaconi 125 ml source/matching only
+when an authorized, readable current source is available; resolve the upstream
+Notino feed/retailer price discrepancy without silently extending this manual
+observation. Recheck ongoing bounded import and documentation PR CI once useful.
+Report delivery remains deferred at the owner's request; no email was sent.
+
+## Previous checkpoint: Givenchy L'Interdit EDP 125 ml / Sites v239 / 2026-09-09
 
 Checkpoint: 2026-09-09T09:22:00Z. Missing Notino offer repaired; retailer/feed
 price discrepancy remains unresolved. Do NOT report the whole pricing request
