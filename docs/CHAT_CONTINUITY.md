@@ -1,5 +1,93 @@
 # Chat continuity runbook
 
+## Current state: Givenchy L'Interdit EDP 125 ml / Sites v239 / 2026-09-09
+
+Checkpoint: 2026-09-09T09:22:00Z. Missing Notino offer repaired; retailer/feed
+price discrepancy remains unresolved. Do NOT report the whole pricing request
+as completed.
+
+- Sites source: `3dfd3cab0fc3d29765fdb4a8ffded8a2c6673eec`.
+- Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_6da2a302a3108191974ca85586e83630`.
+- Deployment: `appgdep_6aa12437ffc08191ac3086e8c3e245a8`, native succeeded
+  2026-09-09T09:18:12.562701+00:00; environment revision 18 unchanged.
+- URL: https://perfumetr.borodzicz85.chatgpt.site.
+- GitHub master baseline rechecked: `c1bb0e1bf1572af15de03693dc775b546110eb7e`
+  (PR #75). No importer contract or workflow changed.
+- Tests: Sites `npm test` 132/132 passed, including synthetic stale-source
+  recovery, retained exact GTINs, old conflict history, no stale-price
+  publication, fresh provider mismatch rejection, comparison family and
+  negative scope tests. Working tree committed and pushed.
+
+### Cause and bounded repair
+
+Public variant `cjv-db07d2a5811a3f5af83e9a73`, EDP 125 ml women, has Brasty
+GTIN `3274872421479`. Official Notino CJ feed `13475384` source
+`GIVINTW_AEDP40` uses `3274872459090`. Durable CJ semantic identity conflict
+`d60a3957e43693bd461156ee5731f6d233272ee50c6d6ededc88da633b8f35d6`
+had quarantined this record.
+
+Both trade items are retailer-listed as Givenchy L'Interdit EDP 125 ml women's
+standard bottle. Evidence: individual Jomashop product pages ending
+`fragrances-3274872421479.html` and `fragrances-3274872459090.html`, and the
+official Notino exact product page below. This is NOT a global EAN alias or
+claim of identical formulation. The reviewed pair keeps separate exact-GTIN
+variants/evidence and coexists only in this precise comparison family.
+
+`app/reviewed-trade-items.ts` is narrowly scoped to Givenchy / l interdit /
+women / EDP / 125 / standard and the two reviewed GTINs. CJ identity keys include
+the individual GTIN only for this reviewed scope. Historical conflicts remain.
+Recovery selects only the witnessed Notino feed/product and terminal semantic
+conflict; stored review prices stay unpublished until fresh provider-by-ID
+confirmation. Existing hidden/manual/wrong size/audience/source/GTIN gates
+remain intact. No raw feed was replaced, credential exposed, or manual price
+inserted.
+
+### Production proof and remaining discrepancy
+
+At comparedAt `1788945545489`, public comparison returned exactly TWO offers:
+Brasty base 491.66 PLN + delivery 12 = 503.66 PLN, and Notino base 675 PLN +
+configured delivery 8.90 = 683.90 PLN. Notino was freshly fetched at 11:18
+Europe/Warsaw. Its new offer is `cj-offer-cfd7c64b1edb8d6dedde8dda`.
+HEAD of its outbound URL returned 302 to the correct 125 ml product:
+https://www.notino.pl/givenchy/linterdit-woda-perfumowana-dla-kobiet/p-16091479/
+
+A direct read of that official product page at about 09:20 UTC confirmed base
+599 PLN, `shoppingdays` 20%, discounted price 479.20 PLN, and InStock.
+The user's Notino app screenshot shows 461.23 PLN with `appdays` and free
+delivery. Official Shopping Days/coupon pages distinguish appdays (application)
+from shoppingdays (web); do NOT apply the advertised maximum 33% to this SKU,
+or present an app-only price as an ordinary website/affiliate price.
+
+Thus fresh CJ retrieval does NOT mean the retailer price matches: provider
+currently supplies 675 PLN. Price/promotion synchronization is still blocked
+by that upstream mismatch, not fixed by the identity recovery. No unverified
+retail price, shipping override or undated coupon was published.
+
+Flaconi: today's completed official generation 37, feed 37697, raw 35129,
+accepted 3742, review 1377, rejected 30010, completion 1788942487961.
+No confirmed Flaconi offer for this exact 125 ml variant in public comparison.
+Indexed official product page exposes 125 ml, but direct research returned
+403, so live stock/price were NOT confirmed. Do not claim out of stock.
+
+### Live run and next task
+
+Latest original Actions #232 / 34324511012 completed successfully. To request
+fresh partner prices after v239, used the native rerun action once for completed
+partner-only job 102269556367 of run #230 / 34288500715 (same current master).
+Attempt 2 import job 102408855410 is in progress at this checkpoint; validation
+job 102408891834 succeeded. This run uses the existing bounded OIDC partner
+orchestrator (Flaconi/Notino/Brasty/vouchers); TradeDoubler full feed and Douglas
+steps are skipped. Notino recovery already publicly verified. Do NOT start
+another run or retry provider 429s. Read final run status/logs before claiming
+the entire partner run succeeded.
+
+Next: reconcile the official Notino product price/promotion with its CJ feed
+using a provenance-preserving, expiry-bounded verification path; confirm
+Flaconi exact 125 ml availability without guessing or bypassing blocked access.
+No browser QA or UI redesign requested/performed. No additional promotion
+status/tint changes. No report email sent; consolidated report remains deferred
+until the owner explicitly asks.
+
 ## Current state: visible promotion status and distinct glass (Sites v238 / 2026-09-08)
 
 Published at `2026-09-08T13:44:31.101257+00:00`, environment revision **18** unchanged.
