@@ -1,5 +1,73 @@
 # Perfumetr project state
 
+## Current state: daily catalog review and quality audit / Sites v243 / 2026-09-09
+
+Owner requested active daily review/publication across all seven stores, fresh prices
+and promotions, plus one comprehensive email report after completion. This supersedes
+report deferral for this task only. Do not send recurring emails without authorization.
+
+Sites source 061262759664f96e5054d695b6eae7df3325310e is deployed as v243,
+version appgprj_6a8236775b808191b6b4979c4d86d889~appgver_46292b8ee2a881919dc910b987a1a5b1,
+deployment appgdep_6aa13a6e08d48191903c8dd175b9e39e succeeded
+2026-09-09T10:52:44.674480+00:00, environment revision 18 unchanged.
+URL https://perfumetr.borodzicz85.chatgpt.site. Sites npm test 137/137 passed.
+GitHub master baseline 07cbb0a788030cf22e2172aa93e1f03bcb487111.
+
+Confirmed causes: CJ prefixes an unresolved attempt with manual_* and excludes it
+from subsequent attempts; AWIN unresolved labels likewise leave the automatic queue.
+Only safe missing-metadata reasons now become eligible again after 24 hours, oldest
+updated records first. All original matching, quarantine, provider identity, exact
+GTIN and observed-price timestamps remain. Hard identity conflicts are not auto-approved.
+Douglas review/safety batches now use 40 instead of 400, fitting the existing maximum
+50-statement write budget. Its earlier step-36 import_failed does not prove that every
+Douglas failure was this batch limit. Flaconi's review counter now mirrors the durable
+conflict exclusion in its selector. A completed generation older than 12h can restart
+even with maintenance backlog, after pending publication, so discovery cannot starve.
+CJ still performs bounded price maintenance while its next generation advances.
+
+New OIDC-only audit_quality action on /api/internal/catalog-orchestrator (source
+catalog:quality) inspects all seven stores, including direct-only CJ. It records source
+raw received counts separately from accepted candidates, operational fresh offer counts,
+review reasons/age, coupon windows, affiliation status and deltas from a daily baseline.
+TradeDoubler raw counts come from the atomic completion receipt, never from cosmetics
+counts labelled as perfumes. A failed read fails the complete audit. It stores private
+latest/baseline catalog_meta keys catalog-quality:latest:<domain> and
+catalog-quality:baseline:<domain>. Each day's worklist rotates up to 25 review records
+per store; rotation is a work assignment, NOT a claim that those records were reviewed.
+Net deltas are not throughput. Operational fresh offers are not an exact public-search
+coverage audit or retailer checkout certification. No new schema or secret was added.
+
+Importer changes on codex/daily-catalog-quality: retained all ten existing schedules
+and provider budgets; PR validation has its own concurrency group, live imports retain
+shared mutual exclusion with queue:max and cancel-in-progress:false, so a newer pending
+run does not evict an older one. Add post-cycle quality audit (even after failures) and
+quality-only manual mode. Aggregate logs exclude worklist product details and raw
+provider payloads. Critical freshness/source failures fail the quality step; outstanding
+review is explicitly flagged. Importer npm test passed 33/33 locally. PR/CI and the first
+production audit remain pending at this checkpoint. Never call that pending proof complete.
+
+Daily ChatGPT task 'Kontrola katalogu Perfumetr' enabled 2026-09-09, Europe/Warsaw,
+flexible morning around 08:00 starting 2026-09-10. Task id
+6aa139d744c081918b5a6811e00214e1 is internal metadata. It reviews rotating batches,
+checks official promo mail, applies evidenced fixes, tests/deploys and updates continuity.
+It does not grant blanket approval for conflicts or recurring external messages.
+The existing feed schedules continue independently. Do not promise no future incidents
+or 100% merchant inventory; inaccessible/ambiguous data remains an explicit blocker.
+
+Known prechange D1: Flaconi gen37 raw35129/accepted3743/review1376;
+Douglas gen25 raw51098/accepted3033/review2668; Brasty gen19 paused raw11585,
+accepted10170/review1248 (incomplete); Notino gen26 completed raw6976,
+accepted3412/review662, scope_skipped. These are source snapshot counts, NOT a single
+simultaneous live public offer total. Last production isolated Flaconi success was
+33511129905 attempt2; last all-workflow Douglas34337324399 failed, last validation
+34340121433 succeeded. Recheck before reporting current results.
+
+Next: publish GitHub PR only after deployed endpoint guard verification, pass CI,
+merge and inspect initial live audit/import results. Resolve newly exposed actionable
+failures, record actual outcomes, then send report #018 to support@perfumetr.pl using
+Sent #003 exact template (latest confirmed Sent #017). Report is pending, not sent.
+
+
 ## Current state: Flaconi Givenchy 125 ml published with BEAUTY / Sites v242 / 2026-09-09
 
 Verified public comparison at 2026-09-09T10:23:38Z: Givenchy L'Interdit EDP
