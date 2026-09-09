@@ -1,5 +1,244 @@
 # Chat continuity runbook
 
+## Current state: Flaconi Givenchy 125 ml published with BEAUTY / Sites v242 / 2026-09-09
+
+Verified public comparison at 2026-09-09T10:23:38Z: Givenchy L'Interdit EDP
+125 ml women now includes Flaconi, in stock, 540.00 PLN before code,
+54.00 PLN BEAUTY discount, zero standard delivery and **486.00 PLN total**.
+The offer is `awin-offer-e3c4c810a67f24b34732256c`, linkMode affiliate.
+Both reviewed GTIN variants retain their individual identities; the original
+comparison link is `cjv-db07d2a5811a3f5af83e9a73` and the second is
+`cjv-cfd7c64b1edb8d6dedde8dda`. Notino's existing timed app observation is
+unchanged. Do not claim Flaconi is cheaper than the 461.23 PLN Notino app offer.
+
+### Recovery and fresh evidence
+
+The owner supplied the official AWIN CSV gzip export dated 9 September.
+It contains 35,150 raw rows and exactly one matching Flaconi 125 ml item,
+feed 37697 / advertiser 18563, source product
+`6c83695c-8acb-4b77-8f19-dea8638a7cf5-4`, GTIN 3274872459090:
+540.00 PLN, in stock, zero feed delivery. Its AWIN link matches publisher
+3043535 and the correct retailer product. The raw export and email were
+not committed or substituted for the production feed. The exact product
+facts agree with the already-fresh official generation-37 observation.
+
+Sites v241 (source `327e61bd194f7f70d754f8134d0d55d50cd37baa`) had already
+deployed a scoped recovery for this reviewed trade item, but it had not
+been processed. Re-ran the existing isolated Flaconi job using native GitHub
+Actions: run #15 / 33511129905 attempt 2, job 102426392297. The workflow
+and orchestrator blobs were verified identical to master before rerunning.
+The shared queue preserved the running Douglas import; pending scheduled
+#236 was superseded by GitHub concurrency, not a running import cancellation.
+Flaconi completed successfully at 10:17:41Z: one maintenance step, one record
+recovered, automatic review zero. Generation 37 remains completed, with
+35,129 raw received, 3,743 accepted/live offers, 1,376 review, 30,010 excluded,
+and 5,473 stored perfume source products. These counters are the official
+production snapshot, not the later 35,150-row owner export.
+
+### Why the promotional price needed v242
+
+The first public proof showed the recovered affiliate offer at 540 PLN.
+Runtime BEAUTY was correctly active and eligible. Worker logs confirmed
+repeated "Comparison coupons exceeded soft deadline": the 750ms optional
+read discarded valid coupons. This was an additional public-price bug.
+
+Coupon retrieval now reuses the fresh accepted offer rows from the public
+comparison instead of repeating the expensive catalog and offers joins.
+It retains merchant verification, public merchant allowlist, exact coupon
+targets, excluded brands, active dates, freshness, conditions and existing
+delivery-aware calculation. JSON-bound ID lists avoid unbounded SQL parameters.
+Coupons have a bounded 2.5-second read budget; stalled optional data still
+falls back, and the overall comparison endpoint retains its 8-second deadline.
+No feed record, coupon configuration, secret, schema or importer contract changed.
+The existing timed sample benefit now appears with the applied BEAUTY coupon.
+
+### Publication and validation
+
+Sites source `7a63c18ba819d311395d202223cb1bae652f2282`, pushed to canonical main.
+Version `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_52ae0163e6b4819193faa4d77eedf939`.
+Deployment `appgdep_6aa13382261c81918cd7142d00e38670` succeeded
+2026-09-09T10:23:10.479148+00:00, environment revision 18 unchanged.
+Native URL: https://perfumetr.borodzicz85.chatgpt.site.
+
+npm test passed **135/135**, including the complete production build.
+The regression now proves a valid coupon arriving after one second is still
+included, while indefinitely stalled coupon/delivery reads finish within
+four seconds. Existing date-boundary, excluded-brand, exact-target,
+freshness, reviewed-GTIN and affiliate redirect tests all passed.
+Public apex comparison returned HTTP 200 with BEAUTY and 486 PLN.
+The beta outbound route returned HTTP 302 to the exact AWIN publisher,
+advertiser and tracked product from the feed. Apex HEAD probes returned
+a transient local-proxy 502; do not treat those as a retailer failure.
+No browser/device QA, purchase or commission transaction was performed.
+
+GitHub master baseline before this documentation update:
+`c1bb0e1bf1572af15de03693dc775b546110eb7e` (PR #75).
+PR #76 retains the v239/v240 history and records this completion.
+Douglas #235 / 34337324399 ended failure in a later load_import step,
+although native generation 25 reports completed: 51,098 raw / 3,033 accepted.
+Do not claim all integrations healthy. The Flaconi isolated run succeeded.
+
+Completed: requested Givenchy Flaconi offer and active promotional price.
+No further importer restart or provider download is needed for this request.
+Next: the owner's next task; normal scheduled refreshes continue. Recheck live
+price and campaign validity before advertising. Report remains deferred;
+no email sent. Never extend today's sample/coupon window without new evidence.
+
+
+## Current state: Givenchy L'Interdit EDP 125 ml / Sites v240 / 2026-09-09
+
+Checkpoint: 2026-09-09T09:35:00Z. Owner explicitly requested publication of
+the Notino application price shown in their screenshot. This is now deployed
+and verified in the public comparison. Flaconi price/availability is NOT
+confirmed; do not interpret absence in our comparison as retailer unavailability.
+
+- Sites source: `dbcfac61a6d45d766d6cdcc9b3be82b4fe44879d`, committed and pushed.
+- Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_58f9684276e08191a83d788d9e3fb8e0`.
+- Deployment: `appgdep_6aa1279c0c908191b69426f85ee6c07a`,
+  succeeded 2026-09-09T09:32:45.522794+00:00; environment revision 18 unchanged.
+- URL: https://perfumetr.borodzicz85.chatgpt.site.
+- GitHub master baseline: `c1bb0e1bf1572af15de03693dc775b546110eb7e` (PR #75).
+- Documentation PR #76 remains open; this checkpoint supersedes the v239 price
+  publication status below without erasing its investigation history.
+- Tests: Sites `npm test` 134/134 passed, including strict offer/store/link/stock
+  scoping, nonmutation, time boundaries, background-return expiry and cleanup.
+  No schema, importer contract, feed data, provider credentials or workflow changed.
+
+### Published screenshot observation, not a feed replacement
+
+The public API for `cjv-db07d2a5811a3f5af83e9a73` was checked after deployment:
+exactly 2 offers, Notino first at 461.23 PLN with zero delivery and code
+`appdays`, followed by Brasty 491.66 + 12.00 = 503.66 PLN. Notino offer ID
+`cj-offer-cfd7c64b1edb8d6dedde8dda` is explicitly marked
+`source: owner-screenshot`, `channel: app`, base price 599.00 PLN.
+The original provider record (675 PLN at the previous check) remains unchanged.
+
+Observation time: 2026-09-09T08:52:00Z (10:52 Warsaw, screenshot).
+Conservative publication cutoff: 2026-09-09T22:00:00Z (Warsaw midnight).
+This cutoff is our manual display lifetime, NOT a verified campaign end date.
+After expiry the UI and API fall back to the unchanged provider offer, including
+an already-open tab returning from the background. No additional coupons stack.
+
+Main comparison, alternate rows and catalog detail show the application-only
+condition. The CTA copies the code and opens the product; visible text explains
+that this price requires the Notino app and checkout confirmation. The normal
+product redirect is not represented as an automatic app-price checkout.
+Implementation: `app/observed-offer.ts`, `app/use-offer-clock.ts`,
+catalog public mapping and both comparison UIs. Timers run at the expiry
+boundary and are cleaned up; no polling loop or new dependency was added.
+
+### Flaconi and remaining work
+
+A fresh official-product-page request returned HTTP 403. Exact product/EAN web
+searches produced no confirmed current 125 ml offer. Do not retry around this
+access restriction or claim a verified Flaconi price/stock status.
+The latest read of `awin:flaconi-pl:catalog` shows generation 37 completed,
+no source error, feed 37697: 35,129 raw received, 3,742 accepted perfumes,
+1,377 review and 30,010 rejected; completed_at 1788942487961.
+Our current 125 ml comparison contains no published Flaconi offer.
+
+Last production rerun #230 / 34288500715 attempt 2 remained in_progress at the
+09:33 UTC check: import job 102408855410 ongoing; validation job 102408891834
+succeeded. Full TradeDoubler and Douglas steps were skipped. No new import was
+started in this turn. Scheduled run #232 / 34324511012 was successful.
+PR validation #233 / 34334329029 was pending behind the shared importer
+concurrency slot. Verify the updated PR head and CI before merging.
+Auto-merge is not enabled on this repository; do not change settings or bypass CI.
+
+Exact next task: investigate the missing Flaconi 125 ml source/matching only
+when an authorized, readable current source is available; resolve the upstream
+Notino feed/retailer price discrepancy without silently extending this manual
+observation. Recheck ongoing bounded import and documentation PR CI once useful.
+Report delivery remains deferred at the owner's request; no email was sent.
+
+## Previous checkpoint: Givenchy L'Interdit EDP 125 ml / Sites v239 / 2026-09-09
+
+Checkpoint: 2026-09-09T09:22:00Z. Missing Notino offer repaired; retailer/feed
+price discrepancy remains unresolved. Do NOT report the whole pricing request
+as completed.
+
+- Sites source: `3dfd3cab0fc3d29765fdb4a8ffded8a2c6673eec`.
+- Version: `appgprj_6a8236775b808191b6b4979c4d86d889~appgver_6da2a302a3108191974ca85586e83630`.
+- Deployment: `appgdep_6aa12437ffc08191ac3086e8c3e245a8`, native succeeded
+  2026-09-09T09:18:12.562701+00:00; environment revision 18 unchanged.
+- URL: https://perfumetr.borodzicz85.chatgpt.site.
+- GitHub master baseline rechecked: `c1bb0e1bf1572af15de03693dc775b546110eb7e`
+  (PR #75). No importer contract or workflow changed.
+- Tests: Sites `npm test` 132/132 passed, including synthetic stale-source
+  recovery, retained exact GTINs, old conflict history, no stale-price
+  publication, fresh provider mismatch rejection, comparison family and
+  negative scope tests. Working tree committed and pushed.
+
+### Cause and bounded repair
+
+Public variant `cjv-db07d2a5811a3f5af83e9a73`, EDP 125 ml women, has Brasty
+GTIN `3274872421479`. Official Notino CJ feed `13475384` source
+`GIVINTW_AEDP40` uses `3274872459090`. Durable CJ semantic identity conflict
+`d60a3957e43693bd461156ee5731f6d233272ee50c6d6ededc88da633b8f35d6`
+had quarantined this record.
+
+Both trade items are retailer-listed as Givenchy L'Interdit EDP 125 ml women's
+standard bottle. Evidence: individual Jomashop product pages ending
+`fragrances-3274872421479.html` and `fragrances-3274872459090.html`, and the
+official Notino exact product page below. This is NOT a global EAN alias or
+claim of identical formulation. The reviewed pair keeps separate exact-GTIN
+variants/evidence and coexists only in this precise comparison family.
+
+`app/reviewed-trade-items.ts` is narrowly scoped to Givenchy / l interdit /
+women / EDP / 125 / standard and the two reviewed GTINs. CJ identity keys include
+the individual GTIN only for this reviewed scope. Historical conflicts remain.
+Recovery selects only the witnessed Notino feed/product and terminal semantic
+conflict; stored review prices stay unpublished until fresh provider-by-ID
+confirmation. Existing hidden/manual/wrong size/audience/source/GTIN gates
+remain intact. No raw feed was replaced, credential exposed, or manual price
+inserted.
+
+### Production proof and remaining discrepancy
+
+At comparedAt `1788945545489`, public comparison returned exactly TWO offers:
+Brasty base 491.66 PLN + delivery 12 = 503.66 PLN, and Notino base 675 PLN +
+configured delivery 8.90 = 683.90 PLN. Notino was freshly fetched at 11:18
+Europe/Warsaw. Its new offer is `cj-offer-cfd7c64b1edb8d6dedde8dda`.
+HEAD of its outbound URL returned 302 to the correct 125 ml product:
+https://www.notino.pl/givenchy/linterdit-woda-perfumowana-dla-kobiet/p-16091479/
+
+A direct read of that official product page at about 09:20 UTC confirmed base
+599 PLN, `shoppingdays` 20%, discounted price 479.20 PLN, and InStock.
+The user's Notino app screenshot shows 461.23 PLN with `appdays` and free
+delivery. Official Shopping Days/coupon pages distinguish appdays (application)
+from shoppingdays (web); do NOT apply the advertised maximum 33% to this SKU,
+or present an app-only price as an ordinary website/affiliate price.
+
+Thus fresh CJ retrieval does NOT mean the retailer price matches: provider
+currently supplies 675 PLN. Price/promotion synchronization is still blocked
+by that upstream mismatch, not fixed by the identity recovery. No unverified
+retail price, shipping override or undated coupon was published.
+
+Flaconi: today's completed official generation 37, feed 37697, raw 35129,
+accepted 3742, review 1377, rejected 30010, completion 1788942487961.
+No confirmed Flaconi offer for this exact 125 ml variant in public comparison.
+Indexed official product page exposes 125 ml, but direct research returned
+403, so live stock/price were NOT confirmed. Do not claim out of stock.
+
+### Live run and next task
+
+Latest original Actions #232 / 34324511012 completed successfully. To request
+fresh partner prices after v239, used the native rerun action once for completed
+partner-only job 102269556367 of run #230 / 34288500715 (same current master).
+Attempt 2 import job 102408855410 is in progress at this checkpoint; validation
+job 102408891834 succeeded. This run uses the existing bounded OIDC partner
+orchestrator (Flaconi/Notino/Brasty/vouchers); TradeDoubler full feed and Douglas
+steps are skipped. Notino recovery already publicly verified. Do NOT start
+another run or retry provider 429s. Read final run status/logs before claiming
+the entire partner run succeeded.
+
+Next: reconcile the official Notino product price/promotion with its CJ feed
+using a provenance-preserving, expiry-bounded verification path; confirm
+Flaconi exact 125 ml availability without guessing or bypassing blocked access.
+No browser QA or UI redesign requested/performed. No additional promotion
+status/tint changes. No report email sent; consolidated report remains deferred
+until the owner explicitly asks.
+
 ## Current state: visible promotion status and distinct glass (Sites v238 / 2026-09-08)
 
 Published at `2026-09-08T13:44:31.101257+00:00`, environment revision **18** unchanged.
