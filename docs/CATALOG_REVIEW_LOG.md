@@ -97,3 +97,47 @@ Douglas generation 25 was last completed 2026-09-09 10:15:59 UTC and crossed the
 Remaining condition: a terminal fresh Douglas full import, restored 7/7 public
 coverage and a new audit result. Do not treat the prior accepted count as current
 public freshness.
+
+## 2026-09-10 recovery proof and review-scope clarification / 07:45 UTC
+
+| Store | Source raw received* | Stored accepted | Fresh offers | Review | Rejected non-perfume this audit |
+|---|---:|---:|---:|---:|---:|
+| flaconi.pl | 35111 | 3741 | 3741 | 1378 | 0 |
+| douglas.pl | 51327 | 3087 | 3061 | 2725 | 0 |
+| notino.pl | 4705 | 8858 | 8858 | 2656 | 0 |
+| brasty.pl | 4800 | 5163 | 5163 | 939 | 0 |
+| cocolita.pl | 28314 | 891 | 891 | 111 | 25 |
+| drogeria.pl | 32095 | 856 | 856 | 366 | 25 |
+| aelia.pl | 8456 | 1438 | 1438 | 331 | 3 |
+
+Audit at2026-09-10T07:39:57.340Z in run245 attempt2/job102780574021 confirms actual
+rejections Cocolita25,Drogeria25,Aelia3 (53 total). These are grouped classifier
+rejections, **not53 published perfumes** or independently verified EAN matches.
+Queue total8506, net+100 since01:51 despite cleanup. Douglas generation26 received
+51327raw but failed at finalize_generation;3061eligible offers fresh, complete full
+import still blocked. Worker503/codeimport_failed; no underlying exception detail.
+See matching continuity entry for exact production/read-only checks and queued runs.
+
+Clarification of the earlier daily entry: the database connector truncated each
+catalog-quality value, including one-row requests. Available list prefixes were
+triaged across seven stores; the full25records/store were NOT read or certified.
+Unseen samples and earlier missing-evidence conflicts are still blocked. No repeats
+were counted as new completed verifications in this follow-up.
+
+New group exposed after cleanup (private Cocolita latest row, inspected07:43UTC):
+feed112471 products606373/GTIN8008970063102 Muschio Bianco1160ml,
+606382/8008970062266 Vaniglia E Zenzero760ml,
+606375/8008970063126 Byzantium1160ml,
+606384/8008970055268 Persian Dream760ml,
+606378/8008970055237 Byzantium760ml. Own stored feed titles explicitly say
+Tesori d'Oriente Płyn do Płukania Tkanin. Category triage: laundry softener,
+not body perfume; no invented EDP/EDT, audience or perfume line.
+No new official-page exact-identity evidence and no mutation for this group yet.
+Next condition: an evidence-bounded exclusion rule in the existing TD adapter/audit,
+with positive perfume controls and a measured rejection count. It must not become
+an automatic approval of missing variants or conflicts.
+
+Remaining full-generation blocker is Douglas finalization. Concurrent uncommitted
+cleanup/test edits were observed and preserved; their correctness/deployment was not
+claimed. Do not weaken fail-closed retirement of orphan and old-feed listings.
+No token creation, access bypass, forced429/403 retry, raw-feed replacement or email.
