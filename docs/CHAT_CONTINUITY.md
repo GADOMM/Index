@@ -1,3 +1,106 @@
+## Daily recovery terminal proof / 2026-09-10 09:34 UTC
+
+Sites v252 is LIVE from `207652e74d2b4f89adfc92a3588284a65c2f94f4`.
+Deployment `appgdep_6aa276fd27508191a5660a929602f6c6` succeeded
+2026-09-10T09:23:41.959616Z, environment revision19 unchanged.
+Full npm test/build **142/142 PASS**, clean canonical checkout.
+Native URL https://perfumetr.borodzicz85.chatgpt.site; custom beta verified below.
+v251's indexed fail-closed Douglas finalization remains unchanged in v252.
+v252 additionally excludes explicit laundry perfume, colour-catching laundry sheets,
+and room-aroma titles via the existing TD adapter and bounded quality cleanup;
+it does not approve perfume variants or change source/EAN identity.
+
+### Final complete seven-store audit, not a healthy-cycle claim
+
+Actions run245 attempt3 https://github.com/GADOMM/Index/actions/runs/34397414280,
+job102813639802: Douglas import SUCCESS; final quality step FAILURE because
+Flaconi remains overdue/failed and old review remains. Whole run is FAILURE.
+Audit at **2026-09-10T09:33:43.000Z**, complete=true, healthy=false.
+
+| Store | Raw in latest generation | Stored candidates | Accepted | Review | Fresh <=18h | Generation/state |
+|---|---:|---:|---:|---:|---:|---|
+| flaconi.pl | 35000 | 5485 | 3754 | 1377 | 3754 | 39 / failed |
+| douglas.pl | 51297 | 6557 | 3077 | 2686 | 3077 | 27 / completed |
+| notino.pl | 6909 | 17892 | 8858 | 2656 | 8858 | 28 / completed |
+| brasty.pl | 12767 | 7132 | 5163 | 938 | 5163 | 20 / completed |
+| cocolita.pl | 28337 | 1030 | 894 | 85 | 894 | TD / completed |
+| drogeria.pl | 32101 | 1247 | 860 | 326 | 860 | TD / completed |
+| aelia.pl | 8494 | 1783 | 1434 | 330 | 1434 | TD / completed |
+
+Totals: **41126 stored candidates / 24040 accepted / 8398 review / 24040 fresh**.
+Against this run's 01:51:37.540Z baseline (41070/24076/8406/24076), net
+candidates +56, accepted -36, review -8, fresh -36. These are net differences,
+NOT manually verified throughput or newly added perfumes.
+Actual bounded explicit non-perfume decisions across distinct audits:
+07:39:57.340Z Cocolita25 + Drogeria25 + Aelia3 =53;
+08:55:00.984Z Cocolita12 =12;
+09:33:43.000Z Cocolita7 + Drogeria7 + Aelia3 =17.
+**82 actual rejections total**, not 82 newly published perfume offers.
+
+- flaconi.pl: gtin_identity_conflict=864, missing_audience=188, source_mapping_conflict=165, semantic_gtin_conflict=150, catalog_hidden=8, missing_audience_unresolved=1, missing_line=1. Flags: full_import_overdue, source_error, review_overdue.
+- douglas.pl: gtin_identity_conflict=1329, missing_concentration=402, semantic_gtin_conflict=351, gtin_identity_conflict_recovery_v1_unresolved=345, missing_line=107, missing_concentration_recovery_v1_unresolved=87, missing_line_recovery_v1_unresolved=27, catalog_hidden=17, possible_refill=16, missing_volume=5. Flags: review_overdue.
+- notino.pl: gtin_conflict=1555, coverage_variant_conflict=379, semantic_gtin_conflict=241, source_mapping_conflict=226, manual_missing_volume=113, manual_missing_audience=88, manual_missing_concentration=20, manual_coverage_variant_conflict=10, catalog_nonstandard_product=7, missing_concentration=4, missing_audience=3, missing_line=3. Flags: review_overdue.
+- brasty.pl: gtin_conflict=617, semantic_gtin_conflict=142, gtin_not_found=122, source_mapping_conflict=38, manual_missing_audience=5, missing_line=4, catalog_hidden=3, manual_missing_volume=3, manual_coverage_variant_conflict=1, manual_missing_line=1, missing_concentration=1, missing_gtin=1. Flags: review_overdue.
+- cocolita.pl: variant_not_found=77, variant_identity_conflict=8. Flags: none.
+- drogeria.pl: missing_valid_gtin=326. Flags: none.
+- aelia.pl: variant_not_found=301, variant_identity_conflict=26, missing_valid_gtin=3. Flags: none.
+
+### Import completion and remaining blocker
+
+Douglas gen26 reached raw51327 but failed under the old finalization.
+Its resumed provider fingerprint changed at09:14:12.585Z (feed_changed);
+the EXISTING bounded orchestrator restarted once, no manual cursor reset.
+Generation27 completed **2026-09-10T09:32:59.289Z**, raw51297;
+initial gen counters3062 accepted /2701 review /45534 rejected, followed by
+existing bounded maintenance. Final stored accepted/fresh3077, review2686.
+This is terminal production evidence for the v251/v252 finalization repair.
+No provider429 was manually retried and no403 was bypassed.
+
+CJ rerun248 attempt2 job102808061951 completed both configured source generations:
+Notino gen28 raw6909 at09:00:51.024Z; Brasty gen20 raw12767 at09:13:45.154Z.
+CJ source step SUCCESS, whole run FAILURE only in quality.
+These are completion of the configured multi-query generation, not proof of
+100% of all official SKUs, not eight runs equalling eight whole catalogs.
+Notino's scope_skipped marker is a scheduling marker, not an invented provider outage.
+Both CJ merchants remain applicationStatus=applied and public links are direct.
+
+Scheduled run250 job102786845465 completed full TD sources:
+Cocolita28337 raw, Drogeria32101 raw, Aelia8494 raw, each EOF and published.
+Its later Flaconi import FAILED at2026-09-10T08:44:12.983Z,
+stage=persist_page, code=import_failed, errorName=Error, response503 ~46.94s.
+Flaconi gen39 checkpoint35000, state=failed, received35000,
+generation accepted3718/review1362/rejected29920, no completedAt.
+The private logger does not expose the underlying SQL error. A timeout is a
+hypothesis, NOT a confirmed exact cause. Source was not repeatedly downloaded.
+Safe next implementation step: reproduce/identify the failing bounded page SQL
+(or add sanitized statement-level diagnostics), preserve atomic page checkpoint,
+test, deploy Sites, then let the existing authorized partner workflow recover.
+Do not label this full import completed merely because3754 offers are fresh.
+
+### Public and promotional verification
+
+At09:33-09:34Z beta homepage API returned all seven stores,24040 fresh offers,
+storeCoverage/promotions/storeSales all complete. This proves fresh coverage7/7,
+NOT full-source completeness. Earlier checks returned unavailable on bounded D1
+deadlines during imports; intermittent homepage latency remains a separate blocker.
+At09:07:34Z beta Givenchy comparison cjv-db07d2a5811a3f5af83e9a73 returned
+Flaconi540 before DEAL1,54 discount,free delivery,total486;
+Brasty491.66+12=503.66 and Notino675+8.90=683.90, both explicitly direct links.
+Earlier current-day Armani/GoodGirl/Prada comparisons and an actual Flaconi /out302
+were checked; redirect target merchant landing page was not re-certified end-to-end.
+No expired BEAUTY or Givenchy gift was extended; expired Notino application
+observation was absent. Official Flaconi code page confirmed DEAL1.
+Gmail overlap checks including08:40Z found no new relevant official message
+beyond the already evidenced Sept9 future LUCKY announcement. No mail sent.
+DEAL1 and future LUCKY time/channel exclusions remain as previously documented.
+
+Private latest catalog_meta records for all seven stores were read again.
+The connector truncates long value cells even at limit1: only visible worklist
+prefixes were inspected, not falsely described as all25 per store.
+Unresolved EAN/semantic conflicts and missing GTINs remain blocked.
+See CATALOG_REVIEW_LOG for the new explicit non-perfume source IDs and decisions.
+No blanket conflict acceptance, manual_* permission inference or manual feed JSON.
+
 ## Indexed finalization safety repair / 2026-09-10 08:08 UTC
 
 Sites v251 is deployed from source `255b94ad5ad2a10542ad6e4142c6a6ef36fc1ab4`.

@@ -185,3 +185,43 @@ Next: verify terminal Douglas/CJ/main results and collect fresh all7-store audit
 including actual further non-perfume cleanup. The07:39 counters below remain the last
 completed audit until superseded. No new mail or additional automation was created.
 
+
+## 2026-09-10 09:19-09:34 UTC — next grouped exclusions and terminal audit
+
+New evidence: private latest catalog_meta worklist prefixes generated09:13:46.754Z
+from the official ingested TD feeds. Long values are connector-truncated; this is
+NOT a claim to have reviewed all25 worklist entries or complete live store pages.
+
+- Cocolita feed112471:671192 /8008970051949 (Tesori d'Oriente Muschio Bianco),
+  671197 /8008970051956 (Hammam),671194 /8008970051970 (Ayurveda), all250ml.
+  Each official source title explicitly says Perfumy do Prania: household laundry
+  fragrance, not personal EDP/EDT/Parfum. Brand/name/size and GTIN retained for audit;
+  audience/standard perfume variant not applicable. Decision: narrowly exclude.
+- Cocolita feed112471:678230 /4062196240413 (20 sheets),678231 /4062196240642
+  (45 sheets), Heitmann Chusteczki Wyłapujące Kolor i Brud. Explicit laundry
+  colour-catcher title, not perfume. Decision: narrowly exclude that phrase.
+  678229 /4062196240659 says Chusteczki Wybielające: not added to the broad
+  rule without a more specific household-type phrase/evidence; remains unresolved.
+- Aelia feed258031:101322908 /5905359803560 (Kuchnia),101322909 /5905359803584
+  (Tytoń),101322910 /5905359803577 (Zwierzęta), Hiskin Home100ml.
+  Each says Neutralizator Zapachów ... Aromat Do Wnętrz. Decision: narrowly exclude
+  explicit room-aroma phrase; never create a body-perfume concentration/audience.
+- Adjacent Aelia Fugazzi101346371 /9509291479270 Angel Dust Extrait100ml unisex,
+  101346344 /9505453493955 Vanilla Haze EDP100ml unisex: no new independent exact
+  identity confirmation, remain variant_not_found; no approval by title alone.
+- Drogeria feed118359 visible615409,615455,615428,615457,615402,615435 still
+  lack valid source GTIN. Do not fill from a guessed similarly named bottle.
+- Flaconi/Douglas/Notino/Brasty latest visible prefixes remain GTIN/semantic conflicts;
+  no new reliable conflict-resolving evidence obtained. No manual_* status accepted.
+  Previous recorded blockers are not counted as newly completed verification.
+
+Implementation: v252 source207652e74d2b4f89adfc92a3588284a65c2f94f4,
+existing TD eligibility+bounded cleanup, max25/store unchanged. Synthetic tests cover
+all added phrases, ASCII/Polish spellings and correct Tesori body perfume preservation;
+142/142 full build/tests PASS. Terminal publish09:23:41.959616Z.
+Actual subsequent audit09:33:43Z rejected7 Cocolita,7 Drogeria,3 Aelia (17);
+with earlier53+12 this run has82 measured explicit non-perfume rejections.
+Group counts prove production cleanup, not per-ID mutation proof for every truncated row.
+No manually approved new perfume identities; full-import net totals are separate.
+Final audit and all seven reason counts, raw/accepted/review/fresh, source completion
+and remaining Flaconi persist_page blocker are in both continuity documents.
