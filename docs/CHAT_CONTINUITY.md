@@ -1,3 +1,139 @@
+## Indexed finalization safety repair / 2026-09-10 08:08 UTC
+
+Sites v251 is deployed from source `255b94ad5ad2a10542ad6e4142c6a6ef36fc1ab4`.
+Deployment `appgdep_6aa26291542c81919fbf9b9cd71149b6` succeeded
+2026-09-10T07:56:29.014510Z, environment revision19 unchanged.
+URL https://perfumetr.borodzicz85.chatgpt.site. Full build/npm test **142/142 passed**.
+
+The concurrent v250 work was committed/deployed before this follow-up changed it.
+A separate synthetic SQLite comparison then demonstrated that v250's stale-source-only
+cleanup differed from the pre-v250 contract: orphan listings, old-feed listings and
+current-generation review listings were left active/valid. This is a reproduced
+cleanup-logic regression, NOT a claim those fixture cases existed publicly.
+
+v251 restores the original offer-first/listing-second/source-last fail-closed order
+and original complete merchant-prefix scope. An additional exact product-ID predicate
+uses the full existing source primary key; the exact source-key equality remains.
+EXPLAIN QUERY PLAN in regression tests confirms all four source-key columns are used,
+rather than scanning a whole generation per listing. No schema/index migration,
+snapshot reset, rate-limit change, EAN merge or freshness-clock change.
+
+New executable SQL regression covers current active preservation, old generation,
+orphan, old feed, review, unrelated merchant and idempotency. The existing injected
+EOF/atomic-completion failure test now again proves that an interruption after offer
+retirement cannot leave the offer valid; preserved counters/checkpoints still resume.
+
+The next explicit non-perfume group is also implemented: titles containing Polish
+"Płyn do Płukania Tkanin" (including ASCII spelling) are excluded by the existing TD
+eligibility gate and bounded audit cleanup. Synthetic tests include a laundry-softener
+record and preserve an actual perfume title from the same brand. This rule has not
+yet received its own measured production rejection count; do not add predicted
+rejections to the53 already confirmed in the07:39 audit.
+
+At08:07Z scheduled run250/34450297243 is still actively executing full TD requests
+(HTTP200 progression). CJ run248 attempt2 and Douglas run245 attempt3 remain pending
+under the shared production concurrency group. Do not cancel/skip the active import
+or describe a pending rerun as a completed refresh. Douglas generation26 remains
+paused at EOF51327 with prior import_failed until its queued job actually runs.
+The public7/7 observation was made during incremental publication, not only after EOF.
+
+Next: verify terminal Douglas/CJ/main results and collect fresh all7-store audit,
+including actual further non-perfume cleanup. The07:39 counters below remain the last
+completed audit until superseded. No new mail or additional automation was created.
+
+## Recovery verification / 2026-09-10 07:45 UTC
+
+This follow-up supersedes the earlier expectation that a deployed six-hour threshold
+alone means Douglas has completed a full refresh.
+
+Sites v249 source `8cf6279adecbcd2778f8878b475bc3877e7c313d` was checked directly:
+deployment `appgdep_6aa258a10da88191abdc45823649080a` is succeeded (terminal status
+updated 2026-09-10T07:14:07.473470Z). The unchanged clean v249 source passed
+`npm test`, including build, 141/141 tests. GitHub baseline is
+`7191ac825dd12abbd79d4c06d411aaf244c0bfee` (PR80); validation run249/34449155929 succeeded.
+
+### Actual production work and outcome
+
+After checking the prior Douglas job for provider access/rate-limit failures,
+the authorized native job rerun started run245/34397414280 attempt2, job102780574021.
+It advanced generation26 through 51,327 raw rows. Public 7/7 coverage returned
+during incremental publication; this is not proof of complete generation finalization.
+The job terminated with failure at 07:40:06Z: step35, orchestrator_import_failed.
+Worker evidence at 07:39:55Z identifies stage=finalize_generation, code=import_failed,
+errorName=Error; the failing request returned503 after46.6s. The underlying exception
+detail was not exposed, so a database timeout is a hypothesis, not a proven error code.
+The EOF page/cursor was preserved, state paused; no forced restart or 429/403 retry.
+
+The post-cycle audit completed at **2026-09-10T07:39:57.340Z**, schema1, complete=true,
+healthy=false. Logs and private latest records agree on the inspected counters.
+41,106 stored candidates;24,034 accepted;24,008 fresh operational offers;8,506 review.
+The actual explicit non-perfume cleanup was **53 rejected rows**:Cocolita25,
+Drogeria25,Aelia3. No identity conflict was approved and no newly accepted perfume
+is attributed to this cleanup. Compared with the 01:51 audit, total review rose100:
+Douglas+153 offset by53 actual rejections. Net delta is not work throughput.
+
+| Store | Source raw received* | Stored accepted | Fresh offers | Review | Rejected non-perfume this audit |
+|---|---:|---:|---:|---:|---:|
+| flaconi.pl | 35111 | 3741 | 3741 | 1378 | 0 |
+| douglas.pl | 51327 | 3087 | 3061 | 2725 | 0 |
+| notino.pl | 4705 | 8858 | 8858 | 2656 | 0 |
+| brasty.pl | 4800 | 5163 | 5163 | 939 | 0 |
+| cocolita.pl | 28314 | 891 | 891 | 111 | 25 |
+| drogeria.pl | 32095 | 856 | 856 | 366 | 25 |
+| aelia.pl | 8456 | 1438 | 1438 | 331 | 3 |
+
+*Raw counts are current/last source receipts, not a common denominator for all stored
+accepted/review records. Notino4705 and Brasty4800 are partial generations28/20.
+Douglas51327 is a persisted EOF receipt with **unfinished finalization**.
+Douglas has3061 fresh eligible offers and no expired eligible-offer backlog in this
+audit, but remains source_error/full_import_in_progress/review_overdue. Flaconi,
+Notino and Brasty retain aged review; CJ generations remain in progress.
+
+### Public and promotional checks
+
+Native and beta Givenchy comparison confirmed DEAL1,486PLN Flaconi including delivery,
+no expired BEAUTY/appdays observation and no expired two-sample gift. Brasty503.66PLN
+and Notino683.90PLN remain direct. A successful apex /out check returned302 to
+www.awin1.com/pclick.php for the exact Flaconi offer; the final retailer landing was
+not followed/certified. An earlier beta redirect request timed out, so reliability
+is not claimed from this single success.
+
+Three public comparison samples also worked: Armani Intensely EDP100ml,
+Carolina Herrera Good Girl EDP80ml and Prada Paradoxe EDP90ml. The last showed a
+fresh Douglas affiliate offer464.50PLN. Aelia exposes known bottle price but unknown
+delivery/final total; do not silently convert unknown delivery to zero.
+Homepage initially returned explicit unavailable statuses at its deadlines;
+a later complete beta result showed all7stores, active DEAL1, scheduled LUCKY and
+Douglas sale examples. Intermittent deadline failures remain observable.
+
+Gmail overlap since7September found no new official campaign/cancellation beyond
+known messages. Re-read advertiser messages1a080e496cb3445d and1a0850660e44c7d2:
+DEAL1/BEAUTY expiry, literalCET windows, exclusions and app-only LUCKY13 unchanged.
+Official https://www.flaconi.pl/kod-rabatowy/ also advertised DEAL1 at this check.
+Its DEAL2 skincare rate differs from the email; out-of-scope cosmetics do not alter
+perfume discounts. No coupon date or gift was extended.
+
+### In-flight work, access and next step
+
+Native rerun of latest CJ job102710483297 was accepted; run248/34425734746 attempt2
+remained pending behind production serialization at07:44Z. Scheduled run250/
+34450297243 was independently in progress on the full TradeDoubler step. Neither
+was cancelled or presented as completed; no additional provider downloads were
+issued outside existing workflows.
+
+Concurrent uncommitted edits appeared in db/awin-douglas-import.ts and
+tests/rendered-html.test.mjs during this read-only follow-up. They were preserved,
+not authored, included in the141-test claim, committed or deployed by this follow-up.
+Do not publish those edits without semantic cleanup tests: preserve orphan/old-feed
+offer retirement and fail-closed ordering, not merely current-generation row matching.
+
+Next: finish and verify the finalization repair against the preserved generation26
+checkpoint, publish/test it, then resume Douglas through the existing workflow when
+provider budgets permit. Observe terminal run250/CJ results and fresh all7-store
+audit; inspect the next explicit laundry-product group recorded in the review log.
+Keep the daily task enabled: it is an ongoing operation, not a completed one-time
+condition. Report018 remains the last known mail; no new report or partner mail sent.
+
 ## Daily catalog control / 2026-09-10
 
 Production was verified against master `9cae4fdbda96c8efe50fee40e3b8d868b6a5e697`,

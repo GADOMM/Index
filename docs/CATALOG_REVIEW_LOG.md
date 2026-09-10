@@ -97,3 +97,91 @@ Douglas generation 25 was last completed 2026-09-09 10:15:59 UTC and crossed the
 Remaining condition: a terminal fresh Douglas full import, restored 7/7 public
 coverage and a new audit result. Do not treat the prior accepted count as current
 public freshness.
+
+## 2026-09-10 recovery proof and review-scope clarification / 07:45 UTC
+
+| Store | Source raw received* | Stored accepted | Fresh offers | Review | Rejected non-perfume this audit |
+|---|---:|---:|---:|---:|---:|
+| flaconi.pl | 35111 | 3741 | 3741 | 1378 | 0 |
+| douglas.pl | 51327 | 3087 | 3061 | 2725 | 0 |
+| notino.pl | 4705 | 8858 | 8858 | 2656 | 0 |
+| brasty.pl | 4800 | 5163 | 5163 | 939 | 0 |
+| cocolita.pl | 28314 | 891 | 891 | 111 | 25 |
+| drogeria.pl | 32095 | 856 | 856 | 366 | 25 |
+| aelia.pl | 8456 | 1438 | 1438 | 331 | 3 |
+
+Audit at2026-09-10T07:39:57.340Z in run245 attempt2/job102780574021 confirms actual
+rejections Cocolita25,Drogeria25,Aelia3 (53 total). These are grouped classifier
+rejections, **not53 published perfumes** or independently verified EAN matches.
+Queue total8506, net+100 since01:51 despite cleanup. Douglas generation26 received
+51327raw but failed at finalize_generation;3061eligible offers fresh, complete full
+import still blocked. Worker503/codeimport_failed; no underlying exception detail.
+See matching continuity entry for exact production/read-only checks and queued runs.
+
+Clarification of the earlier daily entry: the database connector truncated each
+catalog-quality value, including one-row requests. Available list prefixes were
+triaged across seven stores; the full25records/store were NOT read or certified.
+Unseen samples and earlier missing-evidence conflicts are still blocked. No repeats
+were counted as new completed verifications in this follow-up.
+
+New group exposed after cleanup (private Cocolita latest row, inspected07:43UTC):
+feed112471 products606373/GTIN8008970063102 Muschio Bianco1160ml,
+606382/8008970062266 Vaniglia E Zenzero760ml,
+606375/8008970063126 Byzantium1160ml,
+606384/8008970055268 Persian Dream760ml,
+606378/8008970055237 Byzantium760ml. Own stored feed titles explicitly say
+Tesori d'Oriente Płyn do Płukania Tkanin. Category triage: laundry softener,
+not body perfume; no invented EDP/EDT, audience or perfume line.
+No new official-page exact-identity evidence and no mutation for this group yet.
+Next condition: an evidence-bounded exclusion rule in the existing TD adapter/audit,
+with positive perfume controls and a measured rejection count. It must not become
+an automatic approval of missing variants or conflicts.
+
+Remaining full-generation blocker is Douglas finalization. Concurrent uncommitted
+cleanup/test edits were observed and preserved; their correctness/deployment was not
+claimed. Do not weaken fail-closed retirement of orphan and old-feed listings.
+No token creation, access bypass, forced429/403 retry, raw-feed replacement or email.
+
+## Indexed finalization safety repair / 2026-09-10 08:08 UTC
+
+Sites v251 is deployed from source `255b94ad5ad2a10542ad6e4142c6a6ef36fc1ab4`.
+Deployment `appgdep_6aa26291542c81919fbf9b9cd71149b6` succeeded
+2026-09-10T07:56:29.014510Z, environment revision19 unchanged.
+URL https://perfumetr.borodzicz85.chatgpt.site. Full build/npm test **142/142 passed**.
+
+The concurrent v250 work was committed/deployed before this follow-up changed it.
+A separate synthetic SQLite comparison then demonstrated that v250's stale-source-only
+cleanup differed from the pre-v250 contract: orphan listings, old-feed listings and
+current-generation review listings were left active/valid. This is a reproduced
+cleanup-logic regression, NOT a claim those fixture cases existed publicly.
+
+v251 restores the original offer-first/listing-second/source-last fail-closed order
+and original complete merchant-prefix scope. An additional exact product-ID predicate
+uses the full existing source primary key; the exact source-key equality remains.
+EXPLAIN QUERY PLAN in regression tests confirms all four source-key columns are used,
+rather than scanning a whole generation per listing. No schema/index migration,
+snapshot reset, rate-limit change, EAN merge or freshness-clock change.
+
+New executable SQL regression covers current active preservation, old generation,
+orphan, old feed, review, unrelated merchant and idempotency. The existing injected
+EOF/atomic-completion failure test now again proves that an interruption after offer
+retirement cannot leave the offer valid; preserved counters/checkpoints still resume.
+
+The next explicit non-perfume group is also implemented: titles containing Polish
+"Płyn do Płukania Tkanin" (including ASCII spelling) are excluded by the existing TD
+eligibility gate and bounded audit cleanup. Synthetic tests include a laundry-softener
+record and preserve an actual perfume title from the same brand. This rule has not
+yet received its own measured production rejection count; do not add predicted
+rejections to the53 already confirmed in the07:39 audit.
+
+At08:07Z scheduled run250/34450297243 is still actively executing full TD requests
+(HTTP200 progression). CJ run248 attempt2 and Douglas run245 attempt3 remain pending
+under the shared production concurrency group. Do not cancel/skip the active import
+or describe a pending rerun as a completed refresh. Douglas generation26 remains
+paused at EOF51327 with prior import_failed until its queued job actually runs.
+The public7/7 observation was made during incremental publication, not only after EOF.
+
+Next: verify terminal Douglas/CJ/main results and collect fresh all7-store audit,
+including actual further non-perfume cleanup. The07:39 counters below remain the last
+completed audit until superseded. No new mail or additional automation was created.
+
