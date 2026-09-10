@@ -1,3 +1,44 @@
+## Daily catalog control / 2026-09-10
+
+Production was verified against master `9cae4fdbda96c8efe50fee40e3b8d868b6a5e697`,
+scheduled workflow run 248 (`34425734746`, success), private catalog-quality records
+and public APIs. The fresh audit completed 2026-09-10 01:51:37 UTC and covered all
+seven required stores: 41,070 candidates, 24,076 accepted/fresh and 8,406 review.
+Per-store accepted/fresh were Flaconi 3,741; Douglas 3,129; Notino 8,858; Brasty 5,163;
+Cocolita 891; Drogeria.pl 856; Aelia 1,438. Notino generation 28 and Brasty generation
+20 remain paused/in progress; their direct offers must not be described as affiliate
+until current acceptance exists.
+
+The rotating worklists were inspected for every store. Conflicting EAN/semantics in
+Flaconi, Douglas, Notino, Brasty and Aelia were kept blocked without independent
+evidence. A grouped false-positive cause was confirmed in TradeDoubler: Polish car
+air fresheners were entering review because the merchant name contained “Fragrance”;
+a Cocolita hair perfume was also non-standard. Sites v248 rejects these explicit
+non-perfume types before missing-GTIN/variant review, and the daily quality audit now
+cleans at most 25 confirmed rows per store and reports the actual rejection count.
+It does not bulk-approve conflicts.
+
+A public freshness check at about 07:04 UTC showed only 6/7 stores: Douglas generation
+25 was last refreshed 2026-09-09 10:15:59 UTC and crossed the 18-hour public TTL.
+The UI correctly hid 3,129 stale offers, but the generic 12-hour full-refresh priority
+combined with the twice-daily Douglas schedule allowed this gap. Sites v249
+(`8cf6279adecbcd2778f8878b475bc3877e7c313d`, deployment
+`appgdep_6aa258a10da88191abdc45823649080a`) changes Douglas full-feed priority to
+the six-hour boundary. Deployment succeeded 2026-09-10 07:13:47 UTC after 141/141
+tests. Douglas stays unavailable until the next full import completes; do not label
+the current 6/7 state healthy.
+
+Givenchy L'Interdit EDP women 125 ml remained correctly compared: Flaconi base 540 PLN,
+DEAL1 10% and free delivery produced 486 PLN; Brasty 503.66 PLN delivered; Notino
+683.90 PLN delivered. Flaconi is affiliate; Notino and Brasty remain direct.
+The two-sample Givenchy gift was not shown after its 9 September expiry. Gmail overlap
+review found no promotion or cancellation newer than the known 9 September message.
+DEAL1 is active for 10 September; LUCKY/LUCKY13 remain scheduled for 13–14 September.
+
+Next action: verify the next Douglas full generation reaches terminal success, restores
+fresh public offers and 7/7 coverage, then read the new quality result and record the
+exact bounded non-perfume cleanup count. Do not retry supplier HTTP 429/403 manually.
+
 ## Follow-up: scheduled campaigns and daily-operation scope / 2026-09-09
 
 Owner asked whether daily review continues automatically, whether codes can be checked
