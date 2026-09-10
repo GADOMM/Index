@@ -1,3 +1,46 @@
+## Indexed finalization safety repair / 2026-09-10 08:08 UTC
+
+Sites v251 is deployed from source `255b94ad5ad2a10542ad6e4142c6a6ef36fc1ab4`.
+Deployment `appgdep_6aa26291542c81919fbf9b9cd71149b6` succeeded
+2026-09-10T07:56:29.014510Z, environment revision19 unchanged.
+URL https://perfumetr.borodzicz85.chatgpt.site. Full build/npm test **142/142 passed**.
+
+The concurrent v250 work was committed/deployed before this follow-up changed it.
+A separate synthetic SQLite comparison then demonstrated that v250's stale-source-only
+cleanup differed from the pre-v250 contract: orphan listings, old-feed listings and
+current-generation review listings were left active/valid. This is a reproduced
+cleanup-logic regression, NOT a claim those fixture cases existed publicly.
+
+v251 restores the original offer-first/listing-second/source-last fail-closed order
+and original complete merchant-prefix scope. An additional exact product-ID predicate
+uses the full existing source primary key; the exact source-key equality remains.
+EXPLAIN QUERY PLAN in regression tests confirms all four source-key columns are used,
+rather than scanning a whole generation per listing. No schema/index migration,
+snapshot reset, rate-limit change, EAN merge or freshness-clock change.
+
+New executable SQL regression covers current active preservation, old generation,
+orphan, old feed, review, unrelated merchant and idempotency. The existing injected
+EOF/atomic-completion failure test now again proves that an interruption after offer
+retirement cannot leave the offer valid; preserved counters/checkpoints still resume.
+
+The next explicit non-perfume group is also implemented: titles containing Polish
+"Płyn do Płukania Tkanin" (including ASCII spelling) are excluded by the existing TD
+eligibility gate and bounded audit cleanup. Synthetic tests include a laundry-softener
+record and preserve an actual perfume title from the same brand. This rule has not
+yet received its own measured production rejection count; do not add predicted
+rejections to the53 already confirmed in the07:39 audit.
+
+At08:07Z scheduled run250/34450297243 is still actively executing full TD requests
+(HTTP200 progression). CJ run248 attempt2 and Douglas run245 attempt3 remain pending
+under the shared production concurrency group. Do not cancel/skip the active import
+or describe a pending rerun as a completed refresh. Douglas generation26 remains
+paused at EOF51327 with prior import_failed until its queued job actually runs.
+The public7/7 observation was made during incremental publication, not only after EOF.
+
+Next: verify terminal Douglas/CJ/main results and collect fresh all7-store audit,
+including actual further non-perfume cleanup. The07:39 counters below remain the last
+completed audit until superseded. No new mail or additional automation was created.
+
 ## Recovery verification / 2026-09-10 07:45 UTC
 
 This follow-up supersedes the earlier expectation that a deployed six-hour threshold
