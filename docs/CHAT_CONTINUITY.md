@@ -1,3 +1,72 @@
+## Terminal catalog recovery / 2026-09-10 10:42 UTC
+
+Sites v253 is LIVE from `020d66c3bd94e700124f4c468101dbe746fd54c9`.
+Deployment `appgdep_6aa27ec9652481918e57559945b390a3` succeeded
+2026-09-10T09:56:40.846262Z, environment revision 19 unchanged.
+The full build/npm test passed **142/142**.
+
+### Why the owner saw 6/7 and what changed
+
+Douglas generation 25 crossed the strict 18-hour public offer TTL, so the homepage
+correctly removed Douglas rather than show stale prices. The prior 12-hour refresh
+priority left too little recovery margin when generation 26 finalization timed out.
+v249 moved Douglas full-refresh priority to 6 hours. v251/v252 preserved fail-closed
+retirement while adding the exact source-product index predicate; generation 27 then
+completed with 51297 raw rows. Public Douglas coverage is now 3169 fresh offers.
+
+A separate Flaconi generation 39 failed at `persist_page` after a 1000-row page
+(response 503 after about 46.94s). The private runtime did not expose the underlying
+SQL exception, so the exact database substatement remains unknown; timeout/request
+budget is the evidence-backed failure class, not a claimed exact SQL diagnosis.
+v253 reduces each Flaconi feed page to 750 rows and applies the same indexed,
+offer-first/listing-second/source-last finalization contract. The checkpoint is atomic
+and no HTTP 429/403 was retried or bypassed.
+
+Run 250 attempt 2 (job 102826407875) advanced generation 40 from zero to the bounded
+checkpoint 33750 without error. Attempt 3 (job 102837144479) resumed the same snapshot
+and completed at **2026-09-10T10:35:57.990Z**: raw 35245, generation counters
+3743 accepted / 1374 review / 30128 rejected. State=completed, error=null,
+next_page=null. The audit step and whole job both succeeded terminally at 10:42 UTC.
+
+### Latest complete seven-store audit
+
+Audit checkedAt **2026-09-10T10:42:19.749Z**, complete=true, healthy=false only
+because old review queues still carry `review_overdue`; there is no source error,
+full-import overdue, expired-offer backlog or missing fresh-store flag.
+
+| Store | Raw latest source | Accepted | Review | Fresh <=18h | Source state |
+|---|---:|---:|---:|---:|---|
+| flaconi.pl | 35245 | 3743 | 1374 | 3743 | generation 40 completed |
+| douglas.pl | 51297 | 3169 | 2594 | 3169 | generation 27 completed |
+| notino.pl | 6909 | 8858 | 2656 | 8858 | generation 28 completed |
+| brasty.pl | 12767 | 5163 | 938 | 5163 | generation 20 completed |
+| cocolita.pl | 28337 | 894 | 85 | 894 | TD completed |
+| drogeria.pl | 32101 | 860 | 326 | 860 | TD completed |
+| aelia.pl | 8494 | 1434 | 330 | 1434 | TD completed |
+
+Totals: **41127 candidates / 24121 accepted / 8303 review / 24121 fresh**.
+Against the 01:54:20.661Z baseline, review -103, accepted/fresh +45.
+This is a net catalog change, not a claim that all partner SKUs are covered.
+The final two audits added no new bounded non-perfume decisions; the day's previously
+recorded total remains 82 explicit rejections. Unresolved EAN, semantic and
+`manual_*` rows remain blocked and in rotating worklists.
+
+Production homepage verification after completion returned all **7/7** stores and
+24121 fresh offers. One first read timed out at 40s and the bounded retry succeeded;
+intermittent homepage D1 latency remains observable, but it did not change coverage.
+Givenchy L'Interdit EDP women 125 ml / GTIN 3274872459090 was rechecked after the
+completed import: Flaconi 540 PLN less active DEAL1 54 PLN, free delivery, total
+**486 PLN** (affiliate); Brasty **503.66 PLN delivered** and Notino
+**683.90 PLN delivered**, both direct/non-affiliate while applications remain applied.
+The expired BEAUTY/two-sample gift is absent. DEAL1 is active for 10 September;
+LUCKY is scheduled for 13–14 September with LUCKY13 app-only, as already evidenced.
+No newer Gmail promotion/cancellation was found in the prior overlap check and no
+email was sent.
+
+Daily automation remains enabled. It will continue rotating bounded review samples,
+refreshing sources before the 18-hour public TTL and failing closed on unverified
+identity conflicts. It does not promise 100% source coverage without official evidence.
+
 ## Daily recovery terminal proof / 2026-09-10 09:34 UTC
 
 Sites v252 is LIVE from `207652e74d2b4f89adfc92a3588284a65c2f94f4`.
