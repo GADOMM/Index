@@ -39,3 +39,61 @@ Verified upcoming Flaconi LUCKY official campaign received9September:
 web10%LUCKY/app13%LUCKY13,13–14September literalCET; public API shows scheduled.
 No gift extension or unqualified13%deduction. Existing Douglas selected-item sale
 was checked against official advertiser terms and retained without global discount.
+
+## 2026-09-10 daily review
+
+Audit evidence time: 2026-09-10 01:51:37 UTC; workflow run 248, job
+`102710483297`; audit schema 1, complete true, healthy false. Exact counters:
+Flaconi 5,479 candidates / 1,378 review / 3,741 accepted and fresh; Douglas
+6,521 / 2,572 / 3,129; Notino 17,892 / 2,656 / 8,858; Brasty 7,132 / 939 /
+5,163; Cocolita 1,027 / 136 / 891; Drogeria.pl 1,247 / 391 / 856; Aelia
+1,772 / 334 / 1,438. Net review deltas respectively +2, -96, +1, +3, +5,
+0 and -1. Missing or truncated private worklists were not treated as empty.
+
+Rotating-list decisions checked 2026-09-10 06:20–07:10 UTC:
+
+- Aelia: Parfums de Marly Eragon 100 ml GTIN 3701415904354 and Valero 100 ml
+  GTIN 3701415904347 remained blocked as `variant_not_found`; Bohoboco Plum
+  Spray Paint EDP 50 ml GTIN 5902659104656 and Mango Yuzu EDP 50 ml GTIN
+  5902659104694 remained blocked on identity conflict. No new independent exact
+  variant evidence.
+- Brasty: Serge Lutens L'Eau EDP 100 ml GTIN 3700358217231, Prada Luna Rossa
+  Ocean EDT 50 ml GTIN 3614273556187 and Azzaro Sport EDT 100 ml GTIN
+  3614273667418 remained blocked on GTIN/semantic conflicts.
+- Cocolita: Sattva Jasmine 10 ml GTIN 5903794186644, Sattva Sandalwood 10 ml
+  GTIN 5903794186668, Burberry Weekend men EDT 100 ml GTIN 5045252667576 and
+  Dolce & Gabbana Pour Homme EDT 75 ml GTIN 3423473020783 stayed blocked because
+  no exact variant was found. Milky Mane hair perfume 50 ml GTIN 5907006980808
+  was confirmed non-standard and added to the explicit rejection rule.
+- Douglas: Tiziana Terenzi Rivèa 100 ml GTIN 8016741142703 and Kristina 100 ml
+  GTIN 8016741402654 stayed blocked for missing concentration; Laura Biagiotti
+  Uva Dulcis EDT 100 ml GTIN 8059036010226 stayed blocked on semantic conflict.
+  Search produced no adequate official exact-variant evidence.
+- Drogeria.pl: product IDs 879833, 879845, 879851, 879838 and 879840 were grouped
+  as car air fresheners with explicit “Odświeżacz do Samochodu” titles, no GTIN.
+  Decision: reject as `excluded_product_type`; do not publish as perfume.
+- Flaconi: Prada L'Homme Intense EDP 100 ml GTIN 8435137764730 and Carolina
+  Herrera Very Good Girl EDP 50/30 ml GTIN 8411061043875/8411061041659 stayed
+  blocked on GTIN/source-mapping conflicts.
+- Notino: Tom Tailor Perspective EDT 30 ml GTIN 4051395172113, Time to Live EDP
+  30 ml GTIN 4051395181160 and Tous Luminous Gold EDT 50 ml GTIN 8436550505887
+  stayed blocked on semantic/GTIN conflicts.
+
+Grouped correction shipped in Sites v248: ingestion now rejects explicit car and hair
+fragrance non-perfume titles before missing-GTIN/variant review; quality audit applies
+the same evidence-bounded cleanup to at most 25 rows per store and records
+`reviewDecisions.rejectedNonPerfume`. 141/141 tests passed. The next audit must record
+the actual production rejection count; it is not claimed in advance.
+
+Public price evidence checked about 2026-09-10 07:04 UTC: Givenchy L'Interdit EDP
+women 125 ml showed Flaconi 486 PLN after active DEAL1 (affiliate), Brasty 503.66 PLN
+delivered and Notino 683.90 PLN delivered (both direct). The expired 9 September
+two-sample gift was absent. Gmail overlap check found no newer official campaign or
+cancellation; LUCKY/LUCKY13 remains scheduled for 13–14 September.
+
+Douglas generation 25 was last completed 2026-09-09 10:15:59 UTC and crossed the
+18-hour publication TTL, causing safe temporary 6/7 coverage. Sites v249 deployed
+2026-09-10 07:13:47 UTC changes Douglas full-refresh priority from 12 hours to 6 hours.
+Remaining condition: a terminal fresh Douglas full import, restored 7/7 public
+coverage and a new audit result. Do not treat the prior accepted count as current
+public freshness.
