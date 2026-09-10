@@ -225,3 +225,39 @@ Group counts prove production cleanup, not per-ID mutation proof for every trunc
 No manually approved new perfume identities; full-import net totals are separate.
 Final audit and all seven reason counts, raw/accepted/review/fresh, source completion
 and remaining Flaconi persist_page blocker are in both continuity documents.
+
+
+## 2026-09-10 10:42 UTC — terminal feed recovery and final rotating audit
+
+Evidence and operation:
+
+- Sites v253 / source `020d66c3bd94e700124f4c468101dbe746fd54c9`;
+  deployment `appgdep_6aa27ec9652481918e57559945b390a3` succeeded.
+  Full build/tests: 142/142.
+- Flaconi generation 39 had failed at the bounded `persist_page` stage after a
+  1000-row page (503, about 46.94s). The runtime did not disclose the underlying SQL
+  exception, so only the request-budget/timeout failure class is confirmed.
+- The existing official AWIN adapter now persists at most 750 feed rows per step and
+  finalizes through the exact source-product predicate while retaining fail-closed
+  offer/listing/source order. No feed JSON replacement, cursor reset, EAN merge,
+  provider-limit bypass or manual 429/403 retry.
+- Run250 attempt2/job102826407875 reached an atomic checkpoint at33750.
+  Attempt3/job102837144479 resumed it and completed generation40 at
+  2026-09-10T10:35:57.990Z: raw35245, accepted3743, review1374,
+  rejected30128, state completed, error null.
+- Final audit checkedAt2026-09-10T10:42:19.749Z. Counts:
+  Flaconi3743/1374, Douglas3169/2594, Notino8858/2656,
+  Brasty5163/938, Cocolita894/85, Drogeria860/326, Aelia1434/330
+  (accepted/review). Totals41127 candidates,24121 accepted/fresh,8303 review.
+- Rotating audit produced zero additional explicit non-perfume decisions in the two
+  recovery checks. The already recorded day total remains82 measured rejections.
+  Visible unresolved conflict/missing-GTIN groups were not re-approved or counted
+  again; `manual_*` remains a reason, never consent.
+- Production returned7/7 stores. Givenchy L'Interdit EDP women125ml,
+  GTIN3274872459090: Flaconi486 PLN delivered after DEAL1 (affiliate),
+  Brasty503.66 PLN delivered and Notino683.90 PLN delivered (both direct).
+  Expired BEAUTY/two-sample gift stayed absent.
+
+Decision: full-source and stale-offer blockers are cleared. Review-overdue queues
+remain active rotating work, not a completion claim. No 100% source coverage claim,
+new manual perfume acceptance, promotional extension or email.
