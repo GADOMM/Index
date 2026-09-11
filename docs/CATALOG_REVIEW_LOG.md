@@ -358,3 +358,46 @@ official campaign/cancellation. LUCKY remains future-dated; BEAUTY and its gift
 were not extended. No mail was sent.
 
 
+
+## 2026-09-11 22:28 UTC — owner-requested Your Turn II
+
+Cause: all four Douglas Your Turn II records were present in official AWIN
+feed92601 but held as review/missing_concentration. The retailer title used
+generic Polish “Perfumy”; the manufacturer's product and Douglas description
+explicitly identify Eau de Parfum. A narrowly checked source-ID/GTIN/title/
+brand/URL rule now classifies these four standard unisex bottles as EDP:
+1276971 / 0608940588741 / 100ml; 1276972 / 0608940588758 / 50ml;
+1276973 / 0608940588765 / 30ml; 1276974 / 0608940588772 / 10ml.
+The original feed titles, individual GTINs, prices and observation time remain.
+Shared brand vocabulary recognizes “eilish Billie Eilish”; search-only
+“Your Turn 2” maps to “Your Turn II”, without merging Your Turn or Eilish No.2.
+
+The exact newly evidenced missing-concentration rows have priority in existing
+bounded maintenance, including previously unresolved rows. No identity conflict,
+hidden item, manual_* record or non-perfume was blanket-approved. Import revision4,
+provider budgets, locks, full-generation safety and the public18h TTL are retained.
+Two synthetic regressions cover all sizes, altered identities, idempotence,
+search grouping and price expiry. No manual feed replacement or credentials used.
+
+After publication, authorized rerun of the existing isolated Douglas job
+103399769152 started run34640816876 attempt2 / job103442203025.
+First maintenance pass promoted **4 actually inspected products**. Private source
+rows and all four public /api/compare responses confirmed active EDP offers;
+search “your turn 2” returned one family with10/30/50/100ml, all priceAvailable.
+Variant IDs by size:
+10ml awv-21a3a9134582748f493a4beb; 30ml awv-4604f2d30e642bbc4c1392bc;
+50ml awv-3e3bb6a1264a40d8a4dbfd4e;100ml awv-c7e5ca069bba48f6d04f3109.
+Official feed product prices:130/290/330/377PLN respectively, with unchanged
+observedAt1789156607202 (2026-09-11T19:56:47.202Z). These are product prices,
+not a claim of known delivery totals; maintenance does not rejuvenate prices.
+All four public offer modes are affiliate/Douglas. Notino and Brasty status unchanged.
+
+
+Evidence inspected11September2026:
+- Official manufacturer: https://store.billieeilish.com/products/your-turn-2-eau-de-parfum (heading2/bodyII; EDP).
+- Douglas https://www.douglas.pl/pl/p/5011994229?variant=1276971 (four sizes, EDP description, created for everyone, bottle, in stock).
+- Private official AWIN92601 generation30 source rows for all four IDs above; exact GTIN/volume/price/status and preserved observation timestamp.
+- Public Perfumetr search and four exact comparisons after deployment.
+Decision: approve metadata enrichment only for these four witnessed source identities, through the existing adapter. Actual added/published4; targeted review-4/accepted+4, no EAN merge.
+
+Additional inspected group, NOT approved: original Your Turn IDs1225112–1225115, GTIN0608940585818/0608940585825/0608940585849/0608940585856,100/50/30/10ml, AWIN92601 gen30, excluded/refill. https://www.douglas.pl/pl/p/5011735016?variant=1225114 still saysREFILL while specifying a bottle;50ml page is older,10ml page unreadable. Next condition: current independent exact-barcode packaging proof distinguishing standard bottles from the separate refill. Do not count these4 as completed approvals or repeatedly recheck without new evidence.
