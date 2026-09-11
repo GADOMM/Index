@@ -1,3 +1,75 @@
+## Your Turn II recovery / 2026-09-11 22:28 UTC
+
+Owner clarified that the requested fragrance is Billie Eilish Your Turn II and
+asked to continue closing other catalog gaps, not only this one. This was a
+targeted intervention, not a second completed seven-store daily review.
+
+Sites v257 is LIVE from `e9fc22c977795a8a426c440966300d58d87cb5fa`.
+Deployment `appgdep_6aa47fc998088191894c8cd5beec9195` succeeded
+2026-09-11T22:25:26.310473Z; environment revision19 unchanged.
+GitHub master baseline: `a82db80366f0ce6c953ac56b02cedfbe41c12c24`.
+Full build and npm test: **144/144 passed**.
+
+Cause: all four Douglas Your Turn II records were present in official AWIN
+feed92601 but held as review/missing_concentration. The retailer title used
+generic Polish “Perfumy”; the manufacturer's product and Douglas description
+explicitly identify Eau de Parfum. A narrowly checked source-ID/GTIN/title/
+brand/URL rule now classifies these four standard unisex bottles as EDP:
+1276971 / 0608940588741 / 100ml; 1276972 / 0608940588758 / 50ml;
+1276973 / 0608940588765 / 30ml; 1276974 / 0608940588772 / 10ml.
+The original feed titles, individual GTINs, prices and observation time remain.
+Shared brand vocabulary recognizes “eilish Billie Eilish”; search-only
+“Your Turn 2” maps to “Your Turn II”, without merging Your Turn or Eilish No.2.
+
+The exact newly evidenced missing-concentration rows have priority in existing
+bounded maintenance, including previously unresolved rows. No identity conflict,
+hidden item, manual_* record or non-perfume was blanket-approved. Import revision4,
+provider budgets, locks, full-generation safety and the public18h TTL are retained.
+Two synthetic regressions cover all sizes, altered identities, idempotence,
+search grouping and price expiry. No manual feed replacement or credentials used.
+
+After publication, authorized rerun of the existing isolated Douglas job
+103399769152 started run34640816876 attempt2 / job103442203025.
+First maintenance pass promoted **4 actually inspected products**. Private source
+rows and all four public /api/compare responses confirmed active EDP offers;
+search “your turn 2” returned one family with10/30/50/100ml, all priceAvailable.
+Variant IDs by size:
+10ml awv-21a3a9134582748f493a4beb; 30ml awv-4604f2d30e642bbc4c1392bc;
+50ml awv-3e3bb6a1264a40d8a4dbfd4e;100ml awv-c7e5ca069bba48f6d04f3109.
+Official feed product prices:130/290/330/377PLN respectively, with unchanged
+observedAt1789156607202 (2026-09-11T19:56:47.202Z). These are product prices,
+not a claim of known delivery totals; maintenance does not rejuvenate prices.
+All four public offer modes are affiliate/Douglas. Notino and Brasty status unchanged.
+
+The latest completed seven-store audit BEFORE this intervention was
+2026-09-11T20:37:26.715Z (run34642180981); complete=true, healthy=false.
+Raw/current-source; accepted-stored; review; fresh respectively:
+Flaconi1500/gen43failed;3733;1371;3733.
+Douglas51375/gen30completed;3039;2674;3039.
+Notino4800/gen31paused;8889;2752;8889.
+Brasty12849/gen22completed;5154;954;5154.
+Cocolita28337;893;71;893. Drogeria32120;857;314;857. Aelia8515;1431;313;1431.
+Raw and stored populations differ; these are not post-fix totals.
+At22:27Z the continuing Douglas maintenance had3080 accepted/2633review in
+gen30, raw51375 unchanged, safety completed/error=null. The net+41/-41 since
+the earlier snapshot includes existing automatic rules, not41 manual reviews.
+The rerun and its final seven-store audit were still running at this checkpoint.
+
+Remaining gaps: the original Your Turn is a DIFFERENT product. Douglas IDs
+1225112–1225115 / GTIN0608940585818,0608940585825,0608940585849,
+0608940585856 (100/50/30/10ml) are excluded/refill because the feed title says
+REFILL. Retailer variant descriptions are inconsistent (bottle/refill wording),
+and the10ml page was unreadable. Do not approve them on brand/line resemblance;
+obtain exact barcode/bottle evidence, then add an equally bounded rule.
+Flaconi gen43 failed after1500raw with import_failed; this unrelated source
+failure still makes the complete quality check red. No429/403 was bypassed.
+
+Next: verify the terminal Douglas maintenance/audit, then resolve the original
+Your Turn packaging evidence and Flaconi checkpoint failure through existing
+adapters. Continue the owner's seven-store missing-product backlog; do not claim
+100% source coverage or that all review items have been inspected.
+No promotion changes, partner messages or email; report remains deferred.
+
 ## Daily catalog control / 2026-09-11 07:36 UTC
 
 Sites v256 is LIVE from `62e44753ecb33eea1d9ac04d1cfc15c25c5a15c0`.
