@@ -261,3 +261,100 @@ Evidence and operation:
 Decision: full-source and stale-offer blockers are cleared. Review-overdue queues
 remain active rotating work, not a completion claim. No 100% source coverage claim,
 new manual perfume acceptance, promotional extension or email.
+
+## 2026-09-11 01:47-07:36 UTC — daily review, CJ recovery and grouped exclusions
+
+The 01:47:04.879Z audit was complete but not healthy: 41275 candidates,
+23977 accepted/fresh and 8436 review. All seven private
+`catalog-quality:latest:<domain>` records were read. Connector-truncated values
+were treated as partial worklist prefixes, never as empty or as proof that all 25
+samples had been inspected.
+
+Evidence-bounded decisions from the first rotation:
+
+- Aelia feed258031 products 101302199/GTIN5905101540439,
+  101302196/5905101540408, 101302195/5905101540392 and
+  101302193/5905101540378 explicitly contained `Aromaty do wnętrz`.
+  Decision: household interior aroma, reject as `excluded_product_type`;
+  no EDP/EDT, audience or body-perfume identity was invented.
+- Drogeria feed118359 products 890544, 890542, 890540, 890543 and 890545
+  had no valid source GTIN and explicitly said `Lenor Perełki Zapachowe do
+  Prania`. Decision: laundry product, reject. Adjacent Lattafa/perfume titles
+  without source GTIN remained blocked; no EAN was guessed.
+- Cocolita's visible Sattva oil perfumes were deliberately not excluded:
+  personal perfume is plausible and exact variant proof is still missing.
+  YSL/Jean Paul Gaultier conflicts also remained blocked.
+- Flaconi feed37697 exact-GTIN conflicts, Douglas feed92601 concentration/GTIN
+  conflicts, Notino feed13475384 semantic conflicts and Brasty feed13738574
+  GTIN conflicts had no new independent exact-variant evidence. No `manual_*`
+  status was accepted as approval.
+
+Sites v254 applied the same narrow source-title predicates through the existing
+TradeDoubler adapter and bounded quality cleanup. The 06:42:08.425Z production
+audit measured Cocolita5, Drogeria6 and Aelia13 rejections: **24 actual rows**.
+Missing IDs beyond the visible record prefixes are not claimed as individually
+inspected.
+
+A later rotation exposed explicit Cocolita household products:
+778346/GTIN5060033820896 Lenor Crease Releaser `Żelazko w Sprayu`,
+788380/5060411611733 black-laundry wipes, 788378/5060411610798 whitening
+wipes, 788377/4062196265690 and 788790/4062196265706 Heitmann stain removers.
+Sites v256 added only these exact product-type phrases with personal-perfume
+positive controls. The final 07:35:47.186Z audit measured nine more Cocolita
+and nine Drogeria rejections. Today's verified cleanup is therefore
+**42 additional non-perfume rows**, not 42 published perfumes.
+
+The post-cleanup rotation was reviewed without bulk acceptance:
+
+- Aelia 100976407/5906395822010 Nou Secret Blanc EDP50, 100982121/
+  5056245008993 Penhaligon's William Penhaligon EDP75 and 100989686/
+  3274872423886 Givenchy Irresistible Very Floral EDP20 remain
+  `variant_not_found`; next condition is independent exact trade-item evidence.
+- Brasty 12001/8413161017053 Prêt à Porter EDT100, 120130/3760016770300
+  Alexandre.J Rose Oud EDP100 and 120414/7340032860351 Byredo Black Saffron
+  EDP100 remain GTIN/semantic conflicts; next condition is corroborated target
+  semantics for the exact EAN.
+- Cocolita 352206/5903794186675 Sattva Night Queen oil10 remains
+  `variant_not_found`; 398562/3349668614585 Paco Rabanne Phantom EDP50
+  remains an identity conflict. 397155/3349666007983 1 Million aftershave is
+  non-standard and remains unpublished pending the next bounded explicit rule.
+- Douglas 1078402/0690251122370 Jo Malone Cypress & Grapevine EDC100 and
+  1078529/3614273898461 plus 1078530/3614273898478 YSL Y Parfum Intense
+  60/100 remain semantic/identity-recovery conflicts.
+- Drogeria 615457 Azzaro Sport EDT100, 615402 Armani Si Passione Intense
+  EDP50 and 615435 Lattafa Musk Salama EDP100 remain blocked because the
+  official feed supplies no valid GTIN.
+- Flaconi 329cd48c-16f7-4e15-b3c1-74b95cabdab2-1/8016741992384
+  Tiziana Terenzi Arethusa Extrait100 remains a GTIN identity conflict;
+  37f03231-603c-4712-b6e7-e9e0fcd8c50a-1/3614273638869 and
+  -2/3614273638852 Azzaro The Most Wanted Le Parfum50/100 remain blocked
+  on unresolved audience.
+- Notino GRTCELU_AEDP10/8057509460097 Celeste, GRTCHRU_AEDP10/
+  8057509460356 Christos and GRTCLNU_AEDP10/8057509460189 Colonia Nobile,
+  all EDP100 unisex, remain GTIN conflicts.
+
+CJ liveness evidence: Notino generation30 was failed at a durable cursor after
+7600 rows. v255 resumes only a failed `import_failed` checkpoint after successful
+safety maintenance, preserves the error until a new provider page succeeds and
+adds credential-free stage diagnostics. Full 142/142 tests passed. Actions run263
+attempt4 advanced to12346; attempt5 completed generation30 at
+2026-09-11T07:28:41.516Z with raw16743, generation counters9231 accepted,
+2252 review,5260 rejected,state completed,error null. No 429/403 was retried.
+
+Final audit: Flaconi 5487/3741/1373/3741, Douglas 6566/3024/2653/3024,
+Notino 18152/8902/2744/8902, Brasty 7192/5183/955/5183,
+Cocolita1028/892/71/892, Drogeria1247/860/311/860,
+Aelia1782/1434/316/1434 (candidates/accepted/review/fresh).
+Totals41454/24036/8423/24036. Brasty generation22 is paused at4800 with
+error null; its last full generation21 had12826 raw. All7 stores remain public.
+
+Public prices checked around07:13Z: Stronger With You Intensely EDP100
+Flaconi302.85PLN delivered and Aelia408PLN with delivery unknown; Good Girl
+EDP80 Brasty386.03PLN delivered, Douglas419PLN, Drogeria/Cocolita419.99PLN,
+Flaconi434.66PLN, Notino593.90PLN delivered; Prada Paradoxe EDP90
+Brasty458.89PLN delivered, Douglas464.50PLN, Aelia535.50PLN delivery unknown.
+Notino/Brasty links are direct, not affiliate. Gmail overlap contained no new
+official campaign/cancellation. LUCKY remains future-dated; BEAUTY and its gift
+were not extended. No mail was sent.
+
+
