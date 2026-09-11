@@ -1,3 +1,79 @@
+## Daily catalog control / 2026-09-11 07:36 UTC
+
+Sites v256 is LIVE from `62e44753ecb33eea1d9ac04d1cfc15c25c5a15c0`.
+Deployment `appgdep_6aa3ab52e8a08191932f0dd4b34dd416` succeeded at
+2026-09-11T07:18:54.615832Z with environment revision 19. The final full
+build/npm test passed **142/142**. v254 first added bounded rejection of explicit
+plural interior aromas and laundry fragrance beads. v255 repaired CJ checkpoint
+liveness. v256 added only explicit household laundry-treatment phrases:
+stain remover, whitening/black-laundry wipes and ironing spray. None of these
+changes approve an identity, merge EANs or turn `manual_*` into consent.
+
+### CJ recovery and full-generation truth
+
+Notino generation 30 had a durable opaque cursor after 7600 query rows but was
+left in `failed/import_failed` when a successful bounded identity-evidence
+maintenance step returned early. v255 changes only that liveness transition:
+when and only when a failed `import_failed` row has a persisted cursor and
+positive query progress, successful safety maintenance moves it to `paused`
+while preserving the error code. A later successful provider page clears the
+error through the normal checkpoint update. No restart, cursor reset, stale-price
+refresh or provider-limit bypass was used. Safe stage diagnostics contain only
+merchant key, stage, mapped code and error class.
+
+Actions run 263 attempt 4/job 103177358567 resumed from 7600, advanced to 12346
+and succeeded. Attempt 5/job 103181676953 completed generation 30 at
+2026-09-11T07:28:41.516Z: **16743 raw received / 9231 accepted /
+2252 review / 5260 rejected**, state=completed, error=null, next_page=null.
+The same bounded cycle started Brasty generation 22 and paused normally at
+4800 raw with error=null; the latest complete Brasty generation remains 21
+with 12826 raw. Public Brasty prices are refreshed independently and remain fresh.
+
+### Latest complete seven-store audit
+
+Final audit checkedAt **2026-09-11T07:35:47.186Z**, complete=true,
+healthy=false only for `review_overdue` and Brasty `full_import_in_progress`.
+There is no `source_error`, `full_import_overdue`, `expired_offer_backlog`
+or `no_fresh_offers`.
+
+| Store | Raw current source | Stored candidates | Accepted | Review | Fresh <=18h | State |
+|---|---:|---:|---:|---:|---:|---|
+| flaconi.pl | 35248 | 5487 | 3741 | 1373 | 3741 | gen41 completed |
+| douglas.pl | 51114 | 6566 | 3024 | 2653 | 3024 | gen28 completed |
+| notino.pl | 16743 | 18152 | 8902 | 2744 | 8902 | gen30 completed |
+| brasty.pl | 4800 | 7192 | 5183 | 955 | 5183 | gen22 paused; gen21 full=12826 |
+| cocolita.pl | 28333 | 1028 | 892 | 71 | 892 | completed |
+| drogeria.pl | 32101 | 1247 | 860 | 311 | 860 | completed |
+| aelia.pl | 8490 | 1782 | 1434 | 316 | 1434 | completed |
+
+Totals: **41454 candidates / 24036 accepted / 8423 review / 24036 fresh**.
+Against the persisted 2026-09-10T10:42:19.749Z baseline, accepted/fresh -85
+and review +120. This net movement includes new feed evidence and conflict rows;
+it is not manual review throughput. The day's bounded audits actually rejected
+**42 additional explicit non-perfume rows**: first Cocolita5/Drogeria6/Aelia13,
+then Cocolita9/Drogeria9. No perfume identity was manually approved.
+
+The final production homepage returned complete **7/7** coverage. Public checks
+kept Notino and Brasty direct/non-affiliate while their applications are only
+`applied`. Good Girl 80 ml showed Brasty 386.03 PLN delivered, Douglas
+419 PLN, Drogeria/Cocolita 419.99 PLN, Flaconi 434.66 PLN and Notino
+593.90 PLN delivered. Prada Paradoxe EDP 90 ml showed Brasty 458.89 PLN
+delivered, Douglas 464.50 PLN and Aelia 535.50 PLN with delivery still unknown.
+Stronger With You Intensely EDP 100 ml showed Flaconi 302.85 PLN delivered and
+Aelia 408 PLN with delivery unknown. Redirect modes remained correct.
+
+No new official promotion or cancellation was found in the Gmail 48-hour overlap.
+No coupon is active at Flaconi today. LUCKY remains scheduled for 13-14 September:
+10% web; LUCKY13 13% app-only, with the already recorded exclusions and CET
+boundaries. The expired BEAUTY/two-sample promise was not extended and no email
+was sent.
+
+Remaining work is evidence-bound: review queues still contain exact GTIN conflicts,
+missing identity fields and missing source GTINs. The next cycle should finish
+Brasty generation 22, refresh sources before the 18-hour TTL, rotate to new samples
+and approve only exact independently corroborated variants. Daily automation stays
+enabled; there is no 100% catalog-coverage claim.
+
 ## Terminal catalog recovery / 2026-09-10 10:42 UTC
 
 Sites v253 is LIVE from `020d66c3bd94e700124f4c468101dbe746fd54c9`.
