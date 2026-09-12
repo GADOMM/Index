@@ -1,3 +1,80 @@
+## Daily catalog control / 2026-09-12 10:03 UTC
+
+Sites v262 is LIVE from `484818471cb09e906f74799452a8fd43ce71c490`.
+Deployment `appgdep_6aa51b11d6608191b6d4f1d8aba75376` succeeded
+2026-09-12T09:27:56Z with environment revision 19. The final full local build
+and npm test passed **144/144**.
+
+Today's bounded runtime repairs were deployed through Sites v258-v262. Flaconi
+page persistence now uses small ordered D1 batches; CJ safety quarantine uses
+indexed joins; a completed CJ generation can be restored only when completed_at,
+final query index, EOF cursor and counters all prove terminal completion and the
+post-maintenance safety audit passes. TradeDoubler classifier contract
+`perfume-v2` now excludes explicit fabric sprays and hanging air fresheners.
+An abandoned failed Unlimited snapshot may be replaced after a classifier
+selector change only when it has a recorded failure and no live claim; staged
+rows from the old session are removed under the existing session guard.
+
+GitHub PR #86 synchronized the runner classifier and its tests, passed CI in
+run 34683544242 and was squash-merged as
+`d16daca896786df6e901ccec307a1fea3b730d2e`. The merge-triggered full import
+initially encountered the two v1 sessions and correctly failed closed. After
+the guarded Sites recovery, Cocolita completed 28,344 raw rows, Drogeria.pl
+32,129 and Aelia 8,498. Notino generation 32 completed with **16,687 raw /
+9,218 generation-accepted / 2,258 generation-review / 5,211 rejected**;
+its `scope_skipped` receipt is retained because the bounded query plan is not
+a claim of complete CJ programme coverage. Brasty generation 23 remains
+completed at 12,923 raw. Douglas generation 31 also completed at 51,087 raw.
+Scheduled run 34686202921 finished terminally successful and produced the final
+seven-store audit below.
+
+### Latest complete seven-store audit
+
+Audit checkedAt **2026-09-12T10:03:19.468Z**, complete=true. It is unhealthy
+only because four old review queues remain overdue. There is no
+`source_error`, `full_import_overdue`, `full_import_in_progress`,
+`expired_offer_backlog` or `no_fresh_offers`.
+
+| Store | Raw current source | Stored candidates | Accepted | Review | Fresh <=18h | State |
+|---|---:|---:|---:|---:|---:|---|
+| flaconi.pl | 35,280 | 5,502 | 3,714 | 1,344 | 3,714 | gen45 completed |
+| douglas.pl | 51,087 | 6,598 | 3,031 | 2,657 | 3,031 | gen31 completed |
+| notino.pl | 16,687 | 18,268 | 8,912 | 2,765 | 8,912 | gen32 completed; scope_skipped |
+| brasty.pl | 12,923 | 7,255 | 5,201 | 971 | 5,201 | gen23 completed |
+| cocolita.pl | 28,344 | 1,016 | 892 | 59 | 892 | completed |
+| drogeria.pl | 32,129 | 1,235 | 859 | 300 | 859 | completed |
+| aelia.pl | 8,498 | 1,775 | 1,428 | 309 | 1,428 | completed |
+
+Totals: **41,649 candidates / 24,037 accepted / 8,405 review /
+24,037 fresh**. Against the persisted 2026-09-11T13:07:49Z baseline,
+review is -33, accepted +2 and fresh +2. This net movement includes changing
+provider inventories and automatic rules; it is not a manual-review throughput
+claim. An earlier measured audit in this same control cycle rejected 12
+Cocolita and 12 Drogeria.pl explicit non-perfumes. The final audit rejected
+zero additional rows because those 24 were already drained.
+
+Rotating evidence review retained unresolved identity rows as blocked. Exact
+Aelia Dolce & Gabbana The One EDP women 75 ml GTIN 7370520207924 and Pour
+Homme EDT men 75 ml GTIN 3423473020783 have manufacturer-confirmed semantics,
+but no independently corroborated exact GTIN-to-variant creation proof, so
+`variant_not_found` was not overridden. Cocolita official-feed Millefiori
+Acqua Marina hanging freshener GTIN 8053848692229 and Fiori di Perla /
+Acqua Marina fabric sprays GTIN 8053848692380 / 8053848692281 are confirmed
+non-perfumes and covered by the narrow rejection rule. No EANs were merged,
+no `manual_*` status was treated as consent, and no manual JSON replaced a
+feed.
+
+The Gmail 48-hour overlap contained no newer official promotion or cancellation.
+On 12 September Flaconi has no active LUCKY code. LUCKY 10% web and LUCKY13
+13% app-only remain scheduled only for 13-14 September with their recorded CET
+boundaries and exclusions. BEAUTY and the Givenchy sample gift were not extended.
+No email or partner message was sent. Notino and Brasty remain direct,
+non-affiliate links while their applications are only `applied`.
+
+Next: continue new rotating review groups, prioritizing exact conflicts with
+independent barcode/packaging evidence, and refresh before the 18-hour public
+TTL. Do not claim 100% catalogue coverage; 8,405 review rows remain evidence-bound.
+
 ## Your Turn II recovery / 2026-09-11 22:28 UTC
 
 Owner clarified that the requested fragrance is Billie Eilish Your Turn II and
