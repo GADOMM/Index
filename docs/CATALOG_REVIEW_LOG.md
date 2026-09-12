@@ -401,3 +401,68 @@ Evidence inspected11September2026:
 Decision: approve metadata enrichment only for these four witnessed source identities, through the existing adapter. Actual added/published4; targeted review-4/accepted+4, no EAN merge.
 
 Additional inspected group, NOT approved: original Your Turn IDs1225112–1225115, GTIN0608940585818/0608940585825/0608940585849/0608940585856,100/50/30/10ml, AWIN92601 gen30, excluded/refill. https://www.douglas.pl/pl/p/5011735016?variant=1225114 still saysREFILL while specifying a bottle;50ml page is older,10ml page unreadable. Next condition: current independent exact-barcode packaging proof distinguishing standard bottles from the separate refill. Do not count these4 as completed approvals or repeatedly recheck without new evidence.
+
+
+## 2026-09-12 daily control, grouped evidence and terminal publication
+
+Actual review window: 2026-09-12 07:20-10:03 UTC. The final persisted audit is
+run 34686202921 at 2026-09-12T10:03:19.468Z. All seven stores were represented
+with non-null counters and bounded rotating offsets; a missing result was never
+interpreted as an empty queue.
+
+Grouped non-perfume evidence inspected before mutation:
+
+- Cocolita / TradeDoubler feed 112471: Millefiori Milano Acqua Marina hanging
+  freshener, GTIN 8053848692229; Fiori di Perla fabric spray 200 ml,
+  GTIN 8053848692380; Acqua Marina fabric spray 200 ml,
+  GTIN 8053848692281. The official ingested retailer titles identify a hanging
+  air freshener or fabric spray. Millefiori's official product page identifies
+  Fiori di Perla as Laundry Spray:
+  https://millefiorimilano.com/en/products/laundry-spray-fiori-di-perla.
+  Decision: exclude as non-perfume through the existing eligibility classifier
+  and bounded quality cleanup; do not create perfume lines or variants.
+- The same narrow normalized title classes were applied to the current
+  Drogeria.pl rotation. The measured first post-change audit rejected 12
+  Cocolita rows and 12 Drogeria.pl rows; this is **24 actual queue removals**,
+  not 24 individually approved perfume identities. Final-cycle
+  rejectedNonPerfume=0 because the eligible bounded rows had already been
+  drained. Unknown identities outside these explicit title classes were not
+  changed.
+
+Grouped identity evidence retained as blocked:
+
+- Aelia feed 258031: Dolce & Gabbana The One EDP women 75 ml,
+  GTIN 7370520207924, and Dolce & Gabbana Pour Homme EDT men 75 ml,
+  GTIN 3423473020783, both remain `variant_not_found`. Manufacturer pages
+  confirm the semantic line/type/size, but the reviewed pages did not provide
+  an independently readable exact GTIN:
+  https://www.dolcegabbana.com/en-us/beauty/perfumes-for-her/the-one/the-one-edp-75ml---158057971180493.html
+  and
+  https://www.dolcegabbana.com/en-us/beauty/perfumes-for-him/classic/pour-homme-eau-de-toilette---VP1785VP1059V000.html.
+  Decision: no publication. Remaining condition: exact barcode-to-standard-bottle
+  proof suitable for a narrow adapter rule.
+- Current Flaconi, Douglas, Notino and Brasty rotating samples are dominated by
+  persisted GTIN/semantic/source mapping conflicts. Drogeria.pl retains 300
+  missing_valid_gtin rows. No new independent exact evidence was found for
+  those rows, so they remain blocked; `manual_*` reasons were not interpreted
+  as approval and no conflicting EANs were merged.
+
+Runtime/publication decisions:
+
+- Sites v258-v262 shipped the explicit title exclusions, bounded quality cleanup,
+  indexed Flaconi/CJ maintenance, completed-checkpoint recovery and failed
+  classifier-selector snapshot recovery. The final npm suite passed 144/144.
+- Full sources completed: Flaconi gen45 35,280 raw; Douglas gen31 51,087;
+  Notino gen32 16,687; Brasty gen23 12,923; Cocolita 28,344;
+  Drogeria.pl 32,129; Aelia 8,498. Notino's scope_skipped receipt is retained
+  and is not complete-program coverage.
+- Final stored/public counters: 41,649 candidates, 24,037 accepted,
+  8,405 review and 24,037 fresh <=18h. Store freshness is 7/7.
+  Remaining flags are review_overdue only; no source_error,
+  full_import_overdue, full_import_in_progress, expired_offer_backlog or
+  no_fresh_offers.
+- Freshness timestamps came only from current provider fetches. Reprocessing
+  review rows did not rewrite an old remote observation as a new price.
+- Gmail overlap contained no newer official promotion/cancellation. LUCKY and
+  LUCKY13 remain future-only for 13-14 September CET; BEAUTY and the sample gift
+  were not extended. No message was sent.
