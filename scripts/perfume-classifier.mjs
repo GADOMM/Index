@@ -1,4 +1,4 @@
-export const PERFUME_CLASSIFIER_VERSION = "perfume-v1";
+export const PERFUME_CLASSIFIER_VERSION = "perfume-v2";
 
 const normalize = (value) => String(value ?? "")
   .normalize("NFKD")
@@ -10,7 +10,7 @@ const normalize = (value) => String(value ?? "")
 
 const POSITIVE_PRODUCT = /(?:^| )(?:eau de (?:parfum|toilette|cologne)|extrait de parfum|woda (?:perfumowana|toaletowa|kolonska)|perfumy?|parfum|perfume|fragrance|edp|edt|edc)(?: |$)/;
 const POSITIVE_CATEGORY = /(?:^| )(?:perfumy?|parfum|perfume|fragrance|zapachy)(?: |$)/;
-const EXCLUDED_PRODUCT = /(?:^| )(?:zestaw|set|coffret|gift set|tester|probka|sample|miniatura|decant|odlewka|refill|uzupelnienie|dezodorant|deodorant|antyperspirant|balsam|lotion|krem|cream|szampon|shampoo|odzywka|conditioner|mydlo|soap|zel pod prysznic|shower gel|olejek do ciala|body oil|mgielka|body mist|hair mist|body spray|after shave|aftershave|swieca|candle|dyfuzor|diffuser|home fragrance)(?: |$)/;
+const EXCLUDED_PRODUCT = /(?:^| )(?:zestaw|set|coffret|gift set|tester|probka|sample|miniatura|decant|odlewka|refill|uzupelnienie|dezodorant|deodorant|antyperspirant|balsam|lotion|krem|cream|szampon|shampoo|odzywka|conditioner|mydlo|soap|zel pod prysznic|shower gel|olejek do ciala|body oil|mgielka|body mist|hair mist|body spray|after shave|aftershave|swieca|candle|dyfuzor|diffuser|home fragrance|spray do tkanin|zawieszka zapachowa|zapachowa zawieszka)(?: |$)/;
 
 const categoryTexts = (product) => {
   const values = [];
