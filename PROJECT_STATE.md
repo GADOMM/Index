@@ -1,3 +1,15 @@
+## Follow-up source cycle / 2026-09-13 08:20 UTC
+
+A newer scheduled run 34745770787 completed a fresh seven-store audit but the
+workflow itself failed closed because only the TradeDoubler voucher orchestrator
+returned `orchestrator_unavailable`. There was no HTTP 429/403, source error,
+stale-offer backlog or loss of public coverage. Catalog refreshes continued:
+Notino generation 33 reached 19,195 processed rows and Brasty generation 25
+reached 9,562; both remain safe paused checkpoints. The latest audit still has
+**24,027 fresh offers across 7/7 stores** and **8,418 review rows** (Brasty
+moved from 978 to 982). No manual retry was forced; the next planned cycle may
+resume the checkpoints and recheck vouchers.
+
 ## Daily catalog control / 2026-09-13 07:55 UTC
 
 Sites v263 is LIVE from `87be7add9e1f4a6361c44fc1109b593af630ef96`.
