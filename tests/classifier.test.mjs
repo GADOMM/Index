@@ -7,7 +7,7 @@ import {
 } from "../scripts/perfume-classifier.mjs";
 
 test("classifier accepts perfume names and structured perfume categories", () => {
-  assert.equal(PERFUME_CLASSIFIER_VERSION, "perfume-v2");
+  assert.equal(PERFUME_CLASSIFIER_VERSION, "perfume-v3");
   assert.deepEqual(classifyPerfumeProduct({ name: "Aelia Eau de Parfum 50 ml" }), {
     accepted: true,
     reason: "name_signal",
@@ -31,6 +31,8 @@ test("classifier excludes sets, samples, cosmetics and description-only mentions
     { name: "Świeca zapachowa", categories: [{ name: "Home fragrance" }] },
     { name: "Millefiori Milano spray do tkanin Fiori di Perla 200 ml", categories: [{ name: "Perfumy" }] },
     { name: "Millefiori Milano zawieszka zapachowa Acqua Marina 3 szt.", categories: [{ name: "Perfumy" }] },
+    { name: "Nacomi Perfumy do Pomieszczeń Vanilla Cupcake 250 ml", categories: [{ name: "Perfumy" }] },
+    { name: "Nacomi Perfumy do Wnetrz Warm Evening 250 ml", categories: [{ name: "Perfumy" }] },
   ];
   for (const product of rejected) assert.equal(isPerfumeProduct(product), false);
   assert.equal(classifyPerfumeProduct({ name: "Balsam do ciała" }).reason, "excluded_product_type");
