@@ -1,3 +1,68 @@
+## Daily catalog control / 2026-09-13 07:55 UTC
+
+Sites v263 is LIVE from `87be7add9e1f4a6361c44fc1109b593af630ef96`.
+Deployment `appgdep_6aa6441b8d848191a848f97a99f7169e` succeeded and
+`https://beta.perfumetr.pl` serves version 263. The full local build and npm
+test passed **144/144**.
+
+A confirmed classifier gap allowed products explicitly titled “Perfumy do
+Pomieszczeń” or “Perfumy do Wnętrz” to enter perfume candidates. The narrow
+`perfume-v3` rule now rejects those phrases at ingestion and cleanup, without
+changing perfume identity, EAN matching or accepting any `manual_*` status.
+The regression set covers accented and normalized spellings. Sites was deployed
+before the matching GitHub contract; PR #88 passed CI in run 34743198188 and was
+squash-merged as `338d3eb3fbd6acdcd1fe5149d34c06289bb4816a`.
+The merge-triggered production workflow 34743220571 completed successfully.
+
+### Latest complete seven-store audit
+
+Audit checkedAt **2026-09-13T07:55:18.385Z**, complete=true. All seven stores
+have fresh offers. The audit is unhealthy only because Flaconi, Douglas, Notino
+and Brasty retain aged review queues, while Notino generation 33 and Brasty
+generation 25 are safe resumable checkpoints. There is no `source_error`,
+`full_import_overdue`, `expired_offer_backlog`, `no_fresh_offers` or
+`review_no_net_progress`.
+
+| Store | Raw current source | Stored candidates | Accepted | Review | Fresh <=18h | State |
+|---|---:|---:|---:|---:|---:|---|
+| flaconi.pl | 35,349 | 5,513 | 3,739 | 1,352 | 3,739 | gen47 completed |
+| douglas.pl | 51,067 | 6,598 | 3,030 | 2,655 | 3,030 | gen32 completed |
+| notino.pl | 14,395 processed | 18,286 | 8,853 | 2,769 | 8,853 | gen33 paused checkpoint; query 1 at 4,400 |
+| brasty.pl | 4,800 / 5,962 | 7,283 | 5,226 | 978 | 5,226 | gen25 paused checkpoint |
+| cocolita.pl | 28,241 | 1,009 | 890 | 55 | 890 | completed |
+| drogeria.pl | 32,129 | 1,227 | 857 | 294 | 857 | completed |
+| aelia.pl | 8,484 | 1,781 | 1,432 | 311 | 1,432 | completed |
+
+Totals: **41,697 candidates / 24,027 accepted / 8,414 review / 24,027 fresh**.
+Against the persisted baseline, review is net **-9**, accepted **+17**, and
+fresh **+17**. The Cocolita post-classifier snapshot moved from 1,016 to 1,009
+candidates, 59 to 55 review, and 892 to 890 accepted/fresh; these are measured
+net changes over a simultaneously changing feed, not a claim that every delta
+was manual review throughput.
+
+The rotating lists are persisted for all seven stores with real reason counts
+and bounded samples. Reviewed rows without new exact barcode/packaging proof
+remain blocked. Examples include Flaconi Tom Ford Noir 100 ml GTIN
+888066015509 and Dolce & Gabbana Dolce Shine 50/75 ml; Douglas Serge Lutens
+Fleurs d'oranger and La Religieuse 50 ml; Notino This Is Not a Blue Bottle 1.7
+115 ml and HUGO Superman 125 ml; Brasty Marc Jacobs Daisy Pop 50 ml and Khadlaj
+25 Experience/Heritage 100 ml; Aelia Light Blue Capri in Love 50/100 ml;
+Drogeria.pl rows without a valid feed GTIN; and Cocolita NUXE Prodigieux
+30 ml / Good Girl Blush 80 ml. No EANs were merged or invented.
+
+Public checks on 13 September confirmed Billie Eilish Your Turn II EDP in
+10/30/50/100 ml with fresh Douglas affiliate offers. Flaconi LUCKY gives 10% on
+the website and LUCKY13 13% only in the app from 13-14 September, with the
+recorded exclusions and CET/Poland boundary. BEAUTY and the Givenchy sample gift
+were not extended. The Gmail 48-hour overlap contained no new official partner
+promotion or cancellation; no email or partner message was sent. Notino and
+Brasty remain direct, non-affiliate links while their applications are
+`applied`.
+
+Next: let scheduled bounded cycles finish Notino generation 33 and Brasty
+generation 25, then continue new rotating groups with independent exact-GTIN
+evidence. Do not claim complete programme coverage or 100% catalog coverage.
+
 ## Daily catalog control / 2026-09-12 10:03 UTC
 
 Sites v262 is LIVE from `484818471cb09e906f74799452a8fd43ce71c490`.
