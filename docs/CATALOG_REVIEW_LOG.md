@@ -552,3 +552,18 @@ sent. Notino and Brasty public links remained direct/non-affiliate.
 Next condition: resume Notino generation 33 and Brasty generation 25 only
 through their bounded scheduled checkpoints, then audit again. Revisit the
 blocked identities only on new exact manufacturer/store barcode evidence.
+
+
+### 2026-09-13 08:20 UTC follow-up
+
+Scheduled workflow 34745770787 produced another complete audit at
+1789287627621. It failed only because `tradedoubler:vouchers` returned the
+transient `orchestrator_unavailable`; all catalog sources audited normally.
+Notino generation 33 advanced to 19,195 processed rows and Brasty generation 25
+to 9,562. Public fresh counts remained Flaconi 3,739, Douglas 3,030, Notino
+8,853, Brasty 5,226, Cocolita 890, Drogeria.pl 857 and Aelia 1,432
+(**24,027 total, 7/7**). Review is now 8,418 because Brasty added four
+missing-GTIN rows during the resumed source scan. No 429/403 was observed and
+no manual retry or evidence override was performed. Next condition: allow the
+planned bounded cycle to resume both CJ checkpoints and recheck the voucher
+source.
