@@ -466,3 +466,89 @@ Runtime/publication decisions:
 - Gmail overlap contained no newer official promotion/cancellation. LUCKY and
   LUCKY13 remain future-only for 13-14 September CET; BEAUTY and the sample gift
   were not extended. No message was sent.
+
+
+## 2026-09-13 daily review
+
+Audit and inspection window: 2026-09-13 06:25-07:55 UTC. Workflow
+`34743220571`, job `103686374205`, completed successfully. The action log
+and all seven private `catalog-quality:latest:<domain>` records agree at
+checkedAt 1789286118385. Each record includes actual candidate, accepted, review
+and <=18-hour fresh counts, reasons, net deltas and a rotating sample capped at
+25. Connector truncation of long JSON values was treated as incomplete
+visibility, never as an empty worklist.
+
+Counters and source state:
+
+| Domain | Raw/source state | Candidates | Accepted | Review | Fresh | Net review |
+|---|---:|---:|---:|---:|---:|---:|
+| flaconi.pl | 35,349, gen47 complete | 5,513 | 3,739 | 1,352 | 3,739 | +8 |
+| douglas.pl | 51,067, gen32 complete | 6,598 | 3,030 | 2,655 | 3,030 | -2 |
+| notino.pl | 14,395 processed, gen33 checkpoint | 18,286 | 8,853 | 2,769 | 8,853 | +4 |
+| brasty.pl | 4,800/5,962, gen25 checkpoint | 7,283 | 5,226 | 978 | 5,226 | +7 |
+| cocolita.pl | 28,241 complete | 1,009 | 890 | 55 | 890 | -4 |
+| drogeria.pl | 32,129 complete | 1,227 | 857 | 294 | 857 | -6 |
+| aelia.pl | 8,484 complete | 1,781 | 1,432 | 311 | 1,432 | +2 |
+
+Evidence and decisions:
+
+- Cocolita feed 112471 products titled Nacomi “Perfumy do Pomieszczeń” were
+  grouped as an explicit non-perfume type. Confirmed examples are Vanilla
+  Cupcake 250 ml, product 412300, GTIN 5901878683102, and Fresh Breeze 250 ml,
+  product 412301, GTIN 5901878683119. The official Cocolita product route for
+  Vanilla Cupcake was readable at
+  `https://www.cocolita.pl/nacomi-perfumy-do-pomieszczen-vanilla-cupcake-250ml`.
+  Decision: reject this exact room-fragrance wording through classifier v3;
+  never publish it as personal perfume. After the complete v3 snapshot,
+  Cocolita measured 7 fewer candidates, 4 fewer review rows and 2 fewer
+  accepted/fresh rows than baseline; because source inventory also changed,
+  these are net observations rather than seven manual decisions.
+- Flaconi feed 37697 rotating rows Tom Ford Signature Noir EDP 100 ml,
+  product 948e13d4-5b62-43ff-8a2a-b5210963664b-1, GTIN 888066015509;
+  Dolce & Gabbana Dolce Shine EDP 50/75 ml, GTIN
+  8057971180035/8057971180042; and Mugler Angel Fantasm Refillable EDP 25 ml,
+  GTIN 3614274085525, remain blocked on explicit GTIN/semantic conflicts.
+  No new independent packaging evidence justified a merge.
+- Douglas feed 92601 rows Serge Lutens Fleurs d'oranger EDP 50 ml, product
+  010157, GTIN 3700358123372; La Religieuse EDP 50 ml, product 010323, GTIN
+  3700358123471; and Hugo Boss Bottled EDT 30 ml, product 010583, GTIN
+  0737052351001 remain blocked. Existing conflicts were not overridden.
+- Notino feed 13475384 rows This Is Not a Blue Bottle 1.7 EDP 115 ml,
+  product HISNB7U_AEDP10, GTIN 841317002871; HUGO Man Superman Limited Edition
+  125 ml, product HUGSUPM_AEDT15, GTIN 3616305265661; and Maison Margiela
+  Beach Walk EDT 10 ml, product MMGBWAW_AEDT20, GTIN 3614272348981 remain
+  blocked. The feed title/concentration inconsistency on Superman is not
+  approval. No `manual_*` row was accepted.
+- Brasty feed 13738574 rows Marc Jacobs Daisy Pop EDT 50 ml, product 2035134,
+  GTIN 3616304895654; Khadlaj 25 Experience EDP 100 ml, product 2035699,
+  GTIN 6291107975351; and 25 Heritage EDP 100 ml, product 2035704, GTIN
+  6291107975368 remain blocked pending an independent exact GTIN-to-variant
+  source.
+- Aelia feed 258031 rows Dolce & Gabbana Light Blue Capri in Love EDP
+  men 50 ml, product 101495365, GTIN 8056669925637; women 100 ml, product
+  101495369, GTIN 8056669925675; and Sorvella Charles EDP 10 ml, product
+  101499203, GTIN 5905489913214 remain blocked as `variant_not_found`.
+- Drogeria.pl feed 118359 rows Gulf Orchid Vanilla Latte 100 ml, product
+  845220; Sweet Heaven Cherry 100 ml, product 845219; Khadlaj Island 100 ml,
+  product 852009; and La Bomba x Lebrand Le Scent roll-on 10 ml, product
+  882831 have no valid feed GTIN. They remain blocked; no manual EAN was added.
+  Heitmann black-restoring wipes, product 879632, remains non-perfume and must
+  not be published.
+- Current Cocolita rows NUXE Prodigieux 30 ml, product 331579, GTIN
+  3264680008320; Sattva Night Queen oil 10 ml, product 352206, GTIN
+  5903794186675; and Good Girl Blush EDP 80 ml, product 378019, GTIN
+  8411061056752 remain blocked on variant identity/creation evidence. The
+  rotating list no longer repeats the removed Nacomi room-fragrance group.
+
+Public observations at 2026-09-13 07:57 UTC: Billie Eilish Your Turn II EDP
+10/30/50/100 ml had fresh Douglas AWIN offers, with separate GTINs
+0608940588772/0608940588765/0608940588758/0608940588741 and totals
+142.99/290/330/377 PLN. Flaconi LUCKY 10% web and LUCKY13 13% app-only were
+active with the stored 13-14 September limits and exclusions. BEAUTY and the
+Givenchy two-sample gift were not extended. No newer official promotion or
+cancellation appeared in the authorized 48-hour Gmail overlap; no message was
+sent. Notino and Brasty public links remained direct/non-affiliate.
+
+Next condition: resume Notino generation 33 and Brasty generation 25 only
+through their bounded scheduled checkpoints, then audit again. Revisit the
+blocked identities only on new exact manufacturer/store barcode evidence.
