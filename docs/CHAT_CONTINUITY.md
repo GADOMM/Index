@@ -1,3 +1,64 @@
+## Daily catalog control / 2026-09-14 07:40 UTC
+
+Sites v264 is live from `233ac565ce24e7f63ab58c8ae92cc1b654ae1d86`;
+deployment `appgdep_6aa79384b2948191bb1e08036030306e` succeeded and
+`https://beta.perfumetr.pl` serves the updated worker. Full build and npm test
+passed **144/144**. The date-sensitive Douglas fallback regression is now pinned
+inside its verified campaign window instead of changing behaviour after expiry.
+
+The official Cocolita feed exposed three review rows that explicitly identify
+Tesori d'Oriente room-and-fabric fresheners: products 606394 / 8008970050409
+Muschio Bianco, 606393 / 8008970050423 Ayurveda and 606395 / 8008970050416
+Hammam, all 250 ml. Classifier `perfume-v4` rejects only the normalized phrase
+`Odświeżacz Powietrza i Tkanin`; it does not reject Tesori body perfume or
+generic personal “woda odświeżająca”. The rule was published through Sites
+before GitHub. PR #91 passed validation in run 34813558170 and was squash-merged
+as `6ccd12fd8ea784667ca9fbe66e6972d89bae65ff`.
+
+Merge-triggered run 34813578516 produced a complete seven-store audit at
+2026-09-14T07:39:46.167Z. The run is red only because Aelia's provider snapshot
+changed while the full file was being read (`provider_snapshot_changed`);
+Cocolita and Drogeria.pl full snapshots completed and the following 48-step
+partner orchestrator completed successfully. No HTTP 429/403, stale-price
+backlog, source_error flag or public-store loss occurred. Aelia retained its
+last atomic full snapshot and gained fresh proof/current-source offers; the
+next normal full TD window must retry from a stable provider snapshot.
+
+| Store | Raw/current source | Candidates | Accepted | Review | Fresh <=18h | State |
+|---|---:|---:|---:|---:|---:|---|
+| flaconi.pl | 35,116 | 5,514 | 3,724 | 1,348 | 3,724 | gen49 completed |
+| douglas.pl | 50,704 | 6,602 | 3,019 | 2,658 | 3,019 | gen34 completed |
+| notino.pl | 9,600 processed | 18,334 | 8,823 | 2,773 | 8,823 | gen34 paused checkpoint |
+| brasty.pl | 9,528 processed | 7,283 | 5,196 | 982 | 5,196 | gen26 paused checkpoint |
+| cocolita.pl | 28,148 | 1,000 | 885 | 51 | 885 | completed |
+| drogeria.pl | 32,129 | 1,224 | 853 | 295 | 853 | completed |
+| aelia.pl | last atomic full 8,479; current snapshot changed | 1,878 | 1,517 | 323 | 1,517 | full retry pending |
+
+Totals: **41,835 candidates / 24,017 accepted / 8,430 review / 24,017 fresh**,
+with all **7/7 stores** public. Against the 02:00 audit in this control window,
+accepted/fresh is net +97 and review +11; against the persisted baseline embedded
+in the audit, accepted/fresh is -6 and review +4. These are changing-inventory
+net movements, not manual-review throughput. Cocolita moved from 55 to 51 review
+and from 1,007 to 1,000 candidates; the three evidenced Tesori records are now
+covered by the source classifier, while the audit cleanup itself reported zero
+additional rows because the full import filtered them upstream.
+
+Rotating samples from every store were inspected as bounded evidence groups.
+Exact GTIN/semantic conflicts and missing-GTIN rows remain blocked without new
+proof; no EAN was invented or merged and no `manual_*` status was treated as
+approval. Billie Eilish Your Turn II EDP 10/30/50/100 ml remains live at Douglas
+with separate GTINs and fresh prices 130/290/330/377 PLN before delivery
+(10 ml total 142.99 PLN). Notino and Brasty remain direct/non-affiliate.
+
+The Gmail overlap since 12 September contained no new official promotion or
+cancellation from the seven stores. LUCKY 10% web and LUCKY13 13% app-only
+remain active only through the stored 13-14 September window; BEAUTY and the
+Givenchy sample gift were not extended. No mail was sent.
+
+Next: let the normal full TD window retry Aelia after the provider snapshot
+stabilizes, and continue the new rotating exact-GTIN evidence groups. Do not
+claim complete CJ programme coverage or 100% catalogue coverage.
+
 ## Follow-up source cycle / 2026-09-13 08:20 UTC
 
 A newer scheduled run 34745770787 completed a fresh seven-store audit but the

@@ -567,3 +567,74 @@ missing-GTIN rows during the resumed source scan. No 429/403 was observed and
 no manual retry or evidence override was performed. Next condition: allow the
 planned bounded cycle to resume both CJ checkpoints and recheck the voucher
 source.
+
+
+## 2026-09-14 daily review
+
+Actual inspection and deployment window: 2026-09-14 06:15-07:40 UTC.
+Initial scheduled audit 34796868695 and all seven private
+`catalog-quality:latest:<domain>` records agreed at 2026-09-14T02:00:01.297Z.
+They contained non-null raw/current-source, candidate, accepted, review and
+fresh counters, reason counts, net deltas and rotating samples capped at 25.
+Long connector values were treated as partial visibility, never as empty queues.
+
+Evidence-backed change:
+
+- Cocolita / TradeDoubler feed 112471 product 606394, GTIN 8008970050409,
+  “Tesori d'Oriente Odświeżacz Powietrza i Tkanin Muschio Bianco 250 ml”;
+  product 606393, GTIN 8008970050423, Ayurveda 250 ml; and product 606395,
+  GTIN 8008970050416, Hammam 250 ml. The official feed titles and readable
+  Cocolita routes identify sprays for air and fabrics, not personal EDP/EDT:
+  https://www.cocolita.pl/tesori-d-oriente-odswiezacz-powietrza-i-tkanin-muschio-bianco-250ml
+  https://www.cocolita.pl/tesori-d-oriente-odswiezacz-powietrza-i-tkanin-ayurveda-250ml
+  https://www.cocolita.pl/tesori-d-oriente-odswiezacz-powietrza-i-tkanin-hammam-250ml
+  Decision: exclude this exact normalized product type through the existing
+  adapter; no perfume concentration/audience/variant was created. Sites v264
+  and importer classifier v4 implement this narrow rule. The final full Cocolita
+  snapshot has 1,000 candidates / 885 accepted / 51 review / 885 fresh versus
+  1,007 / 888 / 55 / 888 at 02:00. These are source-inventory net figures; the
+  three inspected products are covered, but the full -4 review delta is not
+  claimed as four manual decisions.
+
+Blocked rotating groups (no new identity evidence, therefore no publication):
+
+- Flaconi: Armani Acqua di Giò Profondo Parfum 30/100/200 ml exact-GTIN
+  conflicts and Mexx Woman EDP 40 ml remain blocked.
+- Douglas: Acqua di Parma Colonia Pura EDC 100 ml semantic conflict, Laura
+  Biagiotti Roma Pink EDT 50 ml identity conflict and Coach for Men 100 ml
+  concentration/title inconsistency remain blocked.
+- Notino: Kenzo Flower Poppy Bouquet 50 ml, Jungle Homme 75 ml and Kenzo Homme
+  Intense 60 ml retain GTIN/semantic conflicts.
+- Brasty: Dolce & Gabbana Devotion Intense EDP 100 ml (8057971188291),
+  Al Wataniah Watani Intense Gold 100 ml (5055810012281) and Dior Sauvage EDP
+  30 ml (3348901608053) retain exact-GTIN conflicts.
+- Aelia: Caudalie Thé Des Vignes 100 ml (3522930005322), Bohoboco Mango Yuzu
+  Gasoline 50 ml (5902659104694) and Parfums de Marly Carios/Valero/Eragon
+  100 ml remain variant-not-found/identity conflicts.
+- Drogeria.pl: current Dolce & Gabbana Light Blue Woman, Lalique Encre Noire
+  A L'Extreme, Hugo Boss Ma Vie/The Scent and YSL Black Opium Extreme rows
+  still have no valid feed GTIN. No barcode was guessed.
+- Cocolita: Beverly Hills Polo Club 8 EDP 50 ml (8718719850305) and Miss So
+  Daydream “Woda Odświeżająca” 50 ml (5018389018771) remain blocked; the latter
+  wording was deliberately not broadened to the household exclusion.
+
+Runtime and public result:
+
+- Final audit: Flaconi 5,514/3,724/1,348/3,724; Douglas
+  6,602/3,019/2,658/3,019; Notino 18,334/8,823/2,773/8,823; Brasty
+  7,283/5,196/982/5,196; Cocolita 1,000/885/51/885; Drogeria.pl
+  1,224/853/295/853; Aelia 1,878/1,517/323/1,517
+  (candidates/accepted/review/fresh). Totals 41,835/24,017/8,430/24,017.
+- Run 34813578516 safely rejected Aelia's moving full snapshot with
+  `provider_snapshot_changed`. Cocolita and Drogeria.pl full imports, the
+  48-step partner continuation and seven-store audit all completed. Aelia's
+  previous atomic snapshot stayed public; no partial full result replaced it.
+- Public checks confirmed 7/7 stores and Billie Eilish Your Turn II EDP
+  10/30/50/100 ml at Douglas with separate GTINs and live affiliate offers.
+  LUCKY/LUCKY13 stayed inside the 13-14 September window; expired Douglas
+  SUPERCENY, BEAUTY and the Givenchy sample gift stayed absent. Gmail contained
+  no newer official partner promotion/cancellation and no message was sent.
+
+Remaining condition: retry Aelia only through the next normal full TD cycle
+after the provider snapshot stabilizes; continue new rotating rows only with
+independent exact GTIN/packaging evidence.
