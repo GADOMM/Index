@@ -638,3 +638,114 @@ Runtime and public result:
 Remaining condition: retry Aelia only through the next normal full TD cycle
 after the provider snapshot stabilizes; continue new rotating rows only with
 independent exact GTIN/packaging evidence.
+
+
+## 2026-09-15 daily review
+
+Actual inspection and deployment window: 2026-09-15 06:20-07:45 UTC.
+Workflow 34919159348 and all seven private
+`catalog-quality:latest:<domain>` records agree at
+2026-09-15T02:14:15.896Z. Each store has non-null candidate, accepted, review,
+fresh, reason and rotating-list data. Truncated long values were treated as
+partial visibility, never as zero review.
+
+Counters and source state:
+
+| Domain | Raw/source state | Candidates | Accepted | Review | Fresh at audit |
+|---|---:|---:|---:|---:|---:|
+| flaconi.pl | 35,105, gen51 complete | 5,526 | 3,743 | 1,348 | 3,743 |
+| douglas.pl | no new rows; last full 50,928 | 6,611 | 3,021 | 2,674 | 3,021 |
+| notino.pl | 9,500 processed, gen35 checkpoint | 18,334 | 8,802 | 2,773 | 8,802 |
+| brasty.pl | 4,800 processed, gen28 checkpoint | 7,283 | 5,196 | 979 | 5,196 |
+| cocolita.pl | 28,257 complete | 999 | 884 | 51 | 884 |
+| drogeria.pl | 32,129 complete | 1,224 | 853 | 295 | 853 |
+| aelia.pl | 8,398 complete | 1,758 | 1,411 | 309 | 1,411 |
+
+Persisted totals are 41,735 candidates / 23,910 accepted / 8,429 review /
+23,910 fresh. Net against the previous terminal baseline is -32 accepted/fresh
+and -1 review; this is changing source inventory, not a claim of 32 removals or
+one manual decision. Aelia's previously unstable source completed atomically
+with 8,398 raw rows. No partial full snapshot was published.
+
+Rotating evidence groups inspected and retained as blocked:
+
+- Flaconi feed 37697: Bon Parfumeur 501 EDP 30 ml and 100 ml titles and the
+  official manufacturer page confirm line, concentration and sizes:
+  https://www.bonparfumeur.com/products/501-praline-licorice-patchouli.
+  The readable evidence did not independently prove the audience value required
+  by the current variant identity. Decision: no adapter override and no
+  publication from review. Remaining condition: official or source-specific
+  audience proof tied to each exact feed trade item.
+- Douglas feed 92601: Kilian Love Don't Be Shy 50 ml, GTIN 3700550218227,
+  remains blocked on refill/standard ambiguity; Rabanne Lady Million EDP 80 ml,
+  GTIN 3349668508587, remains blocked on semantic conflict; Rancé generic EDP
+  50 ml, GTIN 8002683000904, lacks adequate line identity. Decision: no merge
+  or manual acceptance. Remaining condition: readable exact-GTIN packaging or
+  official retailer variant evidence.
+- Brasty feed 13738574: Givenchy Pour Homme EDT 100 ml, GTIN 3274870302367;
+  Hermès Un Jardin Sur Le Toit EDT 100 ml, GTIN 3346132400019; and Jennifer
+  Lopez Miami Glow EDT 100 ml, GTIN 3414201420302 remain explicit
+  GTIN/semantic conflicts. Decision: blocked. Remaining condition: independent
+  exact barcode-to-standard-variant evidence.
+- Notino feed 13475384: Karl Lagerfeld Jeans Urban Pink is titled with
+  `60 szt.`, so volume and variant identity are not proven; Lalique Imperial
+  Green 100 ml and Lancôme La Vie Est Belle L'Elixir refillable 30 ml retain
+  semantic/GTIN conflicts. Decision: no title inference and no publication.
+  Remaining condition: corrected provider attributes or exact official trade
+  item proof.
+- Drogeria.pl feed 118359: BOSS Femme 50 ml, DKNY Be Delicious Fresh Blossom
+  100 ml, Versace Crystal Noir 90 ml, Bruno Banani Woman 30 ml and Dior Sauvage
+  100 ml rotating rows have no valid feed GTIN. Decision: remain blocked; no
+  barcode was supplied manually. Remaining condition: a valid GTIN from the
+  official feed.
+- Aelia feed 258031: Penhaligon's Halfeti Leather 100 ml, GTIN
+  5056245053009; Fugazzi Orange Crush 50 ml, GTIN 9509149938959; Fugazzi
+  Borntostandout x Fugazzi 50 ml, GTIN 9503697922323; and BOSS Bottled Tonic
+  100 ml, GTIN 3616306661264 remain in their recorded variant-not-found or
+  identity-conflict states. Decision: no creation from name alone. Remaining
+  condition: exact-GTIN source evidence covering concentration, audience and
+  package type.
+- Cocolita feed 112471: Sattva Jasmine, Sandalwood, Rose and Oudh perfume oils
+  10 ml remain separate non-standard identities; Burberry Weekend men EDT
+  100 ml, GTIN 5045252667576, and Dolce & Gabbana Pour Homme EDT 75 ml remain
+  exact-variant blockers. Decision: no standard EDP/EDT inference for oils and
+  no conflicting-EAN merge.
+
+No `manual_*` reason was interpreted as consent, no EAN was invented and no
+bounded rule could safely unblock this sample set. These rows should not be
+repeated as completed reviews without new evidence.
+
+Source, price and promotion decisions:
+
+- Douglas generation 36 stopped before download with `awin_unavailable`.
+  Isolated run 34896034629 exposed no HTTP code and no raw rows. No manual
+  retry, access bypass or fabricated token was used. The last completed
+  Douglas source observation crossed the 18-hour limit after the 02:14 audit;
+  the final public check therefore showed 20,889 fresh offers and 6/7 stores,
+  with Douglas correctly hidden. Stored Billie Eilish Your Turn II EDP
+  10/30/50/100 ml identities remain separate but are not public until a new
+  atomic Douglas import supplies fresh prices.
+- An authenticated official Douglas/AWIN notice received 14 September confirms
+  code SUPER for 14-17 September 2026: up to 18% from 149 PLN or up to 20% from
+  199 PLN, only products marked SUPER on the website/app, free shipping in the
+  app, excluded brands/categories/Special Offer/partner-dispatched products,
+  not combinable and subject to stock. The public exclusion page is
+  https://www.douglas.pl/pl/cp/promocje/marki-wylaczone-z-rabatowania.
+  Billie Eilish is excluded. Decision: Sites v265 displays this as
+  checkout-verification information only; `dou-super-260914` has no numeric
+  discount and `autoApplyEligible=false`, so Perfumetr prices are unchanged.
+- Flaconi LUCKY/LUCKY13 expired after 14 September and is absent. BEAUTY and the
+  Givenchy two-sample gift were not extended. No other new official promotion
+  or cancellation was found in the 48-hour mail overlap, and no message was
+  sent.
+
+Publication proof: Sites v265 source
+`5c46ecbe1a19025a2b85053eec3cc14b8e7c838f`, deployment
+`appgdep_6aa8f52be11881919db438219aaaf185`, environment revision 20,
+succeeded 2026-09-15T07:35:21Z; npm test passed 145/145. Production homepage
+schema 5 returned the exact SUPER tiers, app-shipping flag and
+`verify-in-cart` treatment.
+
+Next condition: allow the normal AWIN provider window to complete a new
+Douglas full generation, then require a new complete seven-store audit before
+restoring 7/7. Continue new rotating rows only when new evidence exists.
