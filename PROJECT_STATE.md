@@ -1,3 +1,64 @@
+## Daily catalog control / 2026-09-15 07:45 UTC
+
+Sites v265 is live from `5c46ecbe1a19025a2b85053eec3cc14b8e7c838f`;
+deployment `appgdep_6aa8f52be11881919db438219aaaf185` succeeded at
+2026-09-15T07:35:21Z with environment revision 20. Full build and npm test
+passed **145/145**. Production exposes the bounded Douglas `SUPER` campaign
+without applying any discount to offer prices: 14-17 September 2026, up to 18%
+from 149 PLN or up to 20% from 199 PLN, only on products marked SUPER on
+douglas.pl or in the app, with app-only free shipping. The verified coupon
+record `dou-super-260914` has `autoApplyEligible=false`,
+`discountType=promotion` and no percentage value. Billie Eilish is on the
+official Douglas exclusion list, so Your Turn II is not treated as eligible for
+this code. Expired Flaconi LUCKY/LUCKY13, BEAUTY and the Givenchy sample gift
+were not extended. No message was sent.
+
+Action run 34919159348 produced a complete seven-store audit at
+2026-09-15T02:14:15.896Z. It is unhealthy because the Douglas AWIN
+orchestrator returned `awin_unavailable`, its generation 36 has no downloaded
+rows, and aged review queues remain. The isolated Douglas attempt
+34896034629 exposed no HTTP status and no raw download; no manual retry,
+credential workaround, HTTP 403 bypass or 429 retry was attempted. The most
+recent atomic Douglas full import remains generation 35/36 predecessor with
+50,928 raw rows completed at 2026-09-14T11:05:49Z. Its 3,021 offers were still
+inside the 18-hour window when the audit was persisted, but crossed the hard
+limit before the final public check and were correctly hidden.
+
+| Store | Raw/current source | Candidates | Accepted | Review | Fresh <=18h at audit | State |
+|---|---:|---:|---:|---:|---:|---|
+| flaconi.pl | 35,105 | 5,526 | 3,743 | 1,348 | 3,743 | gen51 completed |
+| douglas.pl | 0 new; last full 50,928 | 6,611 | 3,021 | 2,674 | 3,021 at 02:14; 0 public at final check | gen36 paused, awin_unavailable |
+| notino.pl | 9,500 processed | 18,334 | 8,802 | 2,773 | 8,802 | gen35 paused checkpoint |
+| brasty.pl | 4,800 processed | 7,283 | 5,196 | 979 | 5,196 | gen28 paused checkpoint |
+| cocolita.pl | 28,257 | 999 | 884 | 51 | 884 | completed |
+| drogeria.pl | 32,129 | 1,224 | 853 | 295 | 853 | completed |
+| aelia.pl | 8,398 | 1,758 | 1,411 | 309 | 1,411 | completed |
+
+Persisted audit totals are **41,735 candidates / 23,910 accepted /
+8,429 review / 23,910 fresh**. Against the prior terminal baseline this is net
+-32 accepted/fresh and -1 review, representing changing inventories rather than
+manual-review throughput. The final public result is **20,889 fresh offers
+across 6/7 stores**: Notino 8,802, Brasty 5,196, Flaconi 3,743, Aelia 1,411,
+Cocolita 884 and Drogeria.pl 853. Douglas is the missing seventh store because
+all of its prices are older than 18 hours. Billie Eilish Your Turn II
+10/30/50/100 ml therefore remains stored as separate proven GTIN identities but
+is temporarily not public until a fresh atomic Douglas generation completes.
+
+Rotating samples from every store were inspected. No identity rule or manual
+approval was shipped: sampled exact-GTIN conflicts, missing-GTIN rows and
+incomplete audience/concentration evidence remained blocked. Examples include
+Bon Parfumeur 501 30/100 ml without independently proven audience, Douglas
+Kilian Love Don't Be Shy refill ambiguity and Lady Million semantic conflict,
+Brasty Givenchy Pour Homme and Hermès Un Jardin Sur Le Toit conflicts,
+Drogeria.pl rows without GTIN, and Notino Karl Lagerfeld Jeans Urban Pink with a
+non-volume title. No EAN was invented, merged or inferred from `manual_*`.
+
+Next: allow the next scheduled AWIN provider window to obtain a complete fresh
+Douglas snapshot. Restore 7/7 only after atomic completion and <=18-hour price
+proof; do not manually hammer the unavailable source. Continue only new
+rotating evidence groups and do not claim complete CJ programme or catalogue
+coverage.
+
 ## Daily catalog control / 2026-09-14 07:40 UTC
 
 Sites v264 is live from `233ac565ce24e7f63ab58c8ae92cc1b654ae1d86`;
