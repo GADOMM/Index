@@ -7,7 +7,7 @@ import {
 } from "../scripts/perfume-classifier.mjs";
 
 test("classifier accepts perfume names and structured perfume categories", () => {
-  assert.equal(PERFUME_CLASSIFIER_VERSION, "perfume-v4");
+  assert.equal(PERFUME_CLASSIFIER_VERSION, "perfume-v5");
   assert.deepEqual(classifyPerfumeProduct({ name: "Aelia Eau de Parfum 50 ml" }), {
     accepted: true,
     reason: "name_signal",
@@ -36,6 +36,7 @@ test("classifier excludes sets, samples, cosmetics and description-only mentions
     { name: "Tesori d'Oriente Odświeżacz Powietrza i Tkanin Muschio Bianco 250 ml", categories: [{ name: "Perfumy" }] },
     { name: "Tesori d'Oriente Odswiezacz Powietrza i Tkanin Ayurveda 250 ml", categories: [{ name: "Perfumy" }] },
     { name: "Tesori d'Oriente Odświeżacz Powietrza i Tkanin Hammam 250 ml", categories: [{ name: "Perfumy" }] },
+    { name: "Heitmann Chusteczki Przywracające Czerń Ultra 6 Sztuk", categories: [{ name: "Perfumy" }] },
   ];
   for (const product of rejected) assert.equal(isPerfumeProduct(product), false);
   assert.equal(classifyPerfumeProduct({ name: "Balsam do ciała" }).reason, "excluded_product_type");
