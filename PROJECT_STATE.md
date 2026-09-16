@@ -1,3 +1,54 @@
+## Post-import completion / 2026-09-16 08:21 UTC
+
+GitHub Actions run 35067009168 completed successfully after PR #94. The complete
+seven-store audit was persisted at 2026-09-16T08:08:00.996Z with **45,111
+candidates / 25,603 accepted and fresh / 9,038 review**. Raw/current-source,
+accepted, review and fresh counts remain separate:
+
+| Store | Raw/current source | Accepted | Review | Audit fresh | Current public fresh |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Flaconi | 35,237 | 3,761 | 1,357 | 3,761 | 3,762 |
+| Douglas | 51,222 | 3,032 | 2,661 | 3,032 | 3,032 |
+| Notino | 4,800 in generation 36 checkpoint; 21,613 current candidates | 10,486 | 3,381 | 10,486 | 10,918 |
+| Brasty | 12,794 | 5,137 | 983 | 5,137 | 5,137 |
+| Cocolita | 28,391 | 886 | 51 | 886 | 886 |
+| Drogeria.pl | 32,333 | 856 | 291 | 856 | 856 |
+| Aelia | 8,466 | 1,445 | 314 | 1,445 | 1,445 |
+
+The current production homepage read at 2026-09-16T08:21Z is complete at **7/7
+stores and 26,036 fresh offers**. It is later than the audit snapshot: Notino
+continued to publish fresh checkpointed records, so the public total is not a
+rewrite of the persisted accepted/audit total. Brasty generation 29 completed.
+Notino generation 36 is safely paused after 4,800 page records without
+`source_error`; this is resumable progress, not a complete raw catalog.
+
+Sites v267 is live from `c0edb24d814fe63ac75d8f65460b3ecf65aa2ecc`;
+deployment `appgdep_6aaa5042a5b08191be52756bfa9c58c0` succeeded with
+environment revision 20. Full npm test passed **145/145**. The verified-store
+counter now counts from each merchant's indexed listings with an indexed
+`EXISTS` lookup, avoiding the deadline exceeded by the old expanded
+`COUNT(DISTINCT ...)` join after a full import. Production now returns a
+complete seven-store coverage block.
+
+The full v5 Cocolita import no longer places feed 112471 product 770018,
+GTIN 4062196328692 (Heitmann laundry wipes) in the rotating review list. The
+Cocolita review total nevertheless remains 51 because the source inventory
+changed; this is not reported as a one-item net queue reduction.
+
+Public production checks confirm Billie Eilish Your Turn II EDP as four distinct
+Douglas variants: 10 ml GTIN 0608940588772 at PLN 130 plus PLN 12.99 delivery,
+30 ml GTIN 0608940588765 at PLN 290, 50 ml GTIN 0608940588758 at PLN 330 and
+100 ml GTIN 0608940588741 at PLN 377. All were checked from the 2026-09-15
+22:26 Europe/Warsaw feed snapshot and have fresh affiliate redirects. Douglas
+`SUPER` remains active only through 2026-09-17 for eligible marked products;
+Billie Eilish is excluded, so no coupon reduction is applied. Gmail supplied no
+new official promotion or cancellation, and expired campaigns or gifts were
+not extended.
+
+Remaining condition: resume Notino generation 36 from its saved cursor, then
+audit the next rotating evidence groups. Aged identity conflicts and missing
+GTINs remain blocked; no bulk acceptance was performed.
+
 ## Daily catalog control / 2026-09-16 07:10 UTC
 
 Sites v266 is live from `d45883c41a19d3a2e35335315f004738a7ce4df3`;

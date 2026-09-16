@@ -841,3 +841,36 @@ then returned 23,773 fresh offers and complete 7/7 coverage.
 Next condition: merge the versioned classifier contract, let the normal
 workflow reclassify product 770018, confirm the Cocolita review delta and then
 continue only genuinely new rotating evidence groups.
+
+
+### 2026-09-16 08:21 UTC — terminal import, publication and production proof
+
+- Action 35067009168 completed successfully. Persisted seven-store audit:
+  45,111 candidates, 25,603 accepted/fresh and 9,038 review. Store
+  raw/accepted/review/fresh values are recorded in PROJECT_STATE.md and
+  CHAT_CONTINUITY.md; Notino raw 4,800 is explicitly a generation-36 checkpoint,
+  not a full-catalog count.
+- Cocolita feed 112471 product 770018, GTIN 4062196328692, is absent from the
+  rotating review list after the full v5 import. Decision remains reject as
+  non-perfume based on the official Cocolita laundry-wipe page. Net Cocolita
+  review stayed 51 because the source inventory changed, so no false one-item
+  queue reduction is claimed.
+- Brasty generation 29 completed. Notino generation 36 is safely paused at
+  4,800 page records without a source error and must resume from its stored
+  cursor. Conflicting EANs and missing GTINs remain review-blocked.
+- Sites v267, source c0edb24d814fe63ac75d8f65460b3ecf65aa2ecc,
+  deployment appgdep_6aaa5042a5b08191be52756bfa9c58c0, passed 145/145 tests
+  and deployed terminally. The indexed merchant-driven coverage query replaced
+  the expanded DISTINCT join that exceeded the homepage deadline.
+- Production returned complete 7/7 coverage and 26,036 current fresh offers at
+  2026-09-16T08:21Z. This later live value exceeds the audit snapshot because
+  Notino continued from its checkpoint.
+- Production compare proof retained four separate Billie Eilish Your Turn II
+  EDP identities: 0608940588772/10 ml/PLN 130 + PLN 12.99 delivery;
+  0608940588765/30 ml/PLN 290; 0608940588758/50 ml/PLN 330; and
+  0608940588741/100 ml/PLN 377. Feed observation time for all four:
+  2026-09-15 22:26 Europe/Warsaw. Each had a fresh Douglas affiliate redirect.
+  Douglas SUPER was not applied because Billie Eilish is on the official
+  exclusion list.
+- No new official promotion or cancellation was found in the authorized Gmail
+  overlap. No expired promotion or gift was extended. No partner mail was sent.
