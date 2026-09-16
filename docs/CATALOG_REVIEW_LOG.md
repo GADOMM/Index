@@ -749,3 +749,95 @@ schema 5 returned the exact SUPER tiers, app-shipping flag and
 Next condition: allow the normal AWIN provider window to complete a new
 Douglas full generation, then require a new complete seven-store audit before
 restoring 7/7. Continue new rotating rows only when new evidence exists.
+
+
+## 2026-09-16 daily review
+
+Actual inspection and deployment window: 2026-09-16 06:15-07:10 UTC.
+Workflow 35045264235 and the seven private
+`catalog-quality:latest:<domain>` records agree at
+2026-09-16T01:58:52.812Z. The audit is complete and every store has concrete
+candidate, accepted, review, fresh, reason and rotating-list data; truncated
+connector values were treated as partial visibility, not empty worklists.
+
+Counters and source state:
+
+| Domain | Raw/source state | Candidates | Accepted | Review | Fresh <=18h |
+|---|---:|---:|---:|---:|---:|
+| flaconi.pl | 35,237, gen53 complete | 5,536 | 3,761 | 1,357 | 3,761 |
+| douglas.pl | 51,222, gen37 complete | 6,628 | 3,032 | 2,661 | 3,032 |
+| notino.pl | 26,315, gen35 complete | 18,397 | 8,706 | 2,786 | 8,706 |
+| brasty.pl | 9,569, gen29 checkpoint | 7,312 | 5,137 | 983 | 5,137 |
+| cocolita.pl | 28,345 complete | 999 | 883 | 51 | 883 |
+| drogeria.pl | 32,253 complete | 1,224 | 851 | 297 | 851 |
+| aelia.pl | 8,367 complete | 1,750 | 1,403 | 309 | 1,403 |
+
+Totals are 41,846 candidates / 23,773 accepted / 8,444 review / 23,773
+fresh. Net change from the prior persisted baseline is -164 accepted/fresh and
++5 review, caused by source inventory movement rather than asserted manual
+throughput. Brasty's full generation is safely paused without error; other
+full imports are current. There is no `source_error`, `no_fresh_offers` or
+`expired_offer_backlog` signal.
+
+Rotating evidence groups inspected:
+
+- Cocolita feed 112471 product 770018, GTIN 4062196328692, “Heitmann
+  Chusteczki Przywracające Czerń Ultra 6 Sztuk”. Official store evidence:
+  https://www.cocolita.pl/zapachy-do-tkanin/heitmann-chusteczki-przywracajace-czern-ultra-6szt
+  describes laundry wipes that restore the black colour of fabrics. Decision:
+  reject as `excluded_product_type`, never publish as perfume. Sites v266
+  added the exact accented/ascii phrase to the existing ingestion and bounded
+  quality-audit adapters. Remaining condition: normal post-merge import/audit
+  must retire the stored review row. This is not a generic wipe exclusion and
+  no manual product JSON was added.
+- Flaconi feed 37697: Burberry Her Elixir EDP 30/50/100 ml products
+  `358c6b1e-605d-469c-9434-c3cf1f762107-1/-2/-3`, GTINs
+  3616304061943, 3616304061929 and 3616304061936, remain
+  `missing_audience`. The official Burberry women's collection confirms the
+  Her Elixir line and sizes, but the readable page does not bind each EAN to a
+  feed trade item. Decision: blocked; no hard-coded EAN override. Remaining
+  condition: source-specific exact-item audience proof.
+- Douglas feed 92601: Alexandre.J The Majestic Vetiver EDP 100 ml, product
+  408956, GTIN 3701278600875, and Givenchy Gentleman EDP 100 ml, product
+  412696, GTIN 3274872441033, retain recorded identity conflicts. Decision:
+  blocked pending independent exact-barcode semantics.
+- Brasty feed 13738574: Calvin Klein Euphoria Magnetic Elixir Intense 50 ml,
+  GTIN 3616306702073; 30 ml, GTIN 3616307415248; and Euphoria Bold Elixir
+  Intense 100 ml, GTIN 3616305965639, remain separate conflicted trade items.
+  Decision: no family-wide merge; exact barcode evidence is still required.
+- Notino feed 13475384: Tiffany & Co. Sheer EDT 75/50/30 ml products
+  `TIFTISW_AEDT10/20/30`, GTINs 3614226969613, 3614226969316 and
+  3614226969507, remain blocked as exact-GTIN conflicts. No EAN was aliased.
+- Drogeria.pl feed 118359: products 615205 Calvin Klein Eternity EDT 200 ml,
+  615279 Guerlain Aqua Allegoria Granada Salvia EDT 75 ml and 615269 Lattafa
+  Hayaati EDP 100 ml still lack valid GTINs in the feed. Decision: blocked;
+  no barcode was invented.
+- Aelia feed 258031: Sorvella Cashmere & Pepper Parfum 30 ml, GTIN
+  5905489913276; Bergamot & Musk Parfum 30 ml, GTIN 5905489913252; and Neroli
+  & Citron Parfum 30 ml, GTIN 5905489913290 remain `variant_not_found`.
+  Decision: no creation from names alone. Sorvella Charles was not counted as
+  a new completed review because it had no new evidence since the prior sample.
+
+Price and publication checks:
+
+- Douglas generation 37 restored atomic fresh coverage. Billie Eilish Your Turn
+  II remains four separate standard EDP identities: 10 ml GTIN 0608940588772
+  at 130 PLN plus 12.99 PLN delivery, 30 ml GTIN 0608940588765 at 290 PLN,
+  50 ml GTIN 0608940588758 at 330 PLN and 100 ml GTIN 0608940588741 at
+  377 PLN. All four offers were observed 2026-09-15 22:26 Warsaw and verified
+  through their current public comparisons after deployment.
+- The Douglas `SUPER` campaign remains informational through 17 September.
+  Billie Eilish is excluded, so no discount is applied to Your Turn II.
+  No new official promotion or cancellation arrived in the 48-hour Gmail
+  overlap. Expired Flaconi LUCKY/LUCKY13, BEAUTY and gifts were not extended.
+  Notino and Brasty remain direct, non-affiliate links. No mail was sent.
+
+Publication proof: Sites v266 source
+`d45883c41a19d3a2e35335315f004738a7ce4df3`, deployment
+`appgdep_6aaa3f537ae4819183a2a9d4d5da24bb`, environment revision 20,
+succeeded 2026-09-16T07:04:00Z; npm test passed 145/145. Production homepage
+then returned 23,773 fresh offers and complete 7/7 coverage.
+
+Next condition: merge the versioned classifier contract, let the normal
+workflow reclassify product 770018, confirm the Cocolita review delta and then
+continue only genuinely new rotating evidence groups.
