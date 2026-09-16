@@ -1,3 +1,62 @@
+## Daily catalog control / 2026-09-16 07:10 UTC
+
+Sites v266 is live from `d45883c41a19d3a2e35335315f004738a7ce4df3`;
+deployment `appgdep_6aaa3f537ae4819183a2a9d4d5da24bb` succeeded at
+2026-09-16T07:04:00Z with environment revision 20. Full build and npm test
+passed **145/145**. A narrow ingestion and quality-audit rule now rejects the
+exact product class `chusteczki przywracające czerń`; it does not widen to
+generic wipes. Cocolita feed 112471 product 770018, GTIN 4062196328692,
+“Heitmann Chusteczki Przywracające Czerń Ultra 6 Sztuk”, was verified on the
+official Cocolita page as laundry wipes for restoring black fabrics, not a
+perfume. The source remains feed-driven; no hand-written offer or product JSON
+was introduced.
+
+Scheduled Action run 35045264235 completed successfully. Its complete seven-store
+audit was persisted at 2026-09-16T01:58:52.812Z. It is unhealthy only because
+aged review queues remain and Brasty's resumable full generation is still in
+progress; no `source_error`, `no_fresh_offers`, `expired_offer_backlog` or
+overdue full-import signal was reported for the other stores.
+
+| Store | Raw/current source | Candidates | Accepted | Review | Fresh <=18h | State |
+|---|---:|---:|---:|---:|---:|---|
+| flaconi.pl | 35,237 | 5,536 | 3,761 | 1,357 | 3,761 | gen53 completed |
+| douglas.pl | 51,222 | 6,628 | 3,032 | 2,661 | 3,032 | gen37 completed |
+| notino.pl | 26,315 | 18,397 | 8,706 | 2,786 | 8,706 | gen35 completed |
+| brasty.pl | 9,569 | 7,312 | 5,137 | 983 | 5,137 | gen29 paused checkpoint, no error |
+| cocolita.pl | 28,345 | 999 | 883 | 51 | 883 | completed |
+| drogeria.pl | 32,253 | 1,224 | 851 | 297 | 851 | completed |
+| aelia.pl | 8,367 | 1,750 | 1,403 | 309 | 1,403 | completed |
+
+Persisted totals are **41,846 candidates / 23,773 accepted / 8,444 review /
+23,773 fresh**. Against the previous persisted baseline this is net -164
+accepted/fresh and +5 review, representing source inventory movement rather
+than claimed manual throughput. Production was checked after v266 and exposes
+**23,773 fresh offers across 7/7 stores**.
+
+Douglas generation 37 restored Billie Eilish Your Turn II as four separate
+fresh EDP variants: 10 ml GTIN 0608940588772 at 130 PLN plus 12.99 PLN delivery,
+30 ml GTIN 0608940588765 at 290 PLN, 50 ml GTIN 0608940588758 at 330 PLN and
+100 ml GTIN 0608940588741 at 377 PLN, all observed 2026-09-15 22:26 Warsaw.
+The current Douglas `SUPER` campaign remains informational through 17 September:
+Billie Eilish is excluded, so no coupon discount is deducted from these prices.
+Notino and Brasty remain direct links and are not described as affiliate links.
+
+New rotating samples for every store were inspected. Exact-GTIN conflicts,
+missing GTINs and incomplete semantics remain blocked when no new independent
+evidence exists: Flaconi Burberry Her Elixir missing audience, Douglas
+Alexandre.J/Givenchy conflicts, Brasty Calvin Klein Euphoria Elixir conflicts,
+Notino Tiffany & Co. Sheer conflicts, Drogeria.pl missing-GTIN rows, and Aelia
+Sorvella variant-not-found rows. Different EANs were not merged and
+`manual_*` was not treated as approval. No new official promotion or
+cancellation arrived in Gmail after the already-recorded Douglas SUPER message;
+expired Flaconi campaigns and gifts were not extended. No message was sent.
+
+Next: merge the classifier contract after CI, let the normal GitHub importer
+reclassify the evidenced Heitmann row, confirm the resulting Cocolita review
+delta, and continue only new rotating evidence groups. Brasty generation 29 may
+resume from its safe checkpoint; do not restart it or claim complete CJ
+programme coverage.
+
 ## Daily catalog control / 2026-09-15 07:45 UTC
 
 Sites v265 is live from `5c46ecbe1a19025a2b85053eec3cc14b8e7c838f`;
