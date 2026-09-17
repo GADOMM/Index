@@ -1,3 +1,63 @@
+## Daily catalog control / 2026-09-17 06:35 UTC
+
+Scheduled Action [35171716085](https://github.com/GADOMM/Index/actions/runs/35171716085)
+completed successfully. Its complete seven-store audit was persisted at
+2026-09-17T02:01:58.214Z with **45,482 candidates / 27,501 accepted / 9,638
+review / 27,488 fresh offers**. Raw/current-source, accepted, review and fresh
+counts remain separate:
+
+| Store | Raw/current source | Candidates | Accepted | Review | Fresh <=18h | Net review / accepted / fresh |
+|---|---:|---:|---:|---:|---:|---:|
+| Flaconi | 35,250 | 5,549 | 3,779 | 1,361 | 3,766 | +4 / +7 / +134 |
+| Douglas | 51,031 | 6,654 | 3,022 | 2,671 | 3,022 | 0 / 0 / 0 |
+| Notino | 26,137 | 25,301 | 12,363 | 3,949 | 12,363 | 0 / -22 / -22 |
+| Brasty | 12,893 | 7,357 | 5,152 | 1,000 | 5,152 | +1 / +11 / +11 |
+| Cocolita | 28,464 | 1,003 | 886 | 52 | 886 | 0 / 0 / 0 |
+| Drogeria.pl | 32,333 | 1,223 | 856 | 291 | 856 | 0 / 0 / 0 |
+| Aelia | 8,458 | 1,795 | 1,443 | 314 | 1,443 | 0 / 0 / 0 |
+
+Notino generation 36 and Brasty generation 30 completed. Flaconi generation 57
+is safely paused without a source error; 13 accepted offers exceeded the public
+18-hour freshness limit and remain hidden. The audit flags
+`full_import_in_progress`, `expired_offer_backlog` and `review_overdue` for
+Flaconi, and `review_overdue` for the four large identity queues. There is no
+`full_import_overdue`, `no_fresh_offers` or `source_error` signal. Net
+change from the persisted baseline is +5 review, -4 accepted and +123 fresh.
+The normal AWIN window must resume Flaconi; no manual fetch was forced.
+
+Sites v270 is live from `d663608bfba11c88e3dc3df763fa642c579be78a`;
+deployment `appgdep_6aab88ad8c0c8191a1b32f601daf231a` succeeded with
+environment revision 22. Full npm test passed **146/146**. Production now
+returns a complete **7/7** coverage block. The public rail performs a bounded
+presence check and does not recalculate exact catalogue counts on every page
+view; exact fresh counts remain in the daily audit and owner diagnostics.
+
+The v6 TradeDoubler classifier now excludes the explicit Polish product type
+`woda po goleniu`. Cocolita feed 112471 product 397155, GTIN
+3349666007983, is titled “PACO RABANNE 1 Million Woda po Goleniu 100ml” in the
+official feed and is not a perfume. The rule and audit maintenance predicate
+are deployed, but this row is not reported as rejected until a subsequent
+quality/full-feed pass persists that decision. No hand-written offer JSON was
+added.
+
+An authenticated advertiser notice received 2026-09-16 confirmed Flaconi
+Wheel of Fortune codes for 20–21 September, literal CET: `PRIZE1` gives 10%
+on eligible perfumes; `PRIZE2` gives PLN 49 off a basket from PLN 299. Both
+share the recorded brand/product exclusions and are scheduled, not applied on
+17 September. Expired BEAUTY, DEAL1, LUCKY/LUCKY13 and gifts were removed from
+active runtime configuration rather than extended. Douglas `SUPER` remains
+informational only through 17 September. No mail was sent.
+
+Rotating samples for all seven stores were inspected and recorded in
+`docs/CATALOG_REVIEW_LOG.md`. Missing GTINs, missing concentration/audience,
+variant-not-found rows and identity conflicts remain blocked without independent
+exact-variant evidence. Notino and Brasty remain direct, non-affiliate links.
+
+Next condition: let the normal Flaconi/TradeDoubler cycle persist the v6
+classification, confirm the exact queue delta, and continue with only new
+rotating evidence. Resume Flaconi generation 57 from its checkpoint; do not
+retry manually after a provider throttle or bypass a provider denial.
+
 ## Post-import completion / 2026-09-16 08:21 UTC
 
 GitHub Actions run 35067009168 completed successfully after PR #94. The complete

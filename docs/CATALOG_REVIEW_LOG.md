@@ -874,3 +874,74 @@ continue only genuinely new rotating evidence groups.
   exclusion list.
 - No new official promotion or cancellation was found in the authorized Gmail
   overlap. No expired promotion or gift was extended. No partner mail was sent.
+
+
+## 2026-09-17 02:01–06:35 UTC — seven-store rotation, aftershave rule and v270
+
+Audit source: Action [35171716085](https://github.com/GADOMM/Index/actions/runs/35171716085),
+checkedAt 2026-09-17T02:01:58.214Z. Complete=true, healthy=false. Exact totals:
+45,482 candidates, 27,501 accepted, 9,638 review and 27,488 fresh offers.
+Per-store raw/current-source, accepted, review, fresh and net deltas are recorded
+at the top of PROJECT_STATE.md and CHAT_CONTINUITY.md. Missing or truncated
+worklists were not treated as empty.
+
+Rotating-list decisions checked from the persisted private audit records and
+official feed identity fields:
+
+- Flaconi: Giorgio Armani I WILL refillable EDP 100 ml GTIN 3614274492163 and
+  30 ml GTIN 3614274492170 remain blocked on missing audience; Biotherm Eau
+  Vitaminée EDT 100 ml GTIN 3614274823875 also remains blocked on missing
+  audience. Karl Lagerfeld For Men EDT 50 ml GTIN 3386460059190 remains an
+  identity conflict. No new exact audience/identity proof was available.
+- Douglas: Al Haramain Gold Crystal Oudh 100 ml GTIN 6291106813524, Miracle
+  Dubai 100 ml GTIN 6291106814965, Floral Fair 100 ml GTIN 6291106813777 and
+  Manege Blanche EDP 75 ml GTIN 6291100131310 remain blocked where
+  concentration or identity evidence is incomplete. No blanket recovery was
+  applied.
+- Notino: Tom Ford Grey Vetiver Parfum 100 ml GTIN 888066124041, Ombré Leather
+  Parfum 10 ml GTIN 888066122214 and Noir Extreme Parfum 50 ml GTIN
+  888066136914 remain blocked as GTIN/semantic conflicts. A `manual_*` reason
+  was not treated as approval.
+- Brasty: Al Wataniah Kayaan Gold EDP 100 ml GTIN 5055810030421, Paris Corner
+  Taskeen Marina EDP 100 ml GTIN 6291978025421 and Khair Fusion EDP 100 ml
+  GTIN 6291419205986 remain blocked as GTIN conflicts; a separate Armani Acqua
+  di Giò row remains blocked on the same evidence class.
+- Cocolita: feed 112471 product 397155, GTIN 3349666007983, official title
+  “PACO RABANNE 1 Million Woda po Goleniu 100ml” is an aftershave, not a
+  perfume. Decision: add the exact `woda po goleniu` exclusion to ingestion
+  and bounded audit maintenance. Remaining condition: the next authorized
+  quality/full-feed pass must persist `excluded_product_type`; no completed
+  rejection or queue reduction is claimed yet. NUXE Prodigieux le Parfum EDP
+  30 ml GTIN 3264680008320 remains an identity conflict; Sattva Night Queen
+  perfume oil 10 ml GTIN 5903794186675, Carolina Herrera Good Girl Blush EDP
+  80 ml GTIN 8411061056752 and Allvernum Rosemary & Chamomile EDP 50 ml GTIN
+  5901845532044 remain variant-not-found without new exact proof.
+- Drogeria.pl: Moschino Cheap and Chic EDT 50 ml, Joop Homme EDT 75 ml,
+  Montblanc Individuel EDT 75 ml, Davidoff Cool Water Intense EDP 125 ml,
+  Lanvin L'Homme Sport EDT 100 ml and Baldessarini Concentree EDC 75 ml remain
+  blocked because the feed rows lack a valid GTIN. Names alone are not enough.
+- Aelia: Nou Bergamot EDP 50 ml GTIN 5906395822959, Penhaligon's Cairo EDP
+  100 ml GTIN 5056245035777, Nou Rose Patchouli 50 ml GTIN 5906395822003,
+  Nou Cherry Blossom 50 ml GTIN 5906395822973 and Valentino Born in Roma Uomo
+  EDT 50 ml GTIN 3614272994874 remain variant-not-found. No new exact variant
+  evidence was found.
+
+Price/freshness decision: 13 accepted Flaconi offers are older than 18 hours and
+remain public-hidden; generation 57 is paused without `source_error` and must
+resume in its normal AWIN window. Notino generation 36 and Brasty generation 30
+completed. No HTTP 429/403 retry or access bypass was attempted.
+
+Promotion evidence: authenticated advertiser notice received 2026-09-16
+confirmed Flaconi `PRIZE1` (10% on eligible perfumes) and `PRIZE2` (PLN 49
+off from PLN 299), 20.09.2026 00:01 CET through 21.09.2026 23:59 CET, with the
+recorded brand, Steampod and selected ANNEMARIE BÖRLIND exclusions. Both are
+scheduled only; no 17 September price was reduced. Expired Flaconi campaigns
+and gifts were not extended. No email was sent.
+
+Publication proof: Sites v270 source
+`d663608bfba11c88e3dc3df763fa642c579be78a`, deployment
+`appgdep_6aab88ad8c0c8191a1b32f601daf231a`, environment revision 22,
+terminal success; npm test 146/146. Production returned complete 7/7 coverage.
+Public compare verified Billie Eilish Your Turn II EDP 10 ml, GTIN
+0608940588772, Douglas PLN 130 + PLN 12.99 delivery, checked 2026-09-16 22:20
+Europe/Warsaw. Existing separate 30/50/100 ml identities were not merged.
