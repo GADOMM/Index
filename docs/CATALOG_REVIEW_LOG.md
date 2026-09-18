@@ -945,3 +945,94 @@ terminal success; npm test 146/146. Production returned complete 7/7 coverage.
 Public compare verified Billie Eilish Your Turn II EDP 10 ml, GTIN
 0608940588772, Douglas PLN 130 + PLN 12.99 delivery, checked 2026-09-16 22:20
 Europe/Warsaw. Existing separate 30/50/100 ml identities were not merged.
+
+
+## 2026-09-18 01:42–07:00 UTC — seven-store rotation, SEZON and v271
+
+Audit source: Action [35295877929](https://github.com/GADOMM/Index/actions/runs/35295877929),
+checkedAt 2026-09-18T01:42:43.993Z. Complete=true, healthy=false only because
+large review queues remain overdue. Exact totals: 194,675 raw/current-source,
+49,053 candidates, 27,367 accepted, 9,674 review and 27,367 fresh offers.
+Per-store raw, candidate, accepted, review, fresh and net values are recorded at
+the top of PROJECT_STATE.md and CHAT_CONTINUITY.md. All seven private
+`catalog-quality:latest:<domain>` records matched the Action timestamp and
+contained rotating worklists; no missing result was treated as a zero queue.
+
+Rotating-list decisions checked from the official feed identity fields and
+readable manufacturer/store evidence:
+
+- Flaconi feed 37697: Tom Ford Signature Ombré Leather Parfum 100 ml, GTIN
+  888066117692; Jimmy Choo I Want Choo Le Parfum EDP 40/60/100 ml, GTINs
+  3386460142021/3386460142014/3386460141703, remain blocked on exact identity
+  conflicts. Decision: no cross-EAN family merge. Remaining condition:
+  independent source binding each barcode to the exact concentration, size,
+  audience and standard bottle.
+- Douglas feed 92601: Guerlain Aqua Allegoria Forte Mandarine Basilic EDP
+  75 ml, GTIN 3346470144729, remains blocked on recovery/identity conflict;
+  its 200 ml trade item, GTIN 3346470144804, remains blocked as possible refill.
+  Gucci Flora Gorgeous Jasmine EDP 50 ml, GTIN 3616302968534, remains blocked
+  on the same recovery evidence class. No broad recovery rule was accepted.
+- Notino feed 13475384: Lattafa Maharjan Silver EDP 100 ml, GTIN
+  6291108738306, remains blocked on `coverage_variant_conflict`. The official
+  Lattafa page at https://lattafa.com/product/maharjan-silver/ confirms the
+  line and 100 ml size but does not publish the EAN and presents inconsistent
+  audience wording, so it is insufficient to release the trade item. Mexx Ice
+  Touch For Her EDT 20 ml, GTIN 3616305169013, and Mexx Black New EDT 50 ml,
+  GTIN 3616305161239, remain blocked on exact-GTIN conflicts.
+- Brasty feed 13738574: Davidoff Cool Water Reborn women EDT 100 ml, GTIN
+  3616302038398; Lattafa Blend Of Khalta EDP 100 ml, GTIN 6291107452777; and
+  Lattafa Pride Ishq Al Shuyukh Silver EDP 100 ml, GTIN 6291108738672 remain
+  separate blocked identities. Names alone are not barcode proof.
+- Cocolita feed 112471: Carolina Herrera Very Good Girl EDP 80 ml, GTIN
+  8411061995754; Burberry Brit For Her EDP 50 ml, GTIN 3386463021828; Jean
+  Paul Gaultier Le Male EDT 40 ml, GTIN 8435415012607; and Sattva Oudh perfume
+  oil 10 ml, GTIN 5903794186651 remain `variant_not_found`. Yves Saint
+  Laurent Black Opium Le Parfum EDP 50 ml, GTIN 3614273863377, remains an
+  identity conflict. Product 397155 / GTIN 3349666007983, explicitly titled
+  `woda po goleniu` in the feed, is absent after the v6 exclusion. Cocolita
+  review is 49 versus 52 on 17 September; this confirms the rule is active but
+  does not attribute the whole net movement to a single row.
+- Drogeria.pl feed 118359: YSL Y Le Parfum 100 ml, Lacoste L.12.12 Pour Elle
+  French Panache 50 ml, Jimmy Choo EDT 40 ml, Lancôme La Vie Est Belle En Rose
+  EDT 50 ml, DKNY Golden Delicious EDP 30 ml and Gucci Mémoire d'une Odeur EDP
+  40 ml have no valid GTIN in the feed. Decision: blocked; no barcode was
+  invented from title text.
+- Aelia feed 258031: J. Del Pozo Vivid Velvet 15 ml, GTIN 8431754008172;
+  Cartier Baiser Volé EDP 100 ml, GTIN 3432240505897; Air Val Disney Frozen My
+  Unicorn EDT 30 ml, GTIN 8411114085791; Air Val My Unicorn EDT 30 ml, GTIN
+  8411114084589; and Fugazzi Angel Dust EDP 50 ml, GTIN 8717496446503 remain
+  `variant_not_found`. Similar names and equal volumes were not treated as
+  proof that distinct EANs are interchangeable.
+
+Freshness/import decision: every current generation completed. Flaconi
+generation 59 restored all 3,749 accepted offers as fresh and cleared the prior
+13-row expiry backlog. Douglas generation 41, Notino 37 and Brasty 31 also
+completed. No `full_import_overdue`, `expired_offer_backlog`,
+`no_fresh_offers` or `source_error` signal remains. No HTTP 429/403 retry or
+access bypass was attempted.
+
+Promotion evidence: an authenticated Awin advertiser notice received
+2026-09-18T06:19:26Z confirms Douglas `SEZON`, 18–20 September, app only, up
+to 20% from PLN 99, only on marked products, while stocks last. Brand/category,
+Special Offer and partner-shipped exclusions apply; promotions do not combine.
+Runtime decision: informational campaign, `auto_apply_eligible=0`, never
+subtract from feed price without cart eligibility. Billie Eilish is on the
+current official exclusion list at
+https://www.douglas.pl/pl/cp/promocje/marki-wylaczone-z-rabatowania, therefore
+Your Turn II receives no SEZON deduction. Expired SUPER, BEAUTY, LUCKY and gift
+claims were not extended. Flaconi PRIZE1/PRIZE2 remain scheduled for 20–21
+September only. No mail was sent.
+
+Publication proof: Sites v271 source
+`9983ce02494c8ba0c1f647fa20ce00c91f5e5344`, deployment
+`appgdep_6aace15c0e908191917027fe9e64c04a`, environment revision 23,
+terminal success; npm test **147/147**. Production homepage returned complete
+7/7 coverage and the Douglas SEZON campaign with app-only and verify-in-cart
+caveats. Public compare verified Billie Eilish Your Turn II EDP 10 ml, GTIN
+0608940588772, Douglas PLN 130 plus PLN 12.99 delivery, checked 2026-09-17
+22:29 Europe/Warsaw, zero coupon discount and a current affiliate redirect.
+The stored 30/50/100 ml EAN identities remain separate and were not rewritten.
+
+Next condition: continue only new rotating offsets, require exact trade-item
+evidence before releasing conflicts, and validate the scheduled Flaconi codes
+inside their 20–21 September window.
