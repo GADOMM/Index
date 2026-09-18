@@ -1,3 +1,59 @@
+## Daily catalog control / 2026-09-18 07:00 UTC
+
+Scheduled Action [35295877929](https://github.com/GADOMM/Index/actions/runs/35295877929)
+completed successfully. Its complete seven-store audit was persisted at
+2026-09-18T01:42:43.993Z with **49,053 candidates / 27,367 accepted / 9,674
+review / 27,367 fresh offers**. Raw/current-source, accepted, review and fresh
+counts remain separate:
+
+| Store | Raw/current source | Candidates | Accepted | Review | Fresh <=18h | Net review / accepted / fresh |
+|---|---:|---:|---:|---:|---:|---:|
+| Flaconi | 35,395 | 5,551 | 3,749 | 1,356 | 3,749 | 0 / 0 / 0 |
+| Douglas | 51,057 | 6,676 | 3,032 | 2,682 | 3,032 | 0 / 0 / 0 |
+| Notino | 25,909 | 25,439 | 12,291 | 3,974 | 12,291 | +1 / -21 / -21 |
+| Brasty | 12,875 | 7,364 | 5,108 | 1,002 | 5,108 | 0 / -51 / -51 |
+| Cocolita | 28,541 | 995 | 883 | 49 | 883 | -3 / 0 / 0 |
+| Drogeria.pl | 32,357 | 1,220 | 854 | 291 | 854 | 0 / 0 / 0 |
+| Aelia | 8,541 | 1,808 | 1,450 | 320 | 1,450 | +3 / 0 / 0 |
+
+All full generations completed, including Flaconi 59, Douglas 41, Notino 37
+and Brasty 31. The prior 13-offer Flaconi expiry backlog is cleared. There is
+no `full_import_overdue`, `expired_offer_backlog`, `no_fresh_offers` or
+`source_error` signal. Review remains overdue only for the four large
+identity queues. Net audit movement is +1 review, -72 accepted and -72 fresh.
+
+The v6 exact aftershave exclusion is confirmed in production: Cocolita review
+fell from 52 to 49 and feed 112471 product 397155 / GTIN 3349666007983 is no
+longer in the rotating review list. No blanket cosmetic exclusion or manual
+offer JSON was added.
+
+Authenticated Awin notice received 2026-09-18 confirms Douglas `SEZON`, app
+only, up to 20% from PLN 99, 18–20 September, only for marked products and
+subject to current exclusions. It is informational with
+`auto_apply_eligible=0`, so it does not reduce feed prices automatically.
+Billie Eilish is currently excluded by Douglas, therefore Your Turn II receives
+no SEZON discount. Expired campaigns and gifts were not extended. Flaconi
+`PRIZE1`/`PRIZE2` remain scheduled only for 20–21 September. No email was
+sent.
+
+Sites v271 is live from
+`9983ce02494c8ba0c1f647fa20ce00c91f5e5344`; deployment
+`appgdep_6aace15c0e908191917027fe9e64c04a` succeeded with environment
+revision 23. npm test passed **147/147**. Production shows complete 7/7
+coverage and the bounded Douglas SEZON card with app-only and verify-in-cart
+caveats. Public compare verified Billie Eilish Your Turn II EDP 10 ml, GTIN
+0608940588772, at PLN 130 plus PLN 12.99 delivery with zero coupon deduction.
+
+New rotating samples from all seven stores are recorded in
+`docs/CATALOG_REVIEW_LOG.md`. Identity conflicts, missing GTINs,
+missing concentration/audience and variant-not-found rows remain blocked
+pending independent exact-trade-item evidence. No different EANs were merged.
+Notino and Brasty remain direct, non-affiliate links.
+
+Next condition: continue only new rotating evidence groups, reduce the 9,674
+review queue with source-backed fixes, and verify Flaconi codes only inside
+their 20–21 September window.
+
 ## Daily catalog control / 2026-09-17 06:35 UTC
 
 Scheduled Action [35171716085](https://github.com/GADOMM/Index/actions/runs/35171716085)
