@@ -1,3 +1,39 @@
+## Daily catalog control / 2026-09-19 07:05 UTC
+
+Action [35413342780](https://github.com/GADOMM/Index/actions/runs/35413342780)
+finished successfully and persisted a complete seven-store audit at
+2026-09-19T02:04:56.613Z: **49,180 candidates / 27,157 accepted / 9,676 review
+/ 27,121 fresh**. Per-store raw/current-source, accepted, review and fresh
+counts are recorded separately in `PROJECT_STATE.md` and
+`docs/CATALOG_REVIEW_LOG.md`. Brasty raw 4,800 is a paused checkpoint, not a
+full source count.
+
+Flaconi generation 62 and Brasty generation 33 are safely paused without a
+source error. Thirty-six Flaconi offers crossed the 18-hour limit and remain
+hidden. There is no `full_import_overdue`, `no_fresh_offers` or
+`source_error`; no manual provider fetch was forced.
+
+All seven rotating lists were inspected. Conflicting or incomplete identities
+remain blocked. Official Millefiori evidence confirms Cocolita feed 112471
+product 703520 / GTIN 8053848692199 is laundry rinse, not perfume. The exact
+`płyn do płukania` exclusion is deployed as classifier v7; do not claim the
+queue reduction until the next normal audit confirms it.
+
+Sites v272, source `dcc4eb0cce6ffdedb2e85ea6e296609008daab7f`, is live;
+deployment `appgdep_6aae31b8a5988191ba5d592de3a093c0` succeeded on
+environment revision 23 and npm test passed **147/147**. Production shows 7/7.
+Billie Eilish Your Turn II EDP 10 ml remains PLN 130 + PLN 12.99 delivery with
+zero coupon deduction.
+
+Douglas `SEZON` is still app-only through 20 September for marked products;
+Billie Eilish is excluded. Flaconi `PRIZE1`/`PRIZE2` are scheduled only for
+20–21 September and are inactive on 19 September. No new official campaign or
+cancellation arrived in the 48-hour Gmail overlap. Nothing expired was
+extended and no email was sent. Notino and Brasty remain direct/non-affiliate.
+
+Next: normal provider windows resume paused generations; confirm v7 on the
+Cocolita row and rotate only new evidence through the remaining 9,676 reviews.
+
 ## Daily catalog control / 2026-09-18 07:00 UTC
 
 Scheduled Action [35295877929](https://github.com/GADOMM/Index/actions/runs/35295877929)
