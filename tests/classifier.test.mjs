@@ -7,7 +7,7 @@ import {
 } from "../scripts/perfume-classifier.mjs";
 
 test("classifier accepts perfume names and structured perfume categories", () => {
-  assert.equal(PERFUME_CLASSIFIER_VERSION, "perfume-v6");
+  assert.equal(PERFUME_CLASSIFIER_VERSION, "perfume-v7");
   assert.deepEqual(classifyPerfumeProduct({ name: "Aelia Eau de Parfum 50 ml" }), {
     accepted: true,
     reason: "name_signal",
@@ -38,6 +38,7 @@ test("classifier excludes sets, samples, cosmetics and description-only mentions
     { name: "Tesori d'Oriente Odświeżacz Powietrza i Tkanin Hammam 250 ml", categories: [{ name: "Perfumy" }] },
     { name: "Heitmann Chusteczki Przywracające Czerń Ultra 6 Sztuk", categories: [{ name: "Perfumy" }] },
     { name: "PACO RABANNE 1 Million Woda po Goleniu 100ml", categories: [{ name: "Perfumy" }] },
+    { name: "Millefiori Milano Laundry Płyn do Płukania Patchouli Smeraldo 250ml", categories: [{ name: "Perfumy" }] },
   ];
   for (const product of rejected) assert.equal(isPerfumeProduct(product), false);
   assert.equal(classifyPerfumeProduct({ name: "Balsam do ciała" }).reason, "excluded_product_type");

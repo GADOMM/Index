@@ -1036,3 +1036,87 @@ The stored 30/50/100 ml EAN identities remain separate and were not rewritten.
 Next condition: continue only new rotating offsets, require exact trade-item
 evidence before releasing conflicts, and validate the scheduled Flaconi codes
 inside their 20–21 September window.
+
+## 2026-09-19 daily review
+
+Audit evidence time: 2026-09-19T02:04:56.613Z; scheduled Action
+[35413342780](https://github.com/GADOMM/Index/actions/runs/35413342780), schema
+1, complete true, healthy false. Inspection and live checks occurred
+2026-09-19 06:35–07:05 UTC.
+
+| Store | Raw/current source | Candidates | Accepted | Review | Fresh <=18h | Net review / accepted / fresh |
+|---|---:|---:|---:|---:|---:|---:|
+| Flaconi | 35,250 | 5,554 | 3,765 | 1,361 | 3,729 | 0 / 0 / -36 |
+| Douglas | 50,856 | 6,690 | 2,915 | 2,658 | 2,915 | 0 / 0 / 0 |
+| Notino | 25,714 | 25,468 | 12,153 | 3,979 | 12,153 | 0 / 0 / 0 |
+| Brasty | 4,800 checkpoint | 7,447 | 5,134 | 1,022 | 5,134 | +1 / 0 / 0 |
+| Cocolita | 28,564 | 995 | 884 | 49 | 884 | 0 / 0 / 0 |
+| Drogeria.pl | 32,375 | 1,218 | 854 | 289 | 854 | 0 / 0 / 0 |
+| Aelia | 8,579 | 1,808 | 1,452 | 318 | 1,452 | 0 / 0 / 0 |
+
+Brasty raw 4,800 is generation 33's current checkpoint, not a full import.
+Flaconi generation 62 is also paused. Neither has a source error. Thirty-six
+Flaconi accepted offers are older than 18 hours and public-hidden; no stale
+record was refreshed by reprocessing. No `full_import_overdue`,
+`no_fresh_offers` or `source_error` signal was present.
+
+Rotating-list decisions:
+
+- Flaconi: Giorgio Armani Code Homme Parfum Refillable 75 ml
+  (GTIN 3614273604833), the 50 ml trade item (3614273605069), Karl Lagerfeld
+  Jeans Urban Blue EDT 60 ml (3386460160308) and Fleur de Thé EDP 50 ml
+  (3386460124850) remain blocked on identity/semantic conflicts. Names,
+  concentrations, volumes and EANs were not collapsed; remaining condition is
+  authoritative exact-trade-item evidence resolving the stored conflict.
+- Douglas: Auna Dark Grape 50 ml (5905972172661) and ARMAF Le Parfait Pour
+  Homme 100 ml (6294015102239) remain blocked for missing concentration;
+  Al Haramain Noir EDP 100 ml (6291106813098) remains blocked on identity
+  conflict. Readable retailer mentions did not provide stronger official
+  exact-EAN proof, so no concentration was inferred.
+- Notino: Rabanne Invictus Elixir 50 ml (3349668662678), Invictus Victory
+  Elixir 200 ml (3349668614530) and 100 ml (3349668614523) remain blocked on
+  GTIN/semantic identity conflicts. Different EANs remain separate.
+- Brasty: Davidoff Cool Elixir 30 ml (3616305638632), Rabanne Million Gold
+  Elixir 200 ml (3349668644940) and 1 Million Night Elixir 100 ml
+  (3349668662388) remain blocked on GTIN/source-mapping conflicts. The current
+  source is a paused checkpoint; it was not presented as a complete catalog.
+- Cocolita: feed 112471 product 703520, “Millefiori Milano Laundry Płyn do
+  Płukania Patchouli Smeraldo 250ml”, GTIN 8053848692199, is confirmed
+  non-perfume by the official manufacturer page
+  <https://millefiorimilano.com/en/products/laundry-booster-patchouli-smeraldo>,
+  which instructs use in the fabric-softener compartment. Decision: exact
+  product-type exclusion via classifier v7. Gulf Orchid Sweet Heaven EDP
+  100 ml (6291107019741), Miss So Midnight Magic 50 ml (5018389018856),
+  La Bomba x Lebrand roll-on 10 ml (5904541450902) and Apollca Sweet Apogee
+  50 ml (5905575066947) remain blocked as variant-not-found; no blanket
+  approval was made.
+- Drogeria.pl: Gulf Orchid Vanilla Latte EDP 100 ml, Khadlaj Island extract
+  100 ml, Miss So Midnight Magic 50 ml, Grandeur Tubbees Tropical Island and
+  Berry Explosion 50 ml, and Korres Cretan Blue EDT 50 ml remain blocked for
+  missing valid GTIN. No barcode was invented.
+- Aelia: Rabanne Phantom Intense 100 ml (3349668644049) and 50 ml
+  (3349668644063) remain blocked on identity conflict; third-party pages
+  suggest “Phantom Elixir”, while the feed says “Phantom Intense”, so the
+  mismatch is unresolved without official exact-EAN proof. Penhaligon's
+  Fortuitous Finley EDP 75 ml (5056245045431), Nou Roots Eternal Fire 50 ml
+  (5903624849916) and Fading Forest 50 ml (5903624849855) remain blocked as
+  variant-not-found.
+
+Sites v272 deployed classifier v7 from
+`dcc4eb0cce6ffdedb2e85ea6e296609008daab7f`; 147/147 tests passed and
+deployment `appgdep_6aae31b8a5988191ba5d592de3a093c0` succeeded. The
+Cocolita row's actual removal remains conditioned on the next normal quality
+cycle; it is not reported as completed today.
+
+Live check: complete 7/7 coverage. Billie Eilish Your Turn II EDP 10 ml,
+GTIN 0608940588772, has a fresh Douglas offer at PLN 130 + PLN 12.99 delivery,
+with zero coupon deduction. Douglas `SEZON` is active only in-app for marked
+products through 20 September; Billie Eilish is excluded. Flaconi
+`PRIZE1`/`PRIZE2` remain scheduled for 20–21 September and inactive on
+19 September. The 48-hour Gmail overlap added no new official campaign or
+cancellation. No expired code/gift was extended and no email was sent.
+
+Next condition: confirm classifier v7 and resume paused generations only in
+their normal provider windows, then continue new rotation groups. Existing
+blocked rows are not repeated without new evidence.
+
