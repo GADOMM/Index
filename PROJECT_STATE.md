@@ -1,3 +1,59 @@
+## Daily catalog control / 2026-09-20 08:35 UTC
+
+Authorized full-import Action [35457562256](https://github.com/GADOMM/Index/actions/runs/35457562256)
+completed successfully. The complete seven-store audit was persisted at
+2026-09-20T08:29:50.605Z with **49,211 candidates / 26,976 accepted / 9,673
+review / 26,976 fresh offers**. Raw/current-source, accepted, review and fresh
+counts remain separate:
+
+| Store | Raw/current source | Candidates | Accepted | Review | Fresh <=18h | Net review / accepted / fresh |
+|---|---:|---:|---:|---:|---:|---:|
+| Flaconi | 35,338 | 5,554 | 3,690 | 1,353 | 3,690 | -2 / -11 / -11 |
+| Douglas | 50,803 | 6,697 | 2,923 | 2,661 | 2,923 | 0 / 0 / 0 |
+| Notino | 23,933 checkpoint | 25,513 | 12,056 | 3,992 | 12,056 | 0 / 0 / 0 |
+| Brasty | 4,200 checkpoint | 7,450 | 5,114 | 1,021 | 5,114 | 0 / 0 / 0 |
+| Cocolita | 28,546 | 978 | 885 | 43 | 885 | 0 / 0 / 0 |
+| Drogeria.pl | 32,375 | 1,200 | 854 | 283 | 854 | -1 / +1 / +1 |
+| Aelia | 8,617 | 1,819 | 1,454 | 320 | 1,454 | 0 / -5 / -5 |
+
+Notino generation 39 and Brasty generation 35 remain normal resumable
+checkpoints, not completed full-catalog counts. Both have fresh heartbeats and
+no source error. Flaconi generation 65 completed atomically. No accepted offer
+is older than 18 hours; there is no expired-offer backlog, no_fresh_offers,
+source_error or full_import_overdue signal. Audit health remains false only
+because Notino/Brasty full imports are in progress and aged review queues remain.
+
+All seven rotating lists were inspected. Exact-EAN conflicts and rows missing
+authoritative GTIN, concentration, audience or variant identity remain blocked.
+No different EANs were merged and no manual status was treated as approval.
+
+Two Flaconi review rows received a narrow evidence rule: Chopard Casmir EDP
+women's standard bottle 30 ml, GTIN 7640177366009, and 100 ml, GTIN
+7640177366016. Brand, line, concentration, volume and each EAN must all match;
+the two EANs remain separate variants. Evidence:
+<https://www.perfumetrader.de/en/chopard-casmir-eau-de-parfum-edp-30-ml> and
+<https://www.jomashop.com/casmir-chopard-edp-spray-3-4-oz-w-7640177366016.html>.
+The Flaconi queue fell by two after generation 65. Production visibly exposes
+both 30 ml and 100 ml Chopard Cašmir EDP women's variants. The live comparison
+currently shows Brasty and Notino for 30 ml and Notino for 100 ml; no Flaconi
+offer is claimed until one is present in the live comparison.
+
+Sites v273 is live from source
+a37f0824c986337931494ca51c98dc5fec857b68; deployment
+appgdep_6aaf81a994508191b7574e03771109dc succeeded. Full npm test passed
+**148/148**. Production shows complete 7/7 coverage.
+
+On 20 September Flaconi PRIZE1 (10% on eligible perfume) and PRIZE2
+(PLN 49 from PLN 299) are active only through 21 September. Public comparisons
+confirmed literal deductions on eligible offers; exclusions remain respected.
+Douglas SEZON remains app-only through 20 September for marked products and
+is not deducted globally. The 48-hour Gmail overlap contained no new official
+campaign, cancellation or gift. No expired promotion was extended and no email
+was sent. Notino and Brasty remain direct/non-affiliate.
+
+Next: resume only the safe Notino and Brasty checkpoints in normal provider
+windows, then rotate new evidence through the remaining 9,673 review records.
+
 ## Daily catalog control / 2026-09-19 07:05 UTC
 
 Scheduled Action [35413342780](https://github.com/GADOMM/Index/actions/runs/35413342780)

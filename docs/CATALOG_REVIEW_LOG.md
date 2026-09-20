@@ -1120,3 +1120,79 @@ Next condition: confirm classifier v7 and resume paused generations only in
 their normal provider windows, then continue new rotation groups. Existing
 blocked rows are not repeated without new evidence.
 
+## 2026-09-20 daily review
+
+Audit evidence time: 2026-09-20T08:29:50.605Z; authorized full-import Action
+[35457562256](https://github.com/GADOMM/Index/actions/runs/35457562256), schema
+1, complete true, healthy false. Inspection and live checks occurred
+2026-09-20 06:15–08:35 UTC.
+
+| Store | Raw/current source | Candidates | Accepted | Review | Fresh <=18h | Net review / accepted / fresh |
+|---|---:|---:|---:|---:|---:|---:|
+| Flaconi | 35,338 | 5,554 | 3,690 | 1,353 | 3,690 | -2 / -11 / -11 |
+| Douglas | 50,803 | 6,697 | 2,923 | 2,661 | 2,923 | 0 / 0 / 0 |
+| Notino | 23,933 checkpoint | 25,513 | 12,056 | 3,992 | 12,056 | 0 / 0 / 0 |
+| Brasty | 4,200 checkpoint | 7,450 | 5,114 | 1,021 | 5,114 | 0 / 0 / 0 |
+| Cocolita | 28,546 | 978 | 885 | 43 | 885 | 0 / 0 / 0 |
+| Drogeria.pl | 32,375 | 1,200 | 854 | 283 | 854 | -1 / +1 / +1 |
+| Aelia | 8,617 | 1,819 | 1,454 | 320 | 1,454 | 0 / -5 / -5 |
+
+Flaconi generation 65 completed without a source error. Notino generation 39
+and Brasty generation 35 are safe checkpoints, not full catalog counts. Every
+accepted offer is fresh within 18 hours. There is no expired-offer backlog,
+no_fresh_offers, source_error or full_import_overdue signal.
+
+Rotating-list decisions:
+
+- Flaconi: feed 37697 products
+  0fa1c61d-41e1-4042-9eab-a33976af3036-1 and
+  0fa1c61d-41e1-4042-9eab-a33976af3036-3 are Chopard Casmir EDP women's
+  standard bottles 30 ml / GTIN 7640177366009 and 100 ml / GTIN
+  7640177366016. The official feed supplies brand, line, EDP, volume and EAN;
+  exact-EAN retailer evidence supplies women's audience:
+  <https://www.perfumetrader.de/en/chopard-casmir-eau-de-parfum-edp-30-ml>
+  and
+  <https://www.jomashop.com/casmir-chopard-edp-spray-3-4-oz-w-7640177366016.html>.
+  Decision: accept only the exact audience mapping when all identity fields
+  agree. The two EANs remain separate. Flaconi review fell by two. Production
+  visibly exposes 30 ml and 100 ml Cašmir EDP women's variants, but the current
+  live offers are Brasty/Notino for 30 ml and Notino for 100 ml; no live
+  Flaconi offer is claimed. Nahema GTIN 3346470143111 and L'Homme Idéal Parfum
+  GTIN 3346470305229 remain blocked on source/identity conflicts.
+- Douglas: Bad Boy Cobalt 100 ml (8411061099759), J.F. Schwarzlose Fougair
+  100 ml (4260316020406) and YSL Opium EDT 50 ml (3365440556461) remain
+  blocked on semantic or identity conflict. No EAN was collapsed.
+- Notino: Azzaro The Most Wanted Intense EDP rows 3614274769883 and
+  3614274769937 remain blocked for missing volume. Readable exact-trade-item
+  evidence was insufficient; no volume was inferred.
+- Brasty: Prada Luna Rossa Ocean EDT 100 ml (3614273556620), Xerjoff XJ 17/17
+  XXY 50 ml (8033488155476) and Alexandria II 100 ml (8033488154967) remain
+  blocked on source/GTIN conflicts.
+- Cocolita: Azzaro Wanted EDT 50 ml (3351500016600), NUXE Prodigieux 30 ml
+  (3264680008320), Sattva Night Queen oil 10 ml (5903794186675) and Good Girl
+  Blush 80 ml (8411061056752) remain variant-not-found or identity-conflicted.
+  No blanket mapping was made.
+- Drogeria.pl: Gucci Memoire 40 ml, Lacoste French Panache 50 ml, Jimmy Choo
+  Woman 60 ml, Jimmy Choo Blossom 40 ml, Elizabeth Arden After Five 125 ml and
+  Ariana Grande Thank U Next 100 ml remain blocked for missing valid GTIN. No
+  barcode was invented.
+- Aelia: Trudon Vixi 15 ml (3397690002801), Trudon Révolution 100 ml
+  (3397696710052), Byredo Mojave Ghost/Blanche oils 7.5 ml and Lancôme La Nuit
+  Trésor Fleur De Nuit 50 ml (3614274068801) remain variant-not-found. No
+  unverified family merge was added.
+
+Sites v273 deployed source a37f0824c986337931494ca51c98dc5fec857b68;
+148/148 tests passed and deployment
+appgdep_6aaf81a994508191b7574e03771109dc succeeded.
+
+Live promotion checks on 20 September confirmed Flaconi PRIZE1 and
+PRIZE2 inside their 20–21 September window. Eligible examples showed the
+literal configured deduction: Armani Stronger With You Intensely 100 ml and
+Good Girl 80 ml used PLN 49 from PLN 299; Chloé 75 ml used 10%. Douglas
+SEZON remains app-only through 20 September for marked products. The
+48-hour Gmail overlap added no new official promotion/cancellation/gift. No
+expired code or gift was extended and no email was sent.
+
+Next condition: resume Notino and Brasty in normal provider windows and rotate
+only new evidence. Existing blocked rows are not repeated without new proof.
+
