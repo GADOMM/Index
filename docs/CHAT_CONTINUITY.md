@@ -1,3 +1,38 @@
+## Daily catalog control / 2026-09-20 08:35 UTC
+
+Action [35457562256](https://github.com/GADOMM/Index/actions/runs/35457562256)
+finished successfully and persisted a complete seven-store audit at
+2026-09-20T08:29:50.605Z: **49,211 candidates / 26,976 accepted / 9,673 review
+/ 26,976 fresh**. Flaconi generation 65 completed atomically (35,338 raw);
+Notino generation 39 (23,933 raw checkpoint) and Brasty generation 35 (4,200
+raw checkpoint) are safely resumable, have no source error and are not
+misreported as completed catalogs. All accepted offers are within 18 hours.
+
+Sites v273, source a37f0824c986337931494ca51c98dc5fec857b68, is live;
+deployment appgdep_6aaf81a994508191b7574e03771109dc succeeded and npm test
+passed **148/148**.
+
+A scoped reviewed-audience rule now covers only Chopard Casmir EDP women's
+standard bottles 30 ml / GTIN 7640177366009 and 100 ml / GTIN 7640177366016.
+The EANs remain separate. Flaconi review fell by two after generation 65.
+Production visibly exposes both Cašmir variants; current offers are Brasty and
+Notino for 30 ml and Notino for 100 ml, so do not claim a live Flaconi offer
+until it appears in comparison.
+
+Every store's rotating list was inspected. Unresolved exact-EAN conflicts,
+missing GTINs and ambiguous variants remain blocked. No blanket recovery or
+manual approval was applied.
+
+Flaconi PRIZE1 and PRIZE2 are active only 20–21 September and were
+verified on eligible public comparisons. Douglas SEZON remains app-only
+through 20 September for marked products and is not deducted globally. The
+48-hour Gmail overlap added no new official campaign, cancellation or gift.
+Nothing expired was extended; no email was sent. Notino and Brasty remain
+direct/non-affiliate.
+
+Next: normal provider windows resume the Notino and Brasty checkpoints; rotate
+only new evidence through the remaining 9,673 reviews.
+
 ## Daily catalog control / 2026-09-19 07:05 UTC
 
 Action [35413342780](https://github.com/GADOMM/Index/actions/runs/35413342780)
