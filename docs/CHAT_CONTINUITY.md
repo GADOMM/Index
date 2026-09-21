@@ -1,3 +1,42 @@
+## Daily catalog control / 2026-09-21 06:20 UTC
+
+Action [35551833662](https://github.com/GADOMM/Index/actions/runs/35551833662)
+finished successfully and persisted a complete seven-store audit at
+2026-09-21T02:17:31.887Z: **49,228 candidates / 26,845 accepted / 9,664 review
+/ 26,845 fresh**. Per-store raw/current-source, accepted, review and fresh
+counts are recorded separately in `PROJECT_STATE.md` and
+`docs/CATALOG_REVIEW_LOG.md`.
+
+Flaconi generation 66 completed. Notino generation 40 (9,584 raw checkpoint)
+and Brasty generation 36 (4,800 raw checkpoint) are safely resumable, have
+fresh heartbeats and no source error; they are not reported as complete source
+catalogs. All accepted offers are within 18 hours and there is no
+`expired_offer_backlog`, `no_fresh_offers`, `source_error` or
+`full_import_overdue` signal.
+
+Fresh rotating prefixes for all seven stores were inspected. Exact-EAN,
+audience and variant conflicts remain blocked where readable evidence did not
+resolve the catalog target. In particular, Kenzo Flower by Kenzo New Edition
+EDT 30 ml, Nishane Nefs Extrait 50 ml, Valentino Donna Born in Roma Intense
+EDP 50 ml and Fugazzi Vanilla Haze EDP 8 ml were not converted into broad
+exceptions. No different EANs were merged and no manual status was treated as
+approval. Connector-truncated worklists are recorded as incomplete, never as
+empty.
+
+Sites v273 remains the live production version; no source mutation warranted a
+new deployment. Full npm test passed **148/148**. Public checks show all seven
+stores, Flaconi PRIZE1/PRIZE2 active through 21 September and Douglas SEZON
+absent after expiry. Billie Eilish Your Turn II EDP 10 ml remains PLN 130 plus
+PLN 12.99 delivery without a coupon deduction. Notino and Brasty remain direct,
+non-affiliate links.
+
+The 48-hour Gmail overlap contained no new official campaign, cancellation or
+gift. Nothing expired was extended and no email was sent.
+
+Next: resume Notino and Brasty only in normal provider windows, await new exact
+identity evidence for blocked rows, and verify Flaconi promotion expiry after
+21 September.
+
 ## Daily catalog control / 2026-09-20 08:35 UTC
 
 Action [35457562256](https://github.com/GADOMM/Index/actions/runs/35457562256)
