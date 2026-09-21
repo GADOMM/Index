@@ -1,3 +1,55 @@
+## Daily catalog control / 2026-09-21 06:20 UTC
+
+Scheduled Action [35551833662](https://github.com/GADOMM/Index/actions/runs/35551833662)
+completed successfully. The complete seven-store audit was persisted at
+2026-09-21T02:17:31.887Z with **49,228 candidates / 26,845 accepted / 9,664
+review / 26,845 fresh offers**. Raw/current-source, accepted, review and fresh
+counts remain separate:
+
+| Store | Raw/current source | Candidates | Accepted | Review | Fresh <=18h | Net review / accepted / fresh |
+|---|---:|---:|---:|---:|---:|---:|
+| Flaconi | 35,271 | 5,554 | 3,685 | 1,352 | 3,685 | -3 / -16 / -16 |
+| Douglas | 50,464 | 6,697 | 2,916 | 2,648 | 2,916 | -13 / -7 / -7 |
+| Notino | 9,584 checkpoint | 25,534 | 11,957 | 3,995 | 11,957 | +3 / -99 / -99 |
+| Brasty | 4,800 checkpoint | 7,450 | 5,098 | 1,023 | 5,098 | +2 / -16 / -16 |
+| Cocolita | 28,476 | 974 | 881 | 43 | 881 | 0 / -4 / -4 |
+| Drogeria.pl | 32,375 | 1,200 | 854 | 283 | 854 | -1 / +1 / +1 |
+| Aelia | 8,610 | 1,819 | 1,454 | 320 | 1,454 | 0 / -5 / -5 |
+
+Notino generation 40 and Brasty generation 36 are safe resumable checkpoints,
+not completed full-catalog counts. Both have fresh heartbeats and no source
+error. Flaconi generation 66 completed atomically. Every accepted offer is
+within 18 hours; there is no expired-offer backlog, no_fresh_offers,
+source_error or full_import_overdue signal. Aggregate movement from the prior
+audit is +17 candidates, -131 accepted/fresh and -9 review; the accepted
+decrease is source assortment movement, not a claimed manual removal.
+
+New rotating prefixes for every store were reviewed. Kenzo Flower by Kenzo
+New Edition EDT 30 ml / GTIN 3274872420335, Nishane Nefs Extrait 50 ml / GTIN
+8681008055265, Valentino Donna Born in Roma Intense EDP 50 ml / GTIN
+3614273790857 and Fugazzi Vanilla Haze EDP 8 ml / GTIN 9507942457134 received
+readable exact-trade-item checks. Public comparison confirms existing Kenzo,
+Nishane and Valentino families, but the evidence does not resolve the stored
+catalog target/audience conflict or prove a safe cross-EAN relationship. No
+exception, family merge or manual approval was added. The connector projection
+exposed only bounded worklist prefixes; omitted rows remain uninspected, not a
+zero queue.
+
+Sites v273 remains live from source
+`a37f0824c986337931494ca51c98dc5fec857b68`; no site source change was justified
+and no redundant deployment was made. Full npm test passed **148/148**. Public
+production shows all seven stores, active Flaconi PRIZE1/PRIZE2 cards through
+21 September, and no Douglas SEZON card after its 20 September end. Billie
+Eilish Your Turn II EDP 10 ml remains PLN 130 plus PLN 12.99 delivery with no
+coupon deduction. Notino and Brasty listings remain direct/non-affiliate.
+
+The 48-hour Gmail overlap contained no new official partner promotion,
+cancellation or gift. No expired campaign was extended and no email was sent.
+
+Next: let the normal provider windows resume Notino and Brasty, re-audit the
+bounded conflicts only when new identity evidence arrives, and expire Flaconi
+PRIZE1/PRIZE2 after their 21 September window.
+
 ## Daily catalog control / 2026-09-20 08:35 UTC
 
 Authorized full-import Action [35457562256](https://github.com/GADOMM/Index/actions/runs/35457562256)
