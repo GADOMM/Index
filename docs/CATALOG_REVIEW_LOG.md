@@ -1196,3 +1196,95 @@ expired code or gift was extended and no email was sent.
 Next condition: resume Notino and Brasty in normal provider windows and rotate
 only new evidence. Existing blocked rows are not repeated without new proof.
 
+## 2026-09-21 daily review
+
+Audit evidence time: 2026-09-21T02:17:31.887Z; scheduled Action
+[35551833662](https://github.com/GADOMM/Index/actions/runs/35551833662), schema
+1, complete true, healthy false. Inspection and live checks occurred
+2026-09-21 05:35–06:20 UTC.
+
+| Store | Raw/current source | Candidates | Accepted | Review | Fresh <=18h | Net review / accepted / fresh |
+|---|---:|---:|---:|---:|---:|---:|
+| Flaconi | 35,271 | 5,554 | 3,685 | 1,352 | 3,685 | -3 / -16 / -16 |
+| Douglas | 50,464 | 6,697 | 2,916 | 2,648 | 2,916 | -13 / -7 / -7 |
+| Notino | 9,584 checkpoint | 25,534 | 11,957 | 3,995 | 11,957 | +3 / -99 / -99 |
+| Brasty | 4,800 checkpoint | 7,450 | 5,098 | 1,023 | 5,098 | +2 / -16 / -16 |
+| Cocolita | 28,476 | 974 | 881 | 43 | 881 | 0 / -4 / -4 |
+| Drogeria.pl | 32,375 | 1,200 | 854 | 283 | 854 | -1 / +1 / +1 |
+| Aelia | 8,610 | 1,819 | 1,454 | 320 | 1,454 | 0 / -5 / -5 |
+
+Flaconi generation 66 completed. Notino generation 40 and Brasty generation 36
+are fresh-heartbeat checkpoints, not completed full catalogs. No accepted offer
+is older than 18 hours and there is no `expired_offer_backlog`,
+`no_fresh_offers`, `source_error` or `full_import_overdue` signal. The net nine
+fewer review rows are an observed audit result; they are not attributed to an
+unverified manual decision.
+
+The private latest records match the Action timestamp for all seven domains.
+The bounded connector projection truncated longer rotating worklists, so the
+following are inspected prefixes only; omitted assignments are not recorded as
+verified or as a zero queue.
+
+Rotating-prefix decisions:
+
+- Flaconi: feed 37697 product
+  `f3d54291-f23c-4911-84ab-fedaf3e2a495-2`, Kenzo Flower by Kenzo New Edition
+  EDT women's standard bottle 30 ml / GTIN 3274872420335, has readable
+  exact-EAN retailer evidence and the public catalog has a 30 ml Flower by
+  Kenzo EDT women's family. The stored identity conflict still does not expose
+  a uniquely proven target, so it remains blocked. Tiziana Terenzi Kaff Parfum
+  100 ml / 8016741852510 and Jean Paul Gaultier Le Male Elixir Absolu 75 ml /
+  8435415102339 remain blocked on identity conflicts. No EAN was collapsed.
+- Douglas: Alexandre.J The Majestic Vetiver EDP 100 ml / 3701278600875, Bond
+  No. 9 Feminine Touch EDP 100 ml / 0888874006829 and Givenchy Gentleman EDP
+  100 ml / 3274872441033 remain blocked. The visible prefix did not provide a
+  new official fact resolving the stored identity target.
+- Notino: Nishane Nefs Extrait 50 ml / 8681008055265 has readable exact-EAN
+  evidence for a 50 ml extrait spray, but independent evidence describes it as
+  unisex while the public Perfumetr family is currently women's. Decision:
+  keep blocked; do not overwrite audience or merge EANs. Papilefiko 50 ml /
+  8683608070501 and Sultan Vetiver 50 ml / 8681008055487 also remain blocked
+  pending exact conflict resolution.
+- Brasty: Valentino Donna Born in Roma Intense EDP women's 50 ml / GTIN
+  3614273790857 is confirmed by the manufacturer at
+  <https://www.valentino.com/en-us/product-born-in-roma-intense-eau-de-parfum-spray-50ml-8LD890300_000>
+  and an exact-EAN retailer page at
+  <https://www.jomashop.com/valentino-ladies-donna-born-in-roma-intense-edp-spray-1-7-oz-fragrances-3614273790857.html>.
+  Production already has a women's EDP 50 ml family with fresh Notino and Aelia
+  offers, but the stored Brasty conflict does not prove the catalog variant's
+  EAN relationship. It remains blocked rather than adding a cross-EAN rule.
+  Guerlain Nerolia Vetiver Forte 75 ml / 3346470146853 and Armaf Le Parfait
+  Femme Panache 200 ml / 6294015163964 remain blocked.
+- Cocolita: Beverly Hills Polo Club 8 EDP women's 50 ml / 8718719850305 and
+  Miss So Daydream body fragrance 50 ml / 5018389018771 remain
+  variant-not-found. Bracia Mydlarze perfume oils Tamte Noce 22:53, 18:30 and
+  20:48, GTINs 5906067293476, 5906067293469 and 5906067293728, also remain
+  variant-not-found. No new catalog variant was synthesized from review data.
+- Drogeria.pl: Versace Versense EDT 50 ml, Armani Emporio He EDT 100 ml,
+  Rabanne 1 Million EDT 50 ml, Ultraviolet Man EDT 100 ml, Calvin Klein
+  Euphoria EDP 30 ml and Versace Pour Homme EDT 200 ml remain blocked for
+  missing valid GTIN. No barcode was invented.
+- Aelia: Fugazzi Vanilla Haze EDP 8 ml / 9507942457134 has readable exact-EAN
+  retailer evidence for 8 ml EDP, but no uniquely proven public catalog target;
+  it remains variant-not-found. Fugazzi Angel Dust Extrait 100 ml /
+  9509291479270, Nou Roots Eternal Fire 50 ml / 5903624849916 and Midnight
+  Flame 50 ml / 5903624849893 remain variant-not-found. Rabanne Phantom Intense
+  50 ml / 3349668644063 remains identity-conflicted.
+
+Public production check: all seven store marks render. Flaconi PRIZE1 and
+PRIZE2 are active only through 21 September; Douglas SEZON is no longer shown
+after its 20 September window. Billie Eilish Your Turn II EDP 10 ml remains a
+separate variant at PLN 130 plus PLN 12.99 delivery, with no coupon deduction.
+Valentino Donna Born in Roma Intense EDP 50 ml shows fresh Notino and Aelia
+offers. Notino and Brasty link mode remains direct/non-affiliate in the importer
+contract. The 48-hour Gmail overlap added no new official campaign,
+cancellation or gift. No expired code/gift was extended and no email was sent.
+
+No site-source correction met the evidence threshold. Sites v273 therefore
+remains live; no redundant production version was created. Full npm test passed
+148/148 before the documentation change.
+
+Next condition: let the normal provider windows resume Notino and Brasty, then
+revisit these rows only if the feed or an authoritative exact-trade-item source
+resolves the remaining catalog-target conflict. Verify PRIZE1/PRIZE2 retirement
+after 21 September.
